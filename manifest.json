@@ -1,0 +1,29 @@
+{
+    "name": "SkyCrane",
+    "manifest_version": 2,
+    "version": "0.1",
+    "description": "Cross-platform password sync and management.",
+    "permissions": [
+        "tabs",
+        "notifications"
+    ],
+    "background": {
+        "scripts": ["lib/jquery.js","lib/socket.io.js","main.js"]  
+    },
+    "permissions": [
+        "http://*/",
+        "https://*/"        
+    ],
+    "browser_action": {
+      "default_icon": "icons/small.png",
+      "default_title": "SkyCrane"
+    },
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "css": [],
+          "js": ["data/observer.js"]
+        }
+      ],
+  "content_security_policy": "script-src 'self' https://login.persona.org https://persona.org; object-src 'self'"
+}
