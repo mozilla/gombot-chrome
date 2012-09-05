@@ -1,0 +1,38 @@
+.pwmgr-alert {
+    left:0px;
+    top:0px;
+    position:fixed;
+    width:100%;
+    min-height:50px;
+    
+    background-color:#E4EDF7;
+    border:2px #e0e0ff solid;
+    text-align:center;
+    
+    z-index:1000000100;
+    opacity:0.7;
+    
+    font-family:helvetica,sans-serif;
+}
+
+.pwmgr-alert:hover {
+    opacity:1.0;
+}
+
+.pwmgr-alert .pwmgr-close {
+    color:red;
+    float:right;
+    
+    text-decoration:none;
+    
+    margin-right:30px;
+}
+
+.pwmgr-close:hover {
+    background-color:red;
+    color:white;
+}
+
+.pwmgr-alert .pwmgr-alert-text {
+    padding:20px;
+}

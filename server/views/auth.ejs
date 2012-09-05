@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script src="https://login.persona.org/include.js"></script>
+    <script src="/public/lib/jquery.js"></script>
+    <script src="/public/login.js"></script>
+    
+    <script>
+    $(document).ready(function() {
+        // TODO: Get express-browserid to load on document ready
+        
+        var newScript = document.createElement('script');
+        newScript.src = '/browserid/js/browserid-helper.js';
+        $(newScript).attr('data-auto','false');
+        document.head.appendChild(newScript);
+        
+        $(window).on('login-success', window.__authSuccess);
+        alert(window.__authSuccess);
+    });
+    </script>
+    
+    <style>
+    a {
+        font-size:48pt;
+    }
+    </style>
+</head>
+<body>
+    <h1>Welcome to SkyCrane</h1>
+    <a href="#" id="browserid-login">login</a>
+</body>
+</html>
