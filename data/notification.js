@@ -11,6 +11,7 @@ function init() {
 }
     
     function getAlertBody(alertObj) {
+        var bPage = chrome.extension.getBackgroundPage();
         var bodyEl = document.createElement('div');
         if (alertObj.type == 'password_saved') {
             bodyEl.appendChild(document.createTextNode("SkyCrane can save login " + alertObj.username + ":"));
@@ -20,17 +21,38 @@ function init() {
             bodyEl.appendChild(document.createTextNode(" for site " + alertObj.hostname + "!"));
             
             // Show save buttons, and wire to events
-            document.getElementById('save-login-buttons').style.display = 'block';
+            document.getElementById('save-login-widget').style.display = 'block';
             
             function wire(func,id) {
                 return function() { func(id); };
             }
             
-            var bPage = chrome.extension.getBackgroundPage();
-            
             document.getElementById('btn-save').addEventListener('click', wire(bPage.saveLogin,notifID));
             document.getElementById('btn-not-now').addEventListener('click', wire(bPage.notNow,notifID));
             document.getElementById('btn-never-for-site').addEventListener('click', wire(bPage.neverForSite,notifID));
+        }
+        else if (alertObj.type == 'confirm_save') {
+            bodyEl.appendChild(document.createTextNode("Should SkyCrane update the password for " + alertObj.username + " on " + alertObj.hostname + "?"));
+            document.getElementById('confirm-widget').style.display = 'block';
+        }
+        else if (alertObj.type == 'choose_login') {
+            bodyEl.appendChild(document.createTextNode("Which username should SkyCrane use?"));
+            var loginSelectWidget = document.getElementById('login-select');
+            for (var login in alertObj.logins) {
+                console.log("adding: ", JSON.stringify(alertObj.logins[login]));
+                var newOption = document.createElement('option');
+                newOption.value = alertObj.logins[login].username;
+                newOption.appendChild(document.createTextNode(alertObj.logins[login].username));
+                loginSelectWidget.appendChild(newOption);
+            }
+            document.getElementById('choose-login-widget').style.display = 'block';
+        }
+        else if (alertObj.type == 'ask_for_autologin') {
+            bodyEl.appendChild(document.createTextNode("SkyCrane can automatically log you into this site with username " + alertObj.login.username + ". Go ahead?"));
+            document.getElementById('autologin-widget').style.display = 'block';
+            document.getElementById('btn-confirm-autologin').addEventListener('click',function() {
+                bPage.doAutologin(notifID);
+            });
         }
         return bodyEl;
     }

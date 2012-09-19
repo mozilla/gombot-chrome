@@ -39,12 +39,15 @@
         document.body.insertBefore(createAlert(alertObj),document.body.children[0]);
     }
     
-    chrome.extension.onMessage.addListener(function(msg) {
-        console.log('message recvd! ' + JSON.stringify(msg));
-        if (msg.type == 'notify' && msg.notification !== undefined) {
-            displayAlert(msg.notification);
-        }
-    });
+    // chrome.extension.onMessage.addListener(function(msg) {
+    //     console.log('message recvd! ' + JSON.stringify(msg));
+    //     if (msg.type == 'notify' && msg.notification !== undefined) {
+    //         displayAlert(msg.notification);
+    //     }
+    //     else if (msg.type == 'do_autologin') {
+    //         // doAutologin(msg);
+    //     }
+    // });
 
 
     function getDataURLForHash(passwordHash,inputWidth,inputHeight,numColorBars) {
