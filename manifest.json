@@ -11,7 +11,7 @@
         "https://*/"
     ],
     "background": {
-        "scripts": ["lib/jquery.js","lib/jsuri.js","lib/socket.io.js","util.js","main.js"]  
+        "scripts": ["lib/jquery.js","lib/jsuri.js","lib/socket.io.js","util.js","pin_ui.js","pin_ui_incontent.js","main.js"]  
     },
     "browser_action": {
       "default_icon": "icons/small.png",
@@ -24,8 +24,10 @@
           "js": ["data/pwmgr_inject.js","data/observer.js"]
         }
       ],
-  "content_security_policy": "script-src 'self' https://login.persona.org https://persona.org; object-src 'self'; style-src 'self';",
   "web_accessible_resources": [
-    "icons/small.png"
+    "icons/small.png",
+    "data/pin_entry.html",
+    "data/pin_entry.js",
+    "data/css/pin_entry.css"
   ]
 }

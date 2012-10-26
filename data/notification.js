@@ -14,11 +14,7 @@ function init() {
         var bPage = chrome.extension.getBackgroundPage();
         var bodyEl = document.createElement('div');
         if (alertObj.type == 'password_saved') {
-            bodyEl.appendChild(document.createTextNode("SkyCrane can save login " + alertObj.username + ":"));
-            var passwordImg = document.createElement('img');
-            passwordImg.src = getDataURLForHash(alertObj.hash,50,13);
-            bodyEl.appendChild(passwordImg);
-            bodyEl.appendChild(document.createTextNode(" for site " + alertObj.hostname + "!"));
+            bodyEl.appendChild(document.createTextNode("Save this password and lock it with a pin code?"));
             
             // Show save buttons, and wire to events
             document.getElementById('save-login-widget').style.display = 'block';
@@ -27,13 +23,19 @@ function init() {
                 return function() { func(id); };
             }
             
-            document.getElementById('btn-save').addEventListener('click', wire(bPage.saveLogin,notifID));
+            document.getElementById('btn-save-with-pin').addEventListener('click', wire(bPage.saveLoginWithPin,notifID));
+            document.getElementById('btn-save-no-pin').addEventListener('click', wire(bPage.saveLogin,notifID));
             document.getElementById('btn-not-now').addEventListener('click', wire(bPage.notNow,notifID));
             document.getElementById('btn-never-for-site').addEventListener('click', wire(bPage.neverForSite,notifID));
+            // document.getElementById('btn-save').addEventListener('click', wire(bPage.saveLogin,notifID));
+
         }
         else if (alertObj.type == 'confirm_save') {
             bodyEl.appendChild(document.createTextNode("Should SkyCrane update the password for " + alertObj.username + " on " + alertObj.hostname + "?"));
             document.getElementById('confirm-widget').style.display = 'block';
+            document.getElementById('btn-confirm-update').addEventListener('click',function() {
+                bPage.updateLogin(notifID);
+            })
         }
         else if (alertObj.type == 'choose_login') {
             bodyEl.appendChild(document.createTextNode("Which username should SkyCrane use?"));
