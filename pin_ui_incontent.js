@@ -1,3 +1,12 @@
+/*
+*   pin_ui_incontent.js
+*
+*
+*   Manages PIN entry in a iframe inside of web content. Currently not working, but
+*   I'm keeping this code here until there's time to fix it.
+*
+*/
+
 function promptUserForPINInContent(tabID,prompt,repeat,callback) {
         // chrome.tabs.executeScript(tab.id, {file: "data/auth_content_script.js"});
         var iframeURL = chrome.extension.getURL("data/pin_entry.html");
@@ -13,13 +22,11 @@ function promptUserForPINInContent(tabID,prompt,repeat,callback) {
                     newElem.addEventListener('message',function(e) { \
                         alert('Received ' + JSON.stringify(e.data)); \
                     }); \
-                    console.log('is there a postMessage? ', newElem.contentWindow.postMessage); \
                     chrome.extension.onMessage.addListener(function(msg) { \
                         console.log('got message! ', msg); \
                         if (msg.type == 'content_pin_msg') { \
                             console.log('newElem = ', newElem); \
                             newElem.contentDocument.querySelector('body').innerHTML = 'a test message.'; \
-                            newElem.contentDocument.postMessage('iframe_message',msg.data); \
                         } \
                     }); \
                 })()" 

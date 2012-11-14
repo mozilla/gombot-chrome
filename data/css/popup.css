@@ -1,0 +1,15 @@
+body {
+    width:600px;
+}
+
+#pin-entry {
+    display:none;
+}
+
+#pin-entry-frame {
+    display:none;
+}
+
+#submit-pin {
+    display:none;
+}

@@ -1,6 +1,17 @@
-input {
+body {
+    width:300px;
+}
+
+#pin-entry input {
     font-size:48pt;
     width:50px;
+}
+
+#clipboard-sandbox {
+/*    visibility:hidden;*/
+    width:1px;
+    height:1px;
+    opacity:0;
 }
 
 #pin-entry {

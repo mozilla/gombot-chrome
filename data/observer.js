@@ -224,7 +224,9 @@
             if (findByFieldDescriptor(msg.login.formEl)) {
                 chrome.extension.sendMessage({
                     type: 'ask_for_autologin',
-                    login: msg.login
+                    message: {
+                        login: msg.login   
+                    }
                 });
             }
         }

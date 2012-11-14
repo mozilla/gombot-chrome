@@ -11,11 +11,7 @@
         "https://*/"
     ],
     "background": {
-        "scripts": ["lib/jquery.js","lib/jsuri.js","lib/socket.io.js","util.js","pin_ui.js","pin_ui_incontent.js","main.js"]  
-    },
-    "browser_action": {
-      "default_icon": "icons/small.png",
-      "default_title": "SkyCrane"
+        "page": "background.html"
     },
     "content_scripts": [
         {
@@ -24,6 +20,10 @@
           "js": ["data/pwmgr_inject.js","data/observer.js"]
         }
       ],
+  "browser_action": {
+    "default_icon": "icons/persona_small.png",
+    "default_popup": "data/browser_action.html"
+  },
   "web_accessible_resources": [
     "icons/small.png",
     "data/pin_entry.html",

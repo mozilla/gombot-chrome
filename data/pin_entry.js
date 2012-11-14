@@ -1,3 +1,12 @@
+/*
+*   pin_entry.js
+*
+*
+*   Contains the code that runs inside of the PIN entry interface, either
+*   inside of an iframe or a new browser window.
+*
+*/
+
  // PIN the user entered previously.
 var previousPIN = null;
 
@@ -9,17 +18,20 @@ var repeatingPIN = false;
 // Callback ID to send back up to pin_ui.js
 var callbackID = null;
 
-if (!self) {
-    // If we're in an iframe, we have to bolt self.postMessage to the 
-    // iframe postMessage.
-    self = {
-        postMessage: function(data) {
-            parent.postMessage('iframe_message',data);
-        }
-    };
+var IN_IFRAME = false;
+
+function sendMessage(msg) {
+    // console.log('sendMessage: ', msg);
+    // Don't use regular window.postMessage if we're running in popup mode.
+    if (IN_IFRAME) {
+        window.postMessage(msg,'*');
+    }
+    else {
+        chrome.extension.sendMessage(msg);
+    }
 }
 
-$(document).ready(function() {
+function initializePINEntry() {
     // Start focus on first PIN digit.
     $('#digit1').focus();
     
@@ -56,7 +68,6 @@ $(document).ready(function() {
             else {
                 previousPIN = getEnteredPIN();
                 repeatingPIN = true;
-            
                 // Show the user the repeat PIN message.
                 $('#pin-entry-message').hide();
                 $('#pin-repeat-message').show();
@@ -73,11 +84,18 @@ $(document).ready(function() {
         switch (msg.type) {
             case 'set_prompt':
                 $('#pin-entry-message').html(msg.prompt);
-                repeatPIN = Boolean(msg.repeat)//(msg.repeat !== undefined);
+                repeatPIN = Boolean(msg.repeat);
                 console.log('repeatPIN = ', repeatPIN);
                 break;
             case 'set_callbackid':
                 callbackID = msg.callback_id;
+                break;
+            case 'set_container':
+                IN_IFRAME = msg.in_iframe;
+                break;
+            case 'reset_entry':
+                $('input').val('');
+	            $('#digit1').focus();
                 break;
         }
     }
@@ -89,40 +107,19 @@ $(document).ready(function() {
     
     function submitPIN() {
         // We're done, submit the PIN.
-        chrome.extension.sendMessage({
+        sendMessage({
             'type': 'submit_pin', 
             'pin': getEnteredPIN(), 
             'callback_id': callbackID
         });
     }
     
-    if (chrome && chrome.extension) {
-        chrome.extension.onMessage.addListener(onMessage);   
-    }
-    else {
-        alert('attaching iframe listener');
-        // When we're running in an iframe
-        window.addEventListener('message',function(e){
-            console.log('in iframe, got message');
-            alert('in iframe, got message: ', JSON.stringify(e.data));
-        });
-        
-        window.parent.postMessage({
-            type: 'test'
-        },'*');
-    }
-    
-});
+    // Attach message handler for both browser chrome and for when
+    // we're running in an iframe.
+    chrome.extension.onMessage.addListener(onMessage);
+    window.addEventListener('message',function(e){
+        onMessage(e.data);
+    },false);
+};
 
-// 
-// function test() {
-//     console.log('test!');
-//     document.write('hello world!');
-//     
-//     chrome.extension.sendMessage({
-//         type: 'test_msg',
-//         message: []
-//     });
-// }
-// 
-// test();
+$(document).ready(initializePINEntry);
