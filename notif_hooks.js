@@ -20,7 +20,7 @@ function doAutologin(notifID) {
     if (loginData[notifID].notification.login.pin_locked) {
         function promptForLoginPIN(message) {
             message = message ? message : "Please enter your PIN to log into this site.";
-            promptUserForPIN/*InContent*/(/*loginData[notifID].tabId,*/message,false,
+            promptUserForPIN(message,false,
                 function(enteredPIN) {
                     if (validatePIN(enteredPIN)) {
                         autologin();

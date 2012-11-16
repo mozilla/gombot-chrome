@@ -54,6 +54,8 @@ function initializePINEntry() {
     });
     
     $('#submit-pin').click(function() {
+		// Ensure we have four characters
+		if (getEnteredPIN().length != 4) return;
         if (repeatPIN) {
             if (repeatingPIN) {
                 if (previousPIN == getEnteredPIN()) {

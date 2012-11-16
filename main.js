@@ -33,6 +33,12 @@ function initSkyCrane() {
         if (storageObj.logins_lock === undefined) storageObj.logins_lock = {type: 'none'};
         loginsLock = storageObj.logins_lock;
     });
+	checkIfDidFirstRun(function(didFirstRun) {
+		console.log('didFirstRun: ', didFirstRun);
+		if (!didFirstRun) {
+			startFirstRunFlow();
+		}
+	})
 }
 
 //
@@ -151,8 +157,27 @@ function getNotificationForID(notifID) {
  
 //
 // Getting and saving login data to/from localStorage
-// 
- 
+//
+
+// Takes a callback, and passes it a boolean indicating whether
+// or not the user has completed the first run flow.
+// Note that this will return true if the user started the first
+// run flow but did not complete it.
+function checkIfDidFirstRun(callback) {
+	chrome.storage.local.get('did_first_run', function(storageObj) {
+		callback(storageObj.did_first_run !== undefined);
+	});	
+}
+
+// Updates the user's PIN in loginsLock and also updates localStorage.
+function setAndSavePIN(pin) {
+    loginsLock = {
+        'type': 'pin',
+        'pin': pin
+    };
+    saveLoginsLock();
+}
+
 function saveLoginsLock() {
     // Persist loginsLock to localStorage, to preserve PIN across sessions
     chrome.storage.local.set({
@@ -223,13 +248,11 @@ function deleteLoginsForSite(hostname) {
 // PIN creation and validation
 //
 
+// Prompts the user to create a new PIN in a popup window. We should be able to
+// remove this soon, since PIN creation now happens in the first run flow.
 function createPIN() {
   promptUserForPIN("Please enter a 4-digit PIN code to lock your sites.", true, function(newPIN) {
-      loginsLock = {
-          'type': 'pin',
-          'pin': newPIN
-      };
-      saveLoginsLock();
+	  setAndSavePIN(newPIN);
   });
 }
 
