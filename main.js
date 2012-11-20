@@ -8,7 +8,7 @@
 
 
 // Maps a notificationID to the data extracted from it by an g.
-var loginData = {};
+var activeNotifications = {};
 
 // Incrementing counter of last notification ID
 var lastNotificationID = 0;
@@ -63,7 +63,7 @@ var messageHandlers = {
             // Prompt the user to save the login
             displayNotification({
                 notify: true,
-                tabId: tabID,
+                tabID: tabID,
                 notification: notificationObj
             });
             // TODO: Send new login to server
@@ -133,7 +133,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 function offerAutologin(tabID,login) {
     displayNotification({
       notify: true,
-      tabId: tabID,
+      tabID: tabID,
       notification: {
           login: login,
           type: 'ask_for_autologin',
@@ -142,16 +142,16 @@ function offerAutologin(tabID,login) {
 }
 
 function displayNotification(notificationObj) {
-  loginData[lastNotificationID] = notificationObj;
+  activeNotifications[lastNotificationID] = notificationObj;
   var notif = webkitNotifications.createHTMLNotification('data/notification.html#' + lastNotificationID);
   notif.show();
       
-  loginData[lastNotificationID].popupNotifs = [notif];
+  activeNotifications[lastNotificationID].popupNotifs = [notif];
   lastNotificationID++;
 }
   
 function getNotificationForID(notifID) {
-  return loginData[notifID].notification;
+  return activeNotifications[notifID].notification;
 }
 
 //
