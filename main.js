@@ -7,7 +7,7 @@
 */
 
 
-// Maps a notificationID to the data extracted from it by an observer.
+// Maps a notificationID to the data extracted from it by an g.
 var loginData = {};
 
 // Incrementing counter of last notification ID
@@ -81,7 +81,16 @@ var messageHandlers = {
         // Search for logins for this particular site
         getLoginsForSite(message.hostname, function(logins) {
             if (logins.length == 0) return;
+                        
             if (logins.length == 1) {
+                // Check if the login is not PIN locked. If it's not, form fill the page now.
+                if (!logins[0].pin_locked) {
+                    chrome.tabs.sendMessage(tabID,{
+                        type: 'fill_form',
+                        login: logins[0]
+                    });
+                }
+                
                 // If there's only a single login form on the page, we're fine. Otherwise,
                 // see if we were able to record an id or a name for the form when we observed
                 // the login.

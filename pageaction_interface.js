@@ -11,6 +11,22 @@ function getActiveTab(callback) {
      });
 }
 
+// This is called when the user has PIN authenticated in the browser action
+// popup. Fills in the forms on the current page.
+function formFillCurrentTab() {
+    getActiveTab(function(tab) {
+        var tabID = tab.id;
+        getPageDataForPopup(function (logins) {
+            // TODO: Find out how to present a user with a choice if they have
+            // more than one login saved for the current domain.
+            chrome.tabs.sendMessage(tabID,{
+                type: 'fill_form',
+                login: logins[0]
+            });
+        }); 
+    });
+}
+
 function getPageDataForPopup(callback) {
     getActiveTab(function(tab) {
         var newURL = new Uri(tab.url); 

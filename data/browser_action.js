@@ -54,6 +54,9 @@ $(document).ready(function() {
 						if (backgroundPage.validatePIN(msg.pin)) {
 				            $('#logins').show();
 				            $('#pin-entry-frame').hide();
+                            // The user has successfully authenticatd with their PIN,
+                            // so fill in the forms on the current page.
+                            backgroundPage.formFillCurrentTab();
 						}
 						else {
 			                pinEntryIframe.contentWindow.postMessage({
