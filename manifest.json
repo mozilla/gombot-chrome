@@ -1,8 +1,8 @@
 {
-    "name": "SkyCrane",
+    "name": "Gombot",
     "manifest_version": 2,
     "version": "0.1",
-    "description": "Cross-platform password sync and management.",
+    "description": "Tired of remembering your usernames and passwords?  Let Gombot do the work for you!",
     "permissions": [
         "tabs",
         "notifications",
@@ -10,6 +10,10 @@
         "http://*/",
         "https://*/"
     ],
+    "icons": {
+      "128": "icons/gombot-icon-128.png"
+    },
+
     "background": {
         "page": "background.html"
     },
