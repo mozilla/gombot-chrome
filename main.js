@@ -129,16 +129,10 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 //
 // Popup notifications
 //
-  
-function offerAutologin(tabID,login) {
-    displayNotification({
-      notify: true,
-      tabID: tabID,
-      notification: {
-          login: login,
-          type: 'ask_for_autologin',
-      }
-    });
+
+function closeNotif(notifID) {
+    activeNotifications[notifID].popupNotifs[0].close();
+    delete activeNotifications[notifID];
 }
 
 function displayNotification(notificationObj) {
@@ -149,9 +143,20 @@ function displayNotification(notificationObj) {
   activeNotifications[lastNotificationID].popupNotifs = [notif];
   lastNotificationID++;
 }
-  
+
 function getNotificationForID(notifID) {
   return activeNotifications[notifID].notification;
+}
+
+function offerAutologin(tabID,login) {
+    displayNotification({
+      notify: true,
+      tabID: tabID,
+      notification: {
+          login: login,
+          type: 'ask_for_autologin',
+      }
+    });
 }
 
 //

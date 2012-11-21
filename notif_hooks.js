@@ -75,8 +75,3 @@ function neverForSite(notifID) {
     neverSaveOnSite(activeNotifications[notifID].notification.hostname);
     closeNotif(notifID);
 }
-  
-function closeNotif(notifID) {
-    activeNotifications[notifID].popupNotifs[0].close();
-    delete activeNotifications[notifID];
-}
