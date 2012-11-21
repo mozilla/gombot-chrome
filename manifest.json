@@ -25,6 +25,7 @@
     "default_icon": "icons/cropped_persona_icon.png",
     "default_popup": "data/browser_action.html"
   },
+  "update_url": "http://dev.tobmog.org/downloads/updates.xml",
   "web_accessible_resources": [
     "icons/small.png",
     "data/pin_entry.html",
