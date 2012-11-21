@@ -13,6 +13,7 @@
     "background": {
         "page": "background.html"
     },
+    "options_page": "data/debug_settings.html",
     "content_scripts": [
         {
           "matches": ["<all_urls>"],
