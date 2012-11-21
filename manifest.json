@@ -22,7 +22,7 @@
         }
       ],
   "browser_action": {
-    "default_icon": "icons/persona_small.png",
+    "default_icon": "icons/cropped_persona_icon.png",
     "default_popup": "data/browser_action.html"
   },
   "web_accessible_resources": [
