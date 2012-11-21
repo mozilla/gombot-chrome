@@ -1,3 +1,6 @@
 [submodule "server"]
 	path = server
 	url = git://github.com/mozilla/gombot
+[submodule "infobar"]
+	path = infobar
+	url = git://github.com/lloyd/simulated_infobars

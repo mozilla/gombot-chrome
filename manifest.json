@@ -28,6 +28,7 @@
     "icons/small.png",
     "data/pin_entry.html",
     "data/pin_entry.js",
-    "data/css/pin_entry.css"
+    "data/css/pin_entry.css",
+    "data/remember_password_infobar.html"
   ]
 }

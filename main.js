@@ -61,6 +61,12 @@ var messageHandlers = {
                 }
             }
             // Prompt the user to save the login
+            InfobarManager.run({
+                path: "data/remember_password_infobar.html"
+            }, function(err, response) {
+                console.log(err, response);
+            });
+
             displayNotification({
                 notify: true,
                 tabId: tabID,
