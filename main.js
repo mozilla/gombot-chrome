@@ -149,14 +149,17 @@ function getNotificationForID(notifID) {
 }
 
 function offerAutologin(tabID,login) {
-    displayNotification({
-      notify: true,
-      tabID: tabID,
-      notification: {
-          login: login,
-          type: 'ask_for_autologin',
-      }
-    });
+    // We've decided to disable the autologin feature for MVP. Leaving the code
+    // intact for now, in case we decide to revisit it later.
+    return;
+    // displayNotification({
+    //   notify: true,
+    //   tabID: tabID,
+    //   notification: {
+    //       login: login,
+    //       type: 'ask_for_autologin',
+    //   }
+    // });
 }
 
 //
