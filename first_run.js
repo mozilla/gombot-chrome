@@ -12,7 +12,8 @@ function startFirstRunFlow() {
 	// Ensure that only one first run tab is open at a time.
 	if (firstRunTab != -1) return;
 	chrome.tabs.create({
-		url: 'data/first_run.html'
+        // url: 'data/first_run.html'
+        url: 'data/splash.html'
 	}, function(tab) {
 		initFirstRunInTab(tab);
 	})	
