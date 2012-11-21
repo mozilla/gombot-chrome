@@ -48,10 +48,7 @@ $(document).ready(function() {
 	function startStep3() {
 		$('#step2').hide();
 		$('#step3').show();
-		
-		$('#finished-button').click(function() {
-			backgroundPage.closeFirstRunTab();
-		});
+		backgroundPage.firstRunFinished();
 	}
 });
 

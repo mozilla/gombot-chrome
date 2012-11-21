@@ -26,8 +26,16 @@ var loginsLock = {
 // run flow but did not complete it.
 function checkIfDidFirstRun(callback) {
 	chrome.storage.local.get('did_first_run', function(storageObj) {
-		callback(storageObj.did_first_run !== undefined);
+		callback(Boolean(storageObj.did_first_run));
 	});	
+}
+
+// Set (or unset) the flag indicating the user has finished the first
+// run flow.
+function setIfDidFirstRun(firstRunFinished) {
+	chrome.storage.local.set({
+        'did_first_run': Boolean(firstRunFinished)
+    });	
 }
 
 // Updates the user's PIN in loginsLock and also updates localStorage.

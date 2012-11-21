@@ -1,3 +1,8 @@
+body {
+    /* Shrink down the bootstrap default so that it fits into a browserAction */
+    width:500px;   
+}
+
 #form-error-alert{
 	display:none;
 }
