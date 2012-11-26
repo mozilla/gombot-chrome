@@ -14,7 +14,7 @@ function startFirstRunFlow() {
     // Show the splash screen in a new tab. Should point the user to click
     // on the browserAction.
 	chrome.tabs.create({
-        url: 'data/splash.html'
+        url: 'pages/first_run/index.html'
 	}, function(tab) {
 		initFirstRunInTab(tab);
 	});
