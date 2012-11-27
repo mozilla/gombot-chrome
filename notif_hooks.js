@@ -3,11 +3,36 @@
 *
 *
 *   Contains the callback functions for the popup notifications on the desktop.
-*   (see data/notification.js)
+*   (see data/notification.js).
 *
 */
 
-function doAutologin(notifID) {      
+function passwordSavedInfobarHandler(notificationObj,infobarResponse) {
+    switch (infobarResponse.user_action) {
+        case 'save':
+            saveToStorage(notificationObj.notification);
+        break;
+        
+        case 'pin_lock':
+            notificationObj.pin_locked = true;
+            saveToStorage(notificationObj.notification);
+    
+            if (loginsLock.type != 'pin') {
+                createPIN();
+            }
+        break;
+        
+        case 'never_for_this_site':
+            neverSaveOnSite(notificationObj.hostname);
+        break;
+        
+        default:
+            console.log("Unknown response from infobar!");
+        break;
+    }
+}
+
+function doAutologin(notifID) {
     console.log('doAutologin');
     function autologin() {
         chrome.tabs.sendMessage(activeNotifications[notifID].tabID,{

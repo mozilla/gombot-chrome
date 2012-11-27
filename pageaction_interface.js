@@ -7,7 +7,7 @@ function getActiveTab(callback) {
         }, 
         function(tabArray) { 
             callback(tabArray[0]);
-         } ); 
+         });
      });
 }
 

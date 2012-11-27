@@ -61,13 +61,7 @@ var messageHandlers = {
                 }
             }
             // Prompt the user to save the login
-            InfobarManager.run({
-                path: "data/remember_password_infobar.html"
-            }, function(err, response) {
-                console.log(err, response);
-            });
-
-            displayNotification({
+            displayInfobar({
                 notify: true,
                 tabID: tabID,
                 notification: notificationObj
@@ -141,6 +135,37 @@ function closeNotif(notifID) {
     delete activeNotifications[notifID];
 }
 
+function displayInfobar(notificationObj) {
+    var infobarPaths = {
+        password_saved: "data/remember_password_infobar.html"
+    };
+    // Make sure we have a HTML infobar for this type of notification
+    if (!infobarPaths[notificationObj.notification.type]) return;
+    InfobarManager.run({
+        path: infobarPaths[notificationObj.notification.type],
+        tabId: notificationObj.tabID
+    }, genHandlerForNotification(notificationObj));
+    
+    function genHandlerForNotification(notificationObj) {
+        return function(err,response) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            if (!response.type) return;
+            switch(response.type) {
+                case 'password_saved':
+                    passwordSavedInfobarHandler(notificationObj,response);
+                break;
+            
+                default:
+                    console.log('Infobar returned unknown response type!');
+                break;
+            }
+        };
+    }
+}
+
 function displayNotification(notificationObj) {
   activeNotifications[lastNotificationID] = notificationObj;
   var notif = webkitNotifications.createHTMLNotification('data/notification.html#' + lastNotificationID);
@@ -166,6 +191,30 @@ function offerAutologin(tabID,login) {
     //       type: 'ask_for_autologin',
     //   }
     // });
+}
+
+// Test function that spawns an example infobar on the current active tab.
+function testInfobarNotification() {
+    getActiveTab(function(tab) {
+        console.log("tab url: ", tab.url,'  ', tab);
+        displayInfobar({
+            notify: true,
+            tabID: tab.id,
+            notification: {
+                type: 'password_saved',
+                formEl: {},
+                formSubmitURL: "",
+                hash: "bc74f4f071a5a33f00ab88a6d6385b5e6638b86c",
+                hostname: "t.nm.io",
+                httpRealm: null,
+                password: "green",
+                passwordField: {},
+                type: "password_saved",
+                username: "gombottest",
+                usernameField: {}
+            }
+        });
+    });
 }
 
 //
