@@ -17,10 +17,6 @@ function copyToClipboard(_str) {
 
 $(document).ready(function() {
 	var backgroundPage = chrome.extension.getBackgroundPage();
-    // TODO: Remove this, it's just for debugging:
-    $('#infobar-test').click(function() {
-        backgroundPage.testInfobarNotification();
-    });
     var data = backgroundPage.getPageDataForPopup(function(data) {
         var pinLocked = false;
         for (var login in data) {
