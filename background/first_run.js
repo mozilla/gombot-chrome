@@ -14,14 +14,13 @@ function startFirstRunFlow() {
     // Show the splash screen in a new tab. Should point the user to click
     // on the browserAction.
 	chrome.tabs.create({
-        url: 'pages/first_run/index.html'
+        url: '../pages/first_run/index.html'
 	}, function(tab) {
 		initFirstRunInTab(tab);
 	});
-    // Set the browserAction popup to be the Gombot signup page.
-    chrome.browserAction.setPopup({
-        popup: "data/first_run.html"
-    });
+    // Updates the browserAction popup, stores that we haven't
+    // yet completed first run in localStorage.
+    setIfDidFirstRun(false);
 }
 
 function initFirstRunInTab(tab) {

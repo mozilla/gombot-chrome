@@ -117,7 +117,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 
 function displayInfobar(notificationObj) {
     var infobarPaths = {
-        password_observed: "data/remember_password_infobar.html"
+        password_observed: "/infobars/remember_password_infobar.html"
     };
     // Make sure we have a HTML infobar for this type of notification
     if (!infobarPaths[notificationObj.notification.type]) return;

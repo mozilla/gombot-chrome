@@ -11,30 +11,29 @@
         "https://*/"
     ],
     "icons": {
-      "128": "icons/gombot-icon-128.png"
+      "128": "images/gombot-icon-128.png"
     },
 
     "background": {
-        "page": "background.html"
+        "page": "background/background.html"
     },
-    "options_page": "data/debug_settings.html",
+    "options_page": "pages/debug_settings/debug_settings.html",
     "content_scripts": [
         {
           "matches": ["<all_urls>"],
-          "css": ["data/pwmgr.css"],
-          "js": ["data/pwmgr_inject.js","data/observer.js"]
+          "js": ["in_content/observer.js"]
         }
       ],
   "browser_action": {
-    "default_icon": "icons/cropped_persona_icon.png",
-    "default_popup": "data/browser_action.html"
+    "default_icon": "images/cropped_persona_icon.png",
+    "default_popup": "browser_action/browser_action.html"
   },
   "update_url": "http://dev.tobmog.org/downloads/updates.xml",
   "web_accessible_resources": [
-    "icons/small.png",
-    "data/pin_entry.html",
-    "data/pin_entry.js",
-    "data/css/pin_entry.css",
-    "data/remember_password_infobar.html"
+    "images/small.png",
+    "common/pin_entry.html",
+    "common/pin_entry.js",
+    "common/pin_entry.css",
+    "infobars/remember_password_infobar.html"
   ]
 }

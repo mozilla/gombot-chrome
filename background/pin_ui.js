@@ -14,7 +14,7 @@ var lastPopupID = 0;
 function promptUserForPIN(prompt,repeat,callback) {
     console.log('promptUserForPIN');
     chrome.windows.create({
-        url: 'data/pin_entry.html',
+        url: '../common/pin_entry.html',
         type: 'popup',
         width: 300,
         height: 300,

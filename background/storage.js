@@ -38,7 +38,7 @@ function setIfDidFirstRun(firstRunFinished) {
     });
     // Update the browserAction popup page.
     chrome.browserAction.setPopup({
-        popup: firstRunFinished ? "data/browser_action.html" : "data/first_run.html"
+        popup: firstRunFinished ? "browser_action/browser_action.html" : "browser_action/first_run.html"
     });
 }
 

@@ -1,3 +1,14 @@
+/*
+*   browser_action_interface.js
+*
+*
+*   These are some functions that allow the browserAction to get the state of the
+*   browser (ie, which tab is currently active) and send messages to the observer
+*   script running on that page.
+*
+*/
+
+
 function getActiveTab(callback) {
     // Taken from: http://code.google.com/p/pgn4web/issues/detail?id=110
     chrome.windows.getCurrent(function(win) { 
