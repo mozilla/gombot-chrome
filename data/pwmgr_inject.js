@@ -24,7 +24,7 @@
     
     function getAlertBody(alertObj) {
         var bodyEl = document.createElement('div');
-        if (alertObj.type == 'password_saved') {
+        if (alertObj.type == 'password_observed') {
             bodyEl.appendChild(document.createTextNode("SkyCrane saved login " + alertObj.username + ":"));
             var passwordImg = document.createElement('img');
             passwordImg.src = getDataURLForHash(alertObj.hash,50,13);

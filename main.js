@@ -34,7 +34,7 @@ var messageHandlers = {
         var notificationObj = message;
         // Check to see if the user disabled password saving on this site
         if (neverSaveOnSites.indexOf(notificationObj.hostname) != -1) return;
-        notificationObj.type = 'password_saved';
+        notificationObj.type = 'password_observed';
         notificationObj.hash = SHA1(notificationObj.password);
         // Look for passwords in use on the current site
         getLoginsForSite(notificationObj.hostname,function(logins) {
@@ -117,7 +117,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 
 function displayInfobar(notificationObj) {
     var infobarPaths = {
-        password_saved: "data/remember_password_infobar.html"
+        password_observed: "data/remember_password_infobar.html"
     };
     // Make sure we have a HTML infobar for this type of notification
     if (!infobarPaths[notificationObj.notification.type]) return;
@@ -134,7 +134,7 @@ function displayInfobar(notificationObj) {
             }
             if (!response.type) return;
             switch(response.type) {
-                case 'password_saved':
+                case 'password_observed':
                     passwordSavedInfobarHandler(notificationObj,response);
                 break;
             
@@ -154,7 +154,7 @@ function testInfobarNotification() {
             notify: true,
             tabID: tab.id,
             notification: {
-                type: 'password_saved',
+                type: 'password_observed',
                 formEl: {},
                 formSubmitURL: "",
                 hash: "bc74f4f071a5a33f00ab88a6d6385b5e6638b86c",
@@ -162,7 +162,7 @@ function testInfobarNotification() {
                 httpRealm: null,
                 password: "green",
                 passwordField: {},
-                type: "password_saved",
+                type: "password_observed",
                 username: "gombottest",
                 usernameField: {}
             }
