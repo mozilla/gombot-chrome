@@ -6,13 +6,6 @@
 *
 */
 
-
-// Maps a notificationID to the data extracted from it by an g.
-var activeNotifications = {};
-
-// Incrementing counter of last notification ID
-var lastNotificationID = 0;
-
 initSkyCrane();
 
 function initSkyCrane() {
@@ -28,7 +21,7 @@ function initSkyCrane() {
 		if (!didFirstRun) {
 			startFirstRunFlow();
 		}
-	})
+	});
 }
 
 //
@@ -96,11 +89,6 @@ var messageHandlers = {
                 // the login.
                 // TODO: Check to see if the id/name is still valid
 
-                // If there's only one login form on the page, offer to autologin
-                if (message.single_login_form) {
-                    offerAutologin(tabID,logins[0]);
-                    return;
-                }
                 // If we remember specifics about a login form, check to see if it's there.
                 // If it is, offer to autologin.
                 if (logins[0].formEl && (logins[0].formEl.name || logins[0].formEl.id)) {
@@ -114,9 +102,6 @@ var messageHandlers = {
                 // TODO: Prompt user for choice of logins
             }
         });
-    },
-    'ask_for_autologin': function(message,tabID) {
-        offerAutologin(tabID,message.login);
     }
 }
 
@@ -127,13 +112,8 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 //
-// Popup notifications
+// Infobar notifications
 //
-
-function closeNotif(notifID) {
-    activeNotifications[notifID].popupNotifs[0].close();
-    delete activeNotifications[notifID];
-}
 
 function displayInfobar(notificationObj) {
     var infobarPaths = {
@@ -164,33 +144,6 @@ function displayInfobar(notificationObj) {
             }
         };
     }
-}
-
-function displayNotification(notificationObj) {
-  activeNotifications[lastNotificationID] = notificationObj;
-  var notif = webkitNotifications.createHTMLNotification('data/notification.html#' + lastNotificationID);
-  notif.show();
-      
-  activeNotifications[lastNotificationID].popupNotifs = [notif];
-  lastNotificationID++;
-}
-
-function getNotificationForID(notifID) {
-  return activeNotifications[notifID].notification;
-}
-
-function offerAutologin(tabID,login) {
-    // We've decided to disable the autologin feature for MVP. Leaving the code
-    // intact for now, in case we decide to revisit it later.
-    return;
-    // displayNotification({
-    //   notify: true,
-    //   tabID: tabID,
-    //   notification: {
-    //       login: login,
-    //       type: 'ask_for_autologin',
-    //   }
-    // });
 }
 
 // Test function that spawns an example infobar on the current active tab.

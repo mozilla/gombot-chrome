@@ -160,48 +160,13 @@
         }
     }
 
-    // function addAutofillToForm(type,formEl,pwInputs) {
-    //     // Big random number to represent this form uniquely
-    //     var form_id = parseInt(Math.random()*100000);
-    //     var onMsgFunc = function(msg) {
-    //         console.log('in onMsgFunc, saw message of type ', msg.type);
-    //         console.log(msg);
-    //         if (msg.type == 'fill_form' && msg.form_id == form_id) {
-    //             for (var inputIdx in pwInputs) {
-    //                 pwInputs[inputIdx].value = msg.password;
-    //             }
-    //             chrome.extension.onMessage.removeListener(onMsgFunc);
-    //         }
-    //     };
-    //     chrome.extension.onMessage.addListener(onMsgFunc);
-    // }
-
     function autologinError(errorDescription) {
         // TODO: send a message back to chrome saying we screwed up.
     }
 
     function masterOnMessageListener(msg) {
         console.log("got msg", msg);
-        if (msg.type == 'confirm_form_exists') {
-            console.log('confirm_form_exists');
-            if (findByFieldDescriptor(msg.login.formEl)) {
-                chrome.extension.sendMessage({
-                    type: 'ask_for_autologin',
-                    message: {
-                        login: msg.login
-                    }
-                });
-            }
-        }
-        else if (msg.type == 'do_autologin') {
-            var formEl = formsByType[1][0];
-            var fields = getLoginFieldsForForm(formEl);
-            // TODO: "type like a human" with focus, keydown, and blur events.
-            fields.username.value = msg.login.username;
-            fields.password.value = msg.login.password;     
-            formEl.submit();
-        }
-        else if (msg.type == 'fill_form') {
+        if (msg.type == 'fill_form') {
             console.log("in fill_form: ", msg);
             var forms = document.body.getElementsByTagName('form');
             for (var formIdx = 0; formIdx < forms.length; formIdx++) {

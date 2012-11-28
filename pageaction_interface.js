@@ -36,19 +36,3 @@ function getPageDataForPopup(callback) {
         }); 
     });
 }
-
-chrome.tabs.onUpdated.addListener(function(tabID,changeInfo) {
-    console.log('tab onupdated!');
-    if (changeInfo.url) {
-        // TODO: Remove all current notifications for this tab.        
-        var newURL = new Uri(changeInfo.url);
-        getLoginsForSite(newURL.host(), function(logins) {
-            console.log('Found ', logins.length, " logins for ", newURL.host());
-            // console.log(newURL.host(),' is the newest domain on tab ',tabID);
-            if (logins.length > 0) {
-                console.log('calling show for tab ', tabID, ' on url ', changeInfo.url);
-                chrome.pageAction.show(tabID);
-            }
-        });
-    }
-});
