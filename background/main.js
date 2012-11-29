@@ -53,11 +53,27 @@ var messageHandlers = {
                     notificationObj.type = 'confirm_save';
                 }
             }
-            // Prompt the user to save the login
-            displayInfobar({
-                notify: true,
-                tabID: tabID,
-                notification: notificationObj
+            // Has the user signed up for a Gombot account?
+            checkIfDidFirstRun(function(didFirstRun) {
+                if (didFirstRun) {
+                    // Prompt the user to save the login
+                    displayInfobar({
+                        notify: true,
+                        tabID: tabID,
+                        notification: notificationObj
+                    });
+                }
+                else {
+                    // Browser not associated with Gombot account, offer
+                    // to create one/log in.
+                    displayInfobar({
+                        notify: true,
+                        tabID: tabID,
+                        notification: {
+                            type: 'signup_nag'
+                        }
+                    });
+                }
             });
             // TODO: Send new login to server
             // TODO: Enable SkyCrane page action for all tabs on this domain.
@@ -117,7 +133,8 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 
 function displayInfobar(notificationObj) {
     var infobarPaths = {
-        password_observed: "/infobars/remember_password_infobar.html"
+        password_observed: "/infobars/remember_password_infobar.html",
+        signup_nag: "/infobars/signup_nag_infobar.html"
     };
     // Make sure we have a HTML infobar for this type of notification
     if (!infobarPaths[notificationObj.notification.type]) return;
@@ -133,15 +150,11 @@ function displayInfobar(notificationObj) {
                 return;
             }
             if (!response.type) return;
-            switch(response.type) {
-                case 'password_observed':
-                    passwordSavedInfobarHandler(notificationObj,response);
-                break;
-            
-                default:
-                    console.log('Infobar returned unknown response type!');
-                break;
+            if (!infobarHooks[response.type]) {
+                console.log('Infobar returned unknown response type!');
+                return;
             }
+            infobarHooks[response.type].call(infobarHooks,notificationObj,response);
         };
     }
 }

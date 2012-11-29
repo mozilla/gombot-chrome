@@ -9,22 +9,16 @@
 var firstRunTab = -1;
 
 function startFirstRunFlow() {
-	// Ensure that only one first run tab is open at a time.
-	if (firstRunTab != -1) return;
     // Show the splash screen in a new tab. Should point the user to click
     // on the browserAction.
 	chrome.tabs.create({
-        url: '../pages/first_run/index.html'
+        url: '../pages/first_run/create_account.html'
 	}, function(tab) {
-		initFirstRunInTab(tab);
+		firstRunTab = tab.id
 	});
     // Updates the browserAction popup, stores that we haven't
     // yet completed first run in localStorage.
     setIfDidFirstRun(false);
-}
-
-function initFirstRunInTab(tab) {
-	firstRunTab = tab.id
 }
 
 function closeFirstRunTab() {
