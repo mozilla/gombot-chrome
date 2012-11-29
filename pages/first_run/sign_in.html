@@ -14,15 +14,9 @@
         <script src="../common/js/libs/html5shiv.js"></script>
         <![endif]-->
 
-        
         <link rel="stylesheet" type="text/css" href="../common/css/sandstone-resp.css" media="screen" />
         <link rel="stylesheet" type="text/css" href="../common/css/gombot.css" media="screen" />
-        <link rel="stylesheet" type="text/css" href="../common/x-tags/pin/pin.css" media="screen" />
-        
 
-        <script src="../common/js/libs/x-tag.js"></script>
-        <script src="../common/x-tags/pin/pin.js"></script>
-        
     </head>
     <!-- The four different themes of sandstone are, stone, sand, sky, space. Replace the class on the
          body tag below, with the theme you wish to use for your project -->
@@ -51,29 +45,12 @@
                 </header>
 
                 <div id="main-content">
-                  <div class="row create-account">
-                  <!--<img class="logo" src="img/mascot-gombot.png">-->
-                  <h2><img src="../common/img/gombot-logo-92x92.png" /> Create a Gombot account</h2>
-                  <form action="http://dev.tobmog.org/account" method="post" id="account-form">
-
+                  <div class="row sign-in">
+                  <h2><img src="../common/img/gombot-logo-92x92.png" /> Sign into Gombot</h2>
+                  <form action="http://dev.tobmog.org/sign_in" method="post" id="sign-in-form">
                     <p>
-                      Already have an account? <a href="sign_in.html">Sign in</a>
+                      Need an account? <a href="create_account.html">Sign up</a>
                     </p>
-
-                    <div class="pin">
-                    <p>
-                      <label>Choose a PIN. <a href="javascript: void 0;" id="pin-info-link"> What is the PIN for?</a></label>
-
-                      <x-pin name="pin" size="4"></x-pin>
-
-                      <span id="pin-info">Protect your critical passwords with a PIN code – just like your bank card. Choose whichsites to lock with a PIN and use the same PIN no matter how many sites you save.</span>
-                    </p>
-
-                    <p>
-                      <label>Repeat PIN</label>
-                      <x-pin name="pin-repeat" size="4"></x-pin>
-                    </p>
-                    </div>
 
                     <p>
                       <label for="email">email address</label>
@@ -81,18 +58,13 @@
                     </p>
 
                     <p>
-                      <label for="password">choose master password</label>
+                      <label for="password">master password</label>
                       <input type="password" name="password" />
                     </p>
 
                     <p>
-                      <label for="password_repeat">repeat password</label>
-                      <input type="password" name="password_repeat" />
-                    </p>
-
-                    <p>
-                      <button class="button-blue">Sign up &raquo;</button><br />
-                      <small>Already have an account? <a href="sign_in.html">Sign in</a></small>
+                      <button class="button-blue">Sign in &raquo;</button><br />
+                      <small>Need an account? <a href="create_account.html">Sign up</a></small>
                     </p>
                   </form>
                   </div>
@@ -129,7 +101,6 @@
         <script src="../common/js/tabzilla.js"></script>
         <script src="../common/js/libs/jquery-1.7.1.min.js"></script>
         <script src="../common/js/site.js"></script>
-        <script src="create_account.js"></script>
     </body>
 </html>
 

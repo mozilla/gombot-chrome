@@ -97,7 +97,8 @@
   font-size: 90%;
 }
 
-.gombot .create-account label {
+.gombot .create-account label,
+.gombot .sign-in label {
   display: block;
   padding-bottom: 8px;
 }
@@ -161,10 +162,18 @@ x-pin {
     float: right;
 }
 
-.create-account input[name="email"],
-.create-account input[name="password"],
-.create-account input[name="password_repeat"] {
+.gombot form input[name="email"],
+.gombot form input[name="password"],
+.gombot form input[name="password_repeat"] {
   width: 250px;
+}
+
+.gombot form .invalid input[name="password"] {
+  background-color: #fee;
+}
+.gombot form .invalid label[for="password"]:after {
+  content: ' Invalid password.';
+  color: red;
 }
 
 .create-account form {
@@ -172,7 +181,7 @@ x-pin {
   width: 325px;
 }
 
-.create-account p {
+.gombot form p {
   padding: 0 20px;
 }
 
