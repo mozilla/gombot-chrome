@@ -1,18 +1,149 @@
 .gombot #outer-wrapper {
   border-top: 2px solid #fff;
-  background: #f9f9f9 url(../img/sandstone/bg-labs.png) 0 0 repeat-x;
+  background: rgb(246, 246, 246) url(../img/sandstone/bg-labs.png) 0 0 repeat-x;
+}
+
+.gombot #main-feature {
+  padding-top: 50px;
+  padding-bottom: 18px;
+}
+
+.gombot button {
+  height: 34px;
+  line-height: 24px;
+}
+
+.gombot .sign-up-input {
+  margin-right: 10px;
+  width: 18em;
+}
+
+.gombot a,
+.gombot a:link,
+.gombot a:visited {
+  color: #2983c8;
+}
+.gombot a:hover,
+.gombot a:active {
+  color: #20679e;
+}
+
+.gombot h2 img {
+  vertical-align: middle;
 }
 
 .splash h1 {
-    font-size: 52px;
+    font-size: 63px;
     letter-spacing: -4px;
     line-height: 100%;
 }
 
 .splash h2 {
-    font-size: 37px;
+    font-size: 40px;
     letter-spacing: -1px;
     line-height: 150%;
+}
+
+.create-account h2 {
+  font-size: 3em;
+  margin: 30px 0;
+}
+
+#pin-info {
+  display: none;
+}
+.show-info #pin-info {
+  display: auto;
+}
+
+.show-info .pin {
+  background-color: #cbd4da;
+}
+
+#sign-up {
+  position: relative;
+  margin: 0 auto;
+  width: 700px;
+  text-align: middle;
+  padding-bottom: 54px;
+}
+
+#logo {
+  position: relative;
+  float: left;
+  z-index: 2;
+}
+
+#splash-box {
+  position: relative;
+  background-color: rgb(190, 221, 227);
+  background-image: url("/img/shadow.png");
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  display: inline;
+  margin-left: -100px;
+  margin-top: 66px;
+  float: left;
+  z-index: 1;
+  padding: 25px 25px 67px 80px;
+}
+
+.gombot #main-content {
+  color: #222;
+  font-family: 'Open Sans Light', sans-serif;
+}
+
+.gombot label {
+  font-size: 90%;
+}
+
+.gombot .create-account label {
+  display: block;
+  padding-bottom: 8px;
+}
+
+x-pin {
+  font-size: 2.3em;
+  height: 2.8em;
+}
+.gombot .pin input {
+  width: 1.3em;
+}
+
+.gombot .description {
+  font-family: 'Open Sans Light', sans-serif;
+}
+
+.gombot .description img {
+  padding: 0 5px;
+}
+
+#splash-box .download {
+  padding-left: 50px;
+  padding-right: 25px;
+}
+
+#splash-box .download-button {
+  position: relative;
+  height: 52px;
+  text-align: left;
+  padding-left: 48px;
+  font-size: 130%;
+}
+
+#splash-box a.download-button {
+  line-height: 28px;
+}
+
+.download-button img {
+  position: absolute;
+  top: -5px;
+  left: -24px;
+}
+
+#splash-box .alts {
+  display: block;
+  padding-top: 15px;
 }
 
 .firstrun .splash img.logo {
@@ -28,5 +159,40 @@
 
 .splash.right {
     float: right;
+}
+
+.create-account input[name="email"],
+.create-account input[name="password"],
+.create-account input[name="password_repeat"] {
+  width: 250px;
+}
+
+.create-account form {
+  float: left;
+  width: 325px;
+}
+
+.create-account p {
+  padding: 0 20px;
+}
+
+.create-account form .pin {
+  padding: 10px 0 1px;
+  margin-bottom: 10px;
+}
+
+.create-account form.show-info .pin {
+  position: relative;
+  background-color: #d7dce1;
+}
+
+.create-account form.show-info #pin-info {
+  display: block;
+  position: absolute;
+  background-color: #d7dce1;
+  padding: 20px;
+  left: 325px;
+  top: 0px;
+  width: 530px;
 }
 

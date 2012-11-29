@@ -1,0 +1,32 @@
+x-pin {
+  display: inline-block;
+}
+x-pin > div.x-pin-fields {
+  height: inherit;
+  font-size: inherit;
+
+  display: -webkit-flex;
+  -webkit-flex-direction: row;
+
+  display: -moz-flex;
+  -moz-flex-direction: row;
+
+  display: flex;
+  flex-direction: row;
+}
+
+x-pin > div.x-pin-fields > input {
+  font-size: inherit;
+  height: auto;
+  margin: 2px 0;
+  text-align: center;
+
+  -webkit-flex: 1 1 auto;
+  -moz-flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+x-pin > div.x-pin-fields > input + input {
+  margin-left: 8px;
+}
+

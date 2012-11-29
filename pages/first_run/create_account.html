@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- If you are using sandstone for a static website, you can safely delete this file -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Mozilla — Gombot — mozilla.org</title>
+
+        <link rel="shortcut icon" href="../common/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../common/style/tabzilla.css" media="screen" />
+
+        <!--[if lte IE 8]>
+        <script src="../common/js/libs/html5shiv.js"></script>
+        <![endif]-->
+
+        
+        <link rel="stylesheet" type="text/css" href="../common/css/sandstone-resp.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="../common/css/gombot.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="../common/x-tags/pin/pin.css" media="screen" />
+        
+
+        <script src="../common/js/libs/x-tag.js"></script>
+        <script src="../common/x-tags/pin/pin.js"></script>
+        
+    </head>
+    <!-- The four different themes of sandstone are, stone, sand, sky, space. Replace the class on the
+         body tag below, with the theme you wish to use for your project -->
+    <body id="sandstone" class="sand gombot firstrun">
+        <div id="outer-wrapper">
+            <div id="wrapper">
+                
+                <header id="masthead">
+                    <a href="http://www.mozilla.org/" id="tabzilla">Mozilla</a>
+                    <nav id="nav-main" role="menubar">
+                        <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">Menu</span>
+                        <ul role="menu" id="nav-main-menu">
+                            <li><a class="" href="https://mozillalabs.com/en-US/">Home</a></li>
+                            <li><a class="" href="https://mozillalabs.com/en-US/about/">About</a></li>
+                            <li><a class="current" href="https://mozillalabs.com/en-US/projects/">Projects</a></li>
+                            <li><a href="http://blog.mozilla.com/labs/">Blog</a></li>
+                        </ul>
+                    </nav>
+
+                    
+                    <h2><a href="http://mozillalabs.com/"><img src="../common/img/sandstone/header-mozilla-labs.png" alt="mozilla"></a></h2>
+                    
+
+                    
+
+                </header>
+
+                <div id="main-content">
+                  <div class="row create-account">
+                  <!--<img class="logo" src="img/mascot-gombot.png">-->
+                  <h2><img src="../common/img/gombot-logo-92x92.png" /> Create a Gombot account</h2>
+                  <form action="http://dev.tobmog.org/account" method="post" id="account-form">
+
+                    <p>
+                      Already have an account? <a href="#">Sign in</a>
+                    </p>
+
+                    <div class="pin">
+                    <p>
+                      <label>Choose a PIN. <a href="#" id="pin-info-link"> What is the PIN for?</a></label>
+
+                      <x-pin name="pin" size="4"></x-pin>
+
+                      <span id="pin-info">Protect your critical passwords with a PIN code – just like your bank card. Choose whichsites to lock with a PIN and use the same PIN no matter how many sites you save.</span>
+                    </p>
+
+                    <p>
+                      <label>Repeat PIN</label>
+                      <x-pin name="pin-repeat" size="4"></x-pin>
+                    </p>
+                    </div>
+
+                    <p>
+                      <label>email address</label>
+                      <input type="text" name="email" />
+                    </p>
+
+                    <p>
+                      <label>choose master password</label>
+                      <input type="password" name="password" />
+                    </p>
+
+                    <p>
+                      <label>repeat password</label>
+                      <input type="password" name="password_repeat" />
+                    </p>
+
+                    <p>
+                      <button class="button-blue">Sign up &raquo;</button><br />
+                      <small>Already have an account? <a href="#">Sign in</a></small>
+                    </p>
+                  </form>
+                  </div>
+                </div>
+
+            </div>
+
+            <footer id="colophon">
+              <div class="row">
+                  <div class="footer-logo">
+                      <a href="http://mozilla.org"><img src="../common/img/sandstone/footer-mozilla.png" alt="mozilla"></a>
+                  </div>
+
+                  <div class="footer-license">
+                      <p>Portions of this content are &copy;1998–2012 by individual mozilla.org contributors. Content available under a <a href="http://www.mozilla.org/foundation/licensing/website-content.html">Creative Commons license</a>.</p>
+                      <p><a href="http://mozilla.org/b/en-US/contribute/page/">Contribute to this page</a></p>
+                  </div>
+                  <ul class="footer-nav">
+                    <li><a href="http://mozilla.org/about/contact.html#map-mountain_view">Contact Us</a></li>
+                    <li><a href="http://mozilla.org/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="http://mozilla.org/about/legal.html">Legal Notices</a></li>
+                    <li><a href="http://mozilla.org/legal/fraud-report/index.html">Report Trademark Abuse</a></li>
+                  </ul>
+
+                  <ul class="footer-nav">
+                    <li><a href="http://twitter.com/firefox">Twitter</a></li>
+                    <li><a href="http://facebook.com/Firefox">Facebook</a></li>
+                    <li><a href="https://affiliates.mozilla.org/">Firefox Affiliates</a></li>
+                  </ul>
+              </div>
+            </footer>
+            
+        </div>
+        <script src="../common/js/tabzilla.js"></script>
+        <script src="../common/js/libs/jquery-1.7.1.min.js"></script>
+        <script src="../common/js/site.js"></script>
+        <script src="../common/js/main.js"></script>
+    </body>
+</html>
+
