@@ -233,7 +233,8 @@
             hostname: window.location.host,
             // Report if there is a single login-type form on the page, so we can attempt automated sign-in
             // if there's a login stored.
-            single_login_form: (formsByType[1] && formsByType[1].length == 1)
+            single_login_form: (formsByType[1] && formsByType[1].length == 1),
+            num_login_forms: formsByType[1].length
         }
     });
 })();

@@ -1,0 +1,60 @@
+body {
+    background: -webkit-linear-gradient(top, #707070 0%,#3A3A3C 100%);
+    font-size:10pt;
+    color:white;
+    font-family:sans-serif;
+}
+
+a {
+    color:red;
+}
+  
+/*  Modified from bootstrap.css .btn*/
+button {
+    background: -webkit-linear-gradient(top, #4b4b4b 0%,#191919 100%);
+
+    display: inline-block;
+    *display: inline;
+    padding: 2px 7px;
+    margin-bottom: 0;
+    *margin-left: .3em;
+    font-size: 10pt;
+    line-height: 20px;
+    *line-height: 20px;
+    color: white;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+    cursor: pointer;
+    background-repeat: repeat-x;
+    border: 1px solid #bbbbbb;
+    *border: 0;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-bottom-color: #a2a2a2;
+    -webkit-border-radius: 4px;
+    *zoom: 1;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+  
+button:hover {
+    background: -webkit-linear-gradient(top, #191919 0%,#4b4b4b 100%);
+}
+
+input.pin-digit {
+    background: -webkit-linear-gradient(top, #505050 0%,#2A2A2A 100%);
+    border:1px #3e3e3e;
+    width:20px;
+    height:25px;
+    border-radius:5px;
+    color:white;
+}
+
+input.pin-digit.wrong-pin {
+    background: -webkit-linear-gradient(top, #a00000 0%,#2A2A2A 100%);
+    border:1px #720000;
+}
+
+#pin-entry {
+    margin-left:20px;
+}

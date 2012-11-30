@@ -6,6 +6,10 @@
 *   browser (ie, which tab is currently active) and send messages to the observer
 *   script running on that page.
 *
+*   Note that none of these functions check whether logins are PIN locked. In order
+*   to keep with the current security model, you must prompt for a PIN before form
+*   filling.
+*
 */
 
 
@@ -26,15 +30,7 @@ function getActiveTab(callback) {
 // popup. Fills in the forms on the current page.
 function formFillCurrentTab() {
     getActiveTab(function(tab) {
-        var tabID = tab.id;
-        getPageDataForPopup(function (logins) {
-            // TODO: Find out how to present a user with a choice if they have
-            // more than one login saved for the current domain.
-            chrome.tabs.sendMessage(tabID,{
-                type: 'fill_form',
-                login: logins[0]
-            });
-        }); 
+        formFillTab(tab);
     });
 }
 
@@ -42,8 +38,17 @@ function getPageDataForPopup(callback) {
     getActiveTab(function(tab) {
         var newURL = new Uri(tab.url); 
         getLoginsForSite(newURL.host(),function(logins) {
-            // if (logins.length == 0) return;
             callback(logins);
-        }); 
+        });
+    });
+}
+
+function formFillTab(tab) {
+    var newURL = new Uri(tab.url);
+    getLoginsForSite(newURL.host(),function(logins) {
+        chrome.tabs.sendMessage(tab.id,{
+            type: 'fill_form',
+            login: logins[0]
+        });
     });
 }

@@ -28,7 +28,6 @@ function initSkyCrane() {
 // Content-to-chrome message handlers
 //
 
-// TODO: Handle "fill_form" message
 var messageHandlers = {
     'add_login': function(message,tabID) {
         var notificationObj = message;
@@ -76,28 +75,38 @@ var messageHandlers = {
                 }
             });
             // TODO: Send new login to server
-            // TODO: Enable SkyCrane page action for all tabs on this domain.
-        });   
-    },
-    'login_success': function(message,tabID) {
-        console.log('Successfully logged in with ',JSON.stringify(message));
+        });
     },
     'observing_page': function(message,tabID) {
-        console.log('got observing_page\n',JSON.stringify(message));
-        // See if we can automatically log user into this page. If not, there's nothing to do
+        // See if there are login forms on this page. If not, there's nothing to do
         // on the observing_page notification, so bail.
+        if (message.num_login_forms == 0) return;
         
         // Search for logins for this particular site
         getLoginsForSite(message.hostname, function(logins) {
             if (logins.length == 0) return;
                         
             if (logins.length == 1) {
-                // Check if the login is not PIN locked. If it's not, form fill the page now.
-                if (!logins[0].pin_locked) {
+                // Is the login for this site PIN locked?
+                if (logins[0].pin_locked) {
+                    // If it is, show the PIN entry infobar.
+                    displayInfobar({
+                        notify: true,
+                        tabID: tabID,
+                        notification: {
+                            type: 'pin_entry',
+                            // Include the tabID in the notification so the infobar handler
+                            //  can trigger autofill in the correct tab.
+                            tabID: tabID
+                        }
+                    });
+                }
+                else {
+                    // If it's not, form fill the page now.
                     chrome.tabs.sendMessage(tabID,{
                         type: 'fill_form',
                         login: logins[0]
-                    });
+                    });                    
                 }
                 
                 // If there's only a single login form on the page, we're fine. Otherwise,
@@ -118,12 +127,17 @@ var messageHandlers = {
                 // TODO: Prompt user for choice of logins
             }
         });
+    },
+    'validate_pin': function(message,tabID,sendResponse) {
+        sendResponse({
+            'is_valid': validatePIN(message.pin)
+        });
     }
 }
 
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type && messageHandlers[request.type]) {
-        messageHandlers[request.type].call(messageHandlers,request.message,sender.tab.id);   
+        messageHandlers[request.type].call(messageHandlers,request.message,sender.tab.id,sendResponse);
     }
 });
 
@@ -134,7 +148,8 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 function displayInfobar(notificationObj) {
     var infobarPaths = {
         password_observed: "/infobars/remember_password_infobar.html",
-        signup_nag: "/infobars/signup_nag_infobar.html"
+        signup_nag: "/infobars/signup_nag_infobar.html",
+        pin_entry: "/infobars/pin_entry_infobar.html"
     };
     // Make sure we have a HTML infobar for this type of notification
     if (!infobarPaths[notificationObj.notification.type]) return;
@@ -167,7 +182,7 @@ function testInfobarNotification() {
             notify: true,
             tabID: tab.id,
             notification: {
-                type: 'password_observed',
+                type: 'pin_entry',
                 formEl: {},
                 formSubmitURL: "",
                 hash: "bc74f4f071a5a33f00ab88a6d6385b5e6638b86c",

@@ -1,6 +1,11 @@
 11/29 Paul Sawaya
 
 Added signup/login content page, and infobar that reminds the user to signup/login.
+Added PIN entry in infobar.
+
+11/28 Paul Sawaya
+
+Reorganized code, as per https://gist.github.com/4127665.
 
 11/27 Paul Sawaya
 
