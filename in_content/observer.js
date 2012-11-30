@@ -223,7 +223,6 @@
             message: loginObj
         });
     }
-    console.log('sending observing_page');
     chrome.extension.sendMessage({
         type: 'observing_page',
         message: {
@@ -234,7 +233,7 @@
             // Report if there is a single login-type form on the page, so we can attempt automated sign-in
             // if there's a login stored.
             single_login_form: (formsByType[1] && formsByType[1].length == 1),
-            num_login_forms: formsByType[1].length
+            num_login_forms: formsByType[1] ? formsByType[1].length : 0
         }
     });
 })();
