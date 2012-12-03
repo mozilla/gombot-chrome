@@ -25,7 +25,7 @@ var infobarHooks = {
             case 'never_for_this_site':
                 neverSaveOnSite(notificationObj.notification.hostname);
             break;
-            
+                        
             default:
                 console.log("Unknown response from password_observed infobar!");
             break;
@@ -40,9 +40,11 @@ var infobarHooks = {
         if (infobarResponse.pin_valid) {
             console.log(notificationObj)
             chrome.tabs.get(notificationObj.tabID, function(tab) {
-                console.log('form filling tab');
                 formFillTab(tab);
             });
         }   
+    },
+    'update_password': function(notificationObj,infobarResponse) {
+        saveToStorage(notificationObj.notification);
     }
 }

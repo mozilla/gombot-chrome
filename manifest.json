@@ -34,8 +34,6 @@
     "common/pin_entry.html",
     "common/pin_entry.js",
     "common/pin_entry.css",
-    "infobars/remember_password_infobar.html",
-    "infobars/signup_nag_infobar.html",
-    "infobars/pin_entry_infobar.html"
+    "infobars/*"
   ]
 }

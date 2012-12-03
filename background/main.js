@@ -49,7 +49,7 @@ var messageHandlers = {
                 }
                 else {
                     // Prompt user to update password
-                    notificationObj.type = 'confirm_save';
+                    notificationObj.type = 'update_password';
                 }
             }
             // Has the user signed up for a Gombot account?
@@ -148,6 +148,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 function displayInfobar(notificationObj) {
     var infobarPaths = {
         password_observed: "/infobars/remember_password_infobar.html",
+        update_password: "/infobars/update_password_infobar.html",
         signup_nag: "/infobars/signup_nag_infobar.html",
         pin_entry: "/infobars/pin_entry_infobar.html"
     };
