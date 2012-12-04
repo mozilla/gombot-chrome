@@ -61,8 +61,8 @@
                     </p>
 
                     <div class="pin">
-                    <p>
-                      <label>Choose a PIN. <a href="javascript: void 0;" id="pin-info-link"> What is the PIN for?</a></label>
+                    <p class="main">
+                      <label for="pin">Choose a PIN. <a href="javascript: void 0;" id="pin-info-link"> What is the PIN for?</a></label>
 
                       <x-pin name="pin" size="4"></x-pin>
 
@@ -70,25 +70,27 @@
                     </p>
 
                     <p>
-                      <label>Repeat PIN</label>
-                      <x-pin name="pin-repeat" size="4"></x-pin>
+                      <label for="pin_repeat">Repeat PIN</label>
+                      <x-pin name="pin_repeat" size="4"></x-pin>
                     </p>
                     </div>
 
-                    <p>
+                    <p class="email">
                       <label for="email">email address</label>
                       <input type="text" name="email" />
                     </p>
 
-                    <p>
-                      <label for="password">choose master password</label>
-                      <input type="password" name="password" />
-                    </p>
+                    <div class="password">
+                      <p class="main">
+                        <label for="password">choose master password</label>
+                        <input type="password" name="password" />
+                      </p>
 
-                    <p>
-                      <label for="password_repeat">repeat password</label>
-                      <input type="password" name="password_repeat" />
-                    </p>
+                      <p>
+                        <label for="password_repeat">repeat password</label>
+                        <input type="password" name="password_repeat" />
+                      </p>
+                    </div>
 
                     <p>
                       <button class="button-blue">Sign up &raquo;</button><br />

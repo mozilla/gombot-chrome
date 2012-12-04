@@ -168,10 +168,10 @@ x-pin {
   width: 250px;
 }
 
-.gombot form .invalid input[name="password"] {
+.gombot form .sign-in .invalid input[name="password"] {
   background-color: #fee;
 }
-.gombot form .invalid label[for="password"]:after {
+.gombot form .sign-in .invalid label[for="password"]:after {
   content: ' Invalid password.';
   color: red;
 }
@@ -205,3 +205,32 @@ x-pin {
   width: 530px;
 }
 
+.gombot form .email.invalid input[name="email"],
+.gombot form .pin.invalid input,
+.gombot form .password.invalid input {
+  background-color: #fee;
+}
+
+.gombot form .email.invalid label[for="email"]:after {
+  content: ' Please use a valid email address.';
+  color: red;
+}
+
+.gombot form .password.mismatch .main label:after {
+  content: ' Passwords do not match.';
+  color: red;
+}
+.gombot form .password.short .main label:after {
+  content: ' Password must be at least 6 characters.';
+  color: red;
+}
+
+.gombot form .pin.mismatch .main label:after {
+  content: ' PINs do not match.';
+  color: red;
+}
+
+.gombot form .pin.short .main label:after {
+  content: ' PIN must have 4 digits.';
+  color: red;
+}

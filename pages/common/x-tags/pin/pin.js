@@ -33,6 +33,7 @@
       this.xtag.input = xtag.query(this, 'input')[0];
       this.xtag.input.value = '';
       this.xtag.fields = xtag.query(this, '.x-pin-fields')[0];
+      this.name = this.getAttribute('name');
       refreshElements.call(this);
     },
     getters: {
@@ -50,12 +51,14 @@
       size: function(value) {
         this.setAttibute('size', value);
         refreshElements.call(this);
+        alert('size ' + value);
       },
       value: function(value) {
         if (typeof value !== 'undefined') {
           this.xtag.input.setAttribute('value', value);
           refreshElements.call(this);
         }
+        alert('val ' + value);
       },
       'name:attribute(name)': function(value) {
         this.xtag.input.setAttribute('name', value);
