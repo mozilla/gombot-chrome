@@ -14,8 +14,9 @@ $(document).ready(function() {
           // Set user PIN
           backgroundPage.setAndSavePIN($('[name="pin"]').get()[0].value);
           backgroundPage.firstRunFinished();
+        } else {
+          e.preventDefault();
         }
-        e.preventDefault();
     })
 });
 
