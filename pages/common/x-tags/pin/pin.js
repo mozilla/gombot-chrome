@@ -51,14 +51,12 @@
       size: function(value) {
         this.setAttibute('size', value);
         refreshElements.call(this);
-        alert('size ' + value);
       },
       value: function(value) {
         if (typeof value !== 'undefined') {
           this.xtag.input.setAttribute('value', value);
           refreshElements.call(this);
         }
-        alert('val ' + value);
       },
       'name:attribute(name)': function(value) {
         this.xtag.input.setAttribute('name', value);
