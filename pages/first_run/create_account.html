@@ -52,28 +52,12 @@
 
                 <div id="main-content">
                   <div class="row create-account">
-                  <!--<img class="logo" src="img/mascot-gombot.png">-->
                   <h2><img src="../common/img/gombot-logo-92x92.png" /> Create a Gombot account</h2>
                   <form action="http://dev.tobmog.org/account" method="post" id="account-form">
 
                     <p>
                       Already have an account? <a href="sign_in.html">Sign in</a>
                     </p>
-
-                    <div class="pin">
-                    <p class="main">
-                      <label for="pin">Choose a PIN. <a href="javascript: void 0;" id="pin-info-link"> What is the PIN for?</a></label>
-
-                      <x-pin name="pin" size="4"></x-pin>
-
-                      <span id="pin-info">Protect your critical passwords with a PIN code – just like your bank card. Choose whichsites to lock with a PIN and use the same PIN no matter how many sites you save.</span>
-                    </p>
-
-                    <p>
-                      <label for="pin_repeat">Repeat PIN</label>
-                      <x-pin name="pin_repeat" size="4"></x-pin>
-                    </p>
-                    </div>
 
                     <p class="email">
                       <label for="email">email address</label>
@@ -90,6 +74,21 @@
                         <label for="password_repeat">repeat password</label>
                         <input type="password" name="password_repeat" />
                       </p>
+                    </div>
+
+                    <div class="pin">
+                    <p class="main">
+                      <label for="pin">Choose a PIN. <a href="javascript: void 0;" id="pin-info-link"> What is the PIN for?</a></label>
+
+                      <x-pin name="pin" size="4"></x-pin>
+
+                      <span id="pin-info">Protect your critical passwords with a PIN code – just like your bank card. Choose whichsites to lock with a PIN and use the same PIN no matter how many sites you save.</span>
+                    </p>
+
+                    <p>
+                      <label for="pin_repeat">Repeat PIN</label>
+                      <x-pin name="pin_repeat" size="4"></x-pin>
+                    </p>
                     </div>
 
                     <p>
