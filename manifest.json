@@ -25,7 +25,7 @@
         }
       ],
   "browser_action": {
-    "default_icon": "images/cropped_persona_icon.png",
+    "default_icon": "images/gombot_logo-19x19.png",
     "default_popup": "browser_action/browser_action.html"
   },
   "update_url": "http://dev.tobmog.org/downloads/updates.xml",

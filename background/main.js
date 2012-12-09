@@ -85,7 +85,7 @@ var messageHandlers = {
         // Search for logins for this particular site
         getLoginsForSite(message.hostname, function(logins) {
             if (logins.length == 0) return;
-                        
+
             if (logins.length == 1) {
                 // Is the login for this site PIN locked?
                 if (logins[0].pin_locked) {
@@ -156,7 +156,8 @@ function displayInfobar(notificationObj) {
     if (!infobarPaths[notificationObj.notification.type]) return;
     InfobarManager.run({
         path: infobarPaths[notificationObj.notification.type],
-        tabId: notificationObj.tabID
+        tabId: notificationObj.tabID,
+        height: '32px'
     }, genHandlerForNotification(notificationObj));
     
     function genHandlerForNotification(notificationObj) {

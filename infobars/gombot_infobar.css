@@ -1,8 +1,11 @@
 body {
     background: -webkit-linear-gradient(top, #707070 0%,#3A3A3C 100%);
-    font-size:10pt;
+    font-size:9pt;
     color:white;
     font-family:sans-serif;
+    
+    margin:0;
+    padding:0;
 }
 
 a {
@@ -13,14 +16,16 @@ a {
 button {
     background: -webkit-linear-gradient(top, #4b4b4b 0%,#191919 100%);
 
-    display: inline-block;
-    *display: inline;
-    padding: 2px 7px;
-    margin-bottom: 0;
+    border: 0;
+    vertical-align :middle;
+    
+    
+    padding: 4px 6px;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.3);
+    
+    margin-bottom: 4px;
     *margin-left: .3em;
-    font-size: 10pt;
-    line-height: 20px;
-    *line-height: 20px;
+    font-size: 9pt;
     color: white;
     text-align: center;
     vertical-align: middle;
@@ -28,13 +33,17 @@ button {
     background-repeat: repeat-x;
     *border: 0;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    -webkit-border-radius: 4px;
+    -webkit-border-radius: 8px;
     *zoom: 1;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
   
 button:hover {
     background: -webkit-linear-gradient(top, #191919 0%,#4b4b4b 100%);
+}
+
+.gombot-head {
+    margin-right:20px;
 }
 
 #never-for-this-site-button {
@@ -53,11 +62,18 @@ input.pin-digit {
     height:25px;
     border-radius:5px;
     color:white;
+    box-shadow:inset 0 0 4px #2A2A2A;
+    margin-top:3px;
 }
 
 input.pin-digit.wrong-pin {
     background: -webkit-linear-gradient(top, #a00000 0%,#2A2A2A 100%);
     border:1px #720000;
+}
+
+#infobar-container {
+    width:50em;
+    height:100%;
 }
 
 #pin-entry {
