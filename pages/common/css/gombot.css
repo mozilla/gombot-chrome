@@ -107,6 +107,15 @@ x-pin {
   font-size: 2.3em;
   height: 2.8em;
 }
+
+/* This is a hack in order to prevent PIN input boxes from 
+shrinking. See:
+https://github.com/mozilla/gombot/issues/1
+*/
+x-pin > div.x-pin-fields > input {
+    height:90px !important;
+}
+
 .gombot .pin input {
   width: 1.3em;
 }
