@@ -50,6 +50,9 @@ var messageHandlers = {
                 else {
                     // Prompt user to update password
                     notificationObj.type = 'update_password';
+                    // If the existing login stored for this site was PIN locked,
+                    // make sure this new one will be also.
+                    notificationObj.pin_locked = logins[0].pin_locked;
                 }
             }
             // Has the user signed up for a Gombot account?
