@@ -6,7 +6,7 @@
     <div id="infobar-container">
         <img class="gombot-head" src="/images/gombot_logo-19x19.png"/>
         <span id="pin-entry-prompt">
-          Enter PIN.
+            Enter PIN.
         </span>
   
       <span id="pin-entry">
@@ -15,11 +15,13 @@
           <input id="digit3" class="pin-digit"  maxlength="1" type="password" tabindex="3"/>
           <input id="digit4" class="pin-digit"  maxlength="1" type="password" tabindex="4"/>
       </span>
-  </div>
-  <!-- gives you window.CompleteInfobar() which you call with
-       a javascript object to end your infobar -->
-  <script src="/infobar/api.js"></script>
-  <script src="/lib/jquery.js"></script>
-  <script src="pin_entry_infobar.js"></script>
+    </div>
+    <a id="infobar-close-button" href="#">X</a>
+    <!-- gives you window.CompleteInfobar() which you call with
+           a javascript object to end your infobar -->
+    <script src="/infobar/api.js"></script>
+    <script src="/lib/jquery.js"></script>
+    <script src="gombot_infobar.js"></script>
+    <script src="pin_entry_infobar.js"></script>
 </body>
 </html>

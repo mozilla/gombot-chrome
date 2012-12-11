@@ -71,9 +71,28 @@ input.pin-digit.wrong-pin {
     border:1px #720000;
 }
 
+#infobar-close-button {
+    float:right;
+    text-decoration:none;
+    font-family:helvetica;
+    margin-top:6px;
+    margin-right:10px;
+    background:black;
+    border-radius:4px;
+    background:-webkit-linear-gradient(top, #4b4b4b 0%,#191919 100%);
+    color:#ccc;
+    padding:3px;
+}
+
+#infobar-close-button:hover {
+    background:-webkit-linear-gradient(top, #191919 0%,#4b4b4b 100%);
+}
+
 #infobar-container {
     width:50em;
     height:100%;
+    
+    float:left;
 }
 
 #pin-entry {
