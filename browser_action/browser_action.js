@@ -20,6 +20,14 @@ function copyToClipboard(_str) {
 $(document).ready(function() {
     backgroundPage.checkIfDidFirstRun(function(didFirstRun) {
         if (didFirstRun) {
+            // The user has already signed up for Gombot, so ask for feedback.
+            $('#feedback-nag').show();
+            $('#feedback-link').click(function(e) {
+            	chrome.tabs.create({
+                    url: 'https://getsatisfaction.com/gombotalpha'
+            	});
+                e.preventDefault();
+            });
             initBrowserAction();
         }
         else {
