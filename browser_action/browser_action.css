@@ -6,6 +6,10 @@
     display:none;
 }
 
+#signup-nag {
+    display:none;
+}
+
 #submit-pin {
     display:none;
 }

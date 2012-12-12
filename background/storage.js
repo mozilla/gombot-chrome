@@ -36,10 +36,6 @@ function setIfDidFirstRun(firstRunFinished) {
 	chrome.storage.local.set({
         'did_first_run': Boolean(firstRunFinished)
     });
-    // Update the browserAction popup page.
-    chrome.browserAction.setPopup({
-        popup: firstRunFinished ? "browser_action/browser_action.html" : "browser_action/first_run.html"
-    });
 }
 
 // Updates the user's PIN in loginsLock and also updates localStorage.

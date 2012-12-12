@@ -8,6 +8,8 @@
 *
 */
 
+var backgroundPage = chrome.extension.getBackgroundPage();
+
 function copyToClipboard(_str) {
     chrome.extension.sendMessage({
         type: 'copy_clipboard',
@@ -16,7 +18,22 @@ function copyToClipboard(_str) {
 }
 
 $(document).ready(function() {
-	var backgroundPage = chrome.extension.getBackgroundPage();
+    backgroundPage.checkIfDidFirstRun(function(didFirstRun) {
+        if (didFirstRun) {
+            initBrowserAction();
+        }
+        else {
+            $('#signup-nag').show();
+            // Display reminder to sign in to/create a Gombot account.
+            $('#signup-link').click(function(e) {
+                backgroundPage.startFirstRunFlow();
+                e.preventDefault();
+            });
+        }
+    });
+});
+
+function initBrowserAction() {
     var data = backgroundPage.getPageDataForPopup(function(data) {
         var pinLocked = false;
         for (var login in data) {
@@ -75,4 +92,4 @@ $(document).ready(function() {
             copyToClipboard($(this).attr('data-password'));
         });
     });
-});
+}
