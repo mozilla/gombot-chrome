@@ -1,3 +1,10 @@
+#
+#   bundle_for_webstore.py
+#
+#   This little script outputs a file, gombot-webstore.zip, that should be ready for
+#   submission to the Chrome webstore. (https://chrome.google.com/webstore)
+#
+
 import json
 import os
 import shutil
