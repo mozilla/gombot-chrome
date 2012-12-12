@@ -4,6 +4,8 @@
 #   This little script outputs a file, gombot-webstore.zip, that should be ready for
 #   submission to the Chrome webstore. (https://chrome.google.com/webstore)
 #
+#   Requires /usr/bin/zip.
+#
 
 import json
 import os
@@ -30,6 +32,10 @@ def bundle():
     
     # Update gombot manifest.json
     changeManifest('temp/manifest.json')
+    
+    # Delete any existing zip file
+    if os.path.isfile('gombot-webstore.zip'):
+        os.unlink('gombot-webstore.zip')
     
     # Zip up temp directory
     call(['/usr/bin/zip', '-r', 'gombot-webstore', 'temp'], stdout=PIPE, stderr=PIPE)
