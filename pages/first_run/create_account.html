@@ -53,7 +53,7 @@
                 <div id="main-content">
                   <div class="row create-account">
                   <h2><img src="../common/img/gombot-logo-92x92.png" /> Create a Gombot account</h2>
-                  <form action="http://dev.tobmog.org/account" method="post" id="account-form">
+                  <form action="http://127.0.0.1:20000/account" method="post" id="account-form">
 
                     <p>
                       Already have an account? <a href="sign_in.html">Sign in</a>
@@ -90,6 +90,14 @@
                       <x-pin name="pin_repeat" size="4"></x-pin>
                     </p>
                     </div>
+
+                    <p class="small">
+                      <label for="newsletter"><input type="checkbox" name="newsletter" value="subscribe" /> Yes of course, send me the Gombot newsletter!</label>
+                    </p>
+
+                    <p class="small">
+                      By proceeding, you agree to Gombot's <a href="#">Terms</a> and <a href="#">Provacy Policy</a>.
+                    </p>
 
                     <p>
                       <button class="button-blue">Sign up &raquo;</button><br />
@@ -130,6 +138,10 @@
         <script src="../common/js/tabzilla.js"></script>
         <script src="../common/js/libs/jquery-1.7.1.min.js"></script>
         <script src="../common/js/site.js"></script>
+        <script src="../../server/client/urlparse.js"></script>
+        <script src="../../server/client/sjcl.js"></script>
+        <script src="../../server/client/crypto.js"></script>
+        <script src="../../server/client/client.js"></script>
         <script src="create_account.js"></script>
     </body>
 </html>
