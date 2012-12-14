@@ -21,12 +21,15 @@ $(document).ready(function() {
     backgroundPage.checkIfDidFirstRun(function(didFirstRun) {
         if (didFirstRun) {
             // The user has already signed up for Gombot, so ask for feedback.
-            $('#feedback-nag').show();
+            $('.show-after-signup').show();
             $('#feedback-link').click(function(e) {
             	chrome.tabs.create({
                     url: 'https://getsatisfaction.com/gombotalpha'
             	});
                 e.preventDefault();
+            });
+            $('#export-data-button').click(function() {
+                backgroundPage.downloadExportDataFile();
             });
             initBrowserAction();
         }

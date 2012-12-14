@@ -1,7 +1,3 @@
-#feedback-nag {
-    display:none;
-}
-
 #pin-entry {
     display:none;
 }
@@ -15,5 +11,9 @@
 }
 
 #submit-pin {
+    display:none;
+}
+
+.show-after-signup {
     display:none;
 }

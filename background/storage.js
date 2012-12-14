@@ -112,3 +112,26 @@ function deleteLoginsForSite(hostname) {
   storageObj[loginsKey] = {};
   chrome.storage.local.set(storageObj);
 }
+
+// Dump localStorage to JSON file, for debugging purposes.
+function downloadExportDataFile() {
+    // Get entire content of localStorage
+    // NB: This contains all of the user's passwords in plaintext, as well as
+    // their PIN and not-so-useful flags like did_first_run.
+    chrome.storage.local.get(null, function(storageObj) {
+        // Turn storageObj into a blob
+        var blob = new window.Blob([JSON.stringify(storageObj)], {type: 'text/json'});
+
+        // Creates a link that opens the blob on the background page,
+        // and then clicks it. Cribbed from:
+        // http://stackoverflow.com/questions/4845215/making-a-chrome-extension-download-a-file
+        var a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        a.download = 'passwords_dump.json';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        delete a;// we don't need this anymore
+    });
+}
