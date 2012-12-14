@@ -47,6 +47,10 @@ $(document).ready(function() {
 function initBrowserAction() {
     var data = backgroundPage.getPageDataForPopup(function(data) {
         var pinLocked = false;
+        if (data.length == 0) {
+            $('#logins').html('No accounts for this site.');
+            return;
+        }
         for (var login in data) {
             var newEl = $('<div><strong>' + data[login].username + '</strong>: \
             <input class="pwd-copy" type="submit" value="copy" data-password="' + data[login].password + '"></div>')
