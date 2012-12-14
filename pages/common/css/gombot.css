@@ -248,3 +248,34 @@ x-pin > div.x-pin-fields > input {
   color: red;
   display: block;
 }
+
+.gombot .small label {
+  font-size: 100%;
+}
+
+.description h3 {
+  color: #5884C5;
+}
+
+
+.full-width-container {
+  float: left;
+  width: 940px;
+  margin: 0 10px;
+}
+.two-column .sidebar {
+  float: left;
+  width: 220px;
+  margin: 0 10px;
+}
+.two-column .main-content {
+  float: left;
+  width: 620px;
+  margin: 0 10px;
+  margin-left: 90px;
+}
+.two-column .split {
+  float: left;
+  width: 460px;
+  margin: 0 10px;
+}

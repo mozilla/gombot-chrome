@@ -1,23 +1,35 @@
 $(document).ready(function() {
+    var server = 'http://dev.tobmog.org';
+    var client = new GombotClient(server + '/api');
 
     $('#pin-info-link').click(function (ev) {
         $('#account-form').toggleClass('show-info');
     });
 
     $('#account-form').submit(function(e) {
+        e.preventDefault();
         // Validate form
         var ok = checkPINs();
         ok = checkEmail() && ok;
         ok = checkPasswords() && ok;
         if (ok) {
-          var backgroundPage = chrome.extension.getBackgroundPage();
-          // Set user PIN
-          backgroundPage.setAndSavePIN($('[name="pin"]').get()[0].value);
-          backgroundPage.firstRunFinished();
-        } else {
-          e.preventDefault();
+            client.account({
+                email: $('[name="email"]').get()[0].value,
+                pass: $('[name="password"]').get()[0].value,
+                newsletter: $('[name="newsletter"]').get()[0].value === 'subscribe',
+            }, function (err, result){
+                console.log('result', err, result);
+                if (result.success) {
+                  window.location = 'success.html';
+                }
+            });
+
+            var backgroundPage = chrome.extension.getBackgroundPage();
+            // Set user PIN
+            backgroundPage.setAndSavePIN($('[name="pin"]').get()[0].value);
+            backgroundPage.firstRunFinished();
         }
-    })
+    });
 });
 
 function checkPINs() {
