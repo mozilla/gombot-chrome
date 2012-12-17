@@ -105,12 +105,18 @@
     }
     
     function getPwFields(_inputsList) {
-        var pwFields = [];
+        var pwFields = [],
+            pwField = null;
         for (var inputIdx = 0; inputIdx < _inputsList.length; inputIdx++) {
             if (_inputsList[inputIdx].type == 'password') {
+                pwField = _inputsList[inputIdx];
+                // Setting 'autocomplete' to 'off' will signal to the native
+                // password manager to ignore this login wrt filling and capturing.
+                // This solves the "double infobar" problem when linking.
+                pwField.setAttribute('autocomplete', 'off');
                 pwFields.push({
                     idx: inputIdx,
-                    val: _inputsList[inputIdx].value
+                    val: pwField.value
                 });   
             }
         }
