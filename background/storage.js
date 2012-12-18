@@ -113,21 +113,37 @@ function deleteLoginsForSite(hostname) {
   chrome.storage.local.set(storageObj);
 }
 
-// Dump localStorage to JSON file, for debugging purposes.
+// Returns a string of a comma separated value file containing the hostname, username,
+// and password for each login the user has saved.
+function getLoginsCSV(callback) {
+    // Add header
+    var retVal = "hostname,username,password\n";
+    chrome.storage.local.get(null, function(storageObj) {
+        for (var item in storageObj) {
+            if (item.substr(0,7) == 'logins_' && item != 'logins_lock') {
+                var login = storageObj[item].stored_logins[0];
+                retVal += login.hostname + ',' + login.username + ',' + login.password + '\n';
+            }
+        }
+        callback(retVal);
+    });
+}
+
+// Dump localStorage to CSV file, for debugging purposes.
 function downloadExportDataFile() {
     // Get entire content of localStorage
     // NB: This contains all of the user's passwords in plaintext, as well as
     // their PIN and not-so-useful flags like did_first_run.
-    chrome.storage.local.get(null, function(storageObj) {
+    getLoginsCSV(function(loginsCSV) {
         // Turn storageObj into a blob
-        var blob = new window.Blob([JSON.stringify(storageObj)], {type: 'text/json'});
+        var blob = new window.Blob([loginsCSV], {type: 'text/csv'});
 
         // Creates a link that opens the blob on the background page,
         // and then clicks it. Cribbed from:
         // http://stackoverflow.com/questions/4845215/making-a-chrome-extension-download-a-file
         var a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
-        a.download = 'passwords_dump.json';
+        a.download = 'passwords_dump.csv';
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
