@@ -64,6 +64,7 @@ input.pin-digit {
     color:white;
     box-shadow:inset 0 0 4px #2A2A2A;
     margin-top:3px;
+    padding-left:6px;
 }
 
 input.pin-digit.wrong-pin {
