@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <link href="../lib/bootstrap.css" rel="stylesheet">
     <link href="../common/pin_entry.css" rel="stylesheet">
     <link href="browser_action.css" rel="stylesheet">
@@ -9,16 +10,22 @@
 </head>
 
 <body>
-    <iframe src="../common/pin_entry.html" id="pin-entry-frame"></iframe>
-    <div id="logins"></div>
-    <div class="show-after-signup">
-        We want your feedback! Click <a id="feedback-link" href="#">here</a> and let us know what you think of Gombot!
-    </div>
-    <div class="show-after-signup">
-        <button id="export-data-button" class="btn">Export my data</button>
-    </div>
-    <div id="signup-nag">
-        <a id="signup-link" href="#">Sign up</a> for Gombot to get started!
+    <div id="container">
+        <div class="show-after-signup">
+            <a id="feedback-link" href="#">Report a problem</a>
+        </div>
+        <div class="show-after-signup">
+            <a id="export-data-link" href="#">Export my data</a>
+        </div>
+        <iframe src="../common/pin_entry.html" id="pin-entry-frame"></iframe>
+        <div id="signup-nag">
+            <a id="signup-link" href="#">Sign up</a> for Gombot to get started!
+        </div>
+        <hr>
+        <div id="logins"></div>
+        <div id="no-logins-saved">
+            No accounts saved for this site.
+        </div>
     </div>
 </body>
 

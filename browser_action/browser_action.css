@@ -1,5 +1,49 @@
+body {
+    background-color:#f7f7f7;
+}
+
+a {
+    color:black;
+}
+
+hr {
+    height:3px;
+    background-color:white;
+    border-bottom:1px solid #d0d0d0;
+    width:100%;
+    margin:7px 0;
+}
+
+.login .copy-button {
+    display:none;
+    padding:0px;
+    font-size:10px;
+}
+
+.login .fubared-password {
+    float:right;
+}
+
+.login:hover .fubared-password {
+    display:none;
+}
+
+.login:hover .copy-button {
+    display:inline;
+    float:right;
+}
+
+#container {
+    padding:10px;
+}
+
 #logins {
     margin-bottom:10px;
+}
+
+#no-logins-saved {
+    display:none;
+    color:#aaa;
 }
 
 #pin-entry {

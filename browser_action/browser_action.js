@@ -28,8 +28,9 @@ $(document).ready(function() {
             	});
                 e.preventDefault();
             });
-            $('#export-data-button').click(function() {
+            $('#export-data-link').click(function(e) {
                 backgroundPage.downloadExportDataFile();
+                e.preventDefault();
             });
             initBrowserAction();
         }
@@ -48,12 +49,18 @@ function initBrowserAction() {
     var data = backgroundPage.getPageDataForPopup(function(data) {
         var pinLocked = false;
         if (data.length == 0) {
-            $('#logins').html('No accounts for this site.');
+            $('#logins').hide();
+            $('#no-logins-saved').show();
             return;
         }
+        const PASSWORD_CHAR_REPLACEMENT = '•';
         for (var login in data) {
-            var newEl = $('<div><strong>' + data[login].username + '</strong>: \
-            <input class="pwd-copy" type="submit" value="copy" data-password="' + data[login].password + '"></div>')
+            // Display password as a series of PASSWORD_CHAR_REPLACEMENT characters
+            var fubaredPassword = data[login].password.replace(/.{1}/g,PASSWORD_CHAR_REPLACEMENT);
+            var passwordHTMLString = '<div class="login"><strong>' + data[login].username +
+                '</strong><input class="copy-button" type="submit" value="copy" data-password="' + data[login].password + '">'
+                + '<span class="fubared-password">' + fubaredPassword + '</span></div>'
+            var newEl = $(passwordHTMLString);
             $('#logins').append(newEl);
             // Technically, there should be only one login, and if there are more, only all or none
             // of them should be marked pin locked, but since this is still experimental,
@@ -103,7 +110,7 @@ function initBrowserAction() {
 				}
             });
         } 
-        $('.pwd-copy').click(function() {
+        $('.copy-button').click(function() {
             copyToClipboard($(this).attr('data-password'));
         });
     });
