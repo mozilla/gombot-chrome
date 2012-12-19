@@ -53,13 +53,11 @@ function initBrowserAction() {
             $('#no-logins-saved').show();
             return;
         }
-        const PASSWORD_CHAR_REPLACEMENT = '•';
+        const PASSWORD_REPLACEMENT = '••••••••';
         for (var login in data) {
-            // Display password as a series of PASSWORD_CHAR_REPLACEMENT characters
-            var fubaredPassword = data[login].password.replace(/.{1}/g,PASSWORD_CHAR_REPLACEMENT);
             var passwordHTMLString = '<div class="login"><strong>' + data[login].username +
                 '</strong><input class="copy-button" type="submit" value="copy" data-password="' + data[login].password + '">'
-                + '<span class="fubared-password">' + fubaredPassword + '</span></div>'
+                + '<span class="fubared-password">' + PASSWORD_REPLACEMENT + '</span></div>'
             var newEl = $(passwordHTMLString);
             $('#logins').append(newEl);
             // Technically, there should be only one login, and if there are more, only all or none
