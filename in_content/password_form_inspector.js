@@ -43,6 +43,18 @@ var PasswordFormInspector = (function() {
     };
 })();
 
+function attachHandlers() {
+    // Run on page load
+    document.body.addEventListener('load', function() {
+        console.log('on load');
+        highlightLoginForms();
+    });
+    setInterval(function() {
+        console.log('on timeout');
+        highlightLoginForms();
+    },500);    
+}
+
 function highlightLoginForms() {
     var res = PasswordFormInspector.detect();
     for (var formX = 0; formX < res.loginForms.length; formX++) {
@@ -52,4 +64,4 @@ function highlightLoginForms() {
         res.loginForms[formX].containingEl.style['border'] = '2px solid red';
     }
 }
-setTimeout(highlightLoginForms,500);
+attachHandlers();
