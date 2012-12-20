@@ -21,7 +21,7 @@
     "content_scripts": [
         {
           "matches": ["<all_urls>"],
-          "js": ["in_content/observer.js"]
+          "js": ["lib/jquery.js","in_content/password_form_inspector.js"]
         }
       ],
   "browser_action": {
