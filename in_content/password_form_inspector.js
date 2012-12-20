@@ -50,7 +50,6 @@ function attachHandlers() {
         highlightLoginForms();
     });
     setInterval(function() {
-        console.log('on timeout');
         highlightLoginForms();
     },500);    
 }
@@ -58,7 +57,6 @@ function attachHandlers() {
 function highlightLoginForms() {
     var res = PasswordFormInspector.detect();
     for (var formX = 0; formX < res.loginForms.length; formX++) {
-        console.log(res.loginForms[formX]);
         res.loginForms[formX].usernameEl.style['border'] = '2px solid blue';
         res.loginForms[formX].passwordEl.style['border'] = '2px solid green';
         res.loginForms[formX].containingEl.style['border'] = '2px solid red';
