@@ -15,22 +15,30 @@ var PasswordFormInspector = (function() {
     
     function detect() {
         var $passwordInputs = $('input[type=password]'),
-            result = { loginForms: [], signupForms: [], changePasswordForms: [] };
+            result = { loginForms: [], signupForms: [], changePasswordForms: [] },
+            $passwordEl = null,
+            $containingForm = null,
+            usernameEl = null,
+            numPasswordInputs = 0;
+
         $passwordInputs.each(function(idx,passwordEl) {
-            var containingForm = $(passwordEl).closest('form'),
-                usernameEl,
-                numPaswordInputs = $(containingForm).find('input[type=password]').length;
-                
-            if (!containingForm) {
-                // TODO
+            $passwordEl = $(passwordEl);
+            $containingForm = $passwordEl.closest('form');
+            if ($containingForm.length === 0) {
+                console.log("Could not find form element, passwordEl=", $passwordEl);
+                $containingForm = $passwordEl.parents().has($passwordEl).has('input:text').first();
+            }
+
+            if ($containingForm.length === 0) {
                 return;
             }
-            if (numPaswordInputs > 1) return;
-            usernameEl = getUsernameFieldForPasswordField(containingForm,passwordEl);
+            numPasswordInputs = $containingForm.find('input[type=password]').length;
+            if (numPasswordInputs > 1) return;
+            usernameEl = getUsernameFieldForPasswordField($containingForm,passwordEl);
             result.loginForms.push({
                 usernameEl: usernameEl,
                 passwordEl: passwordEl,
-                containingEl: containingForm.get()[0]
+                containingEl: $containingForm.get()[0]
             });
         });
         return result;
@@ -43,23 +51,81 @@ var PasswordFormInspector = (function() {
     };
 })();
 
+var DomMonitor = (function() {
+    const MONITOR_INTERVAL_LENGTH = 1000;
+    var monitorInterval = null,
+        callback = null,
+        test = null;
+
+    function executeTest() {
+        if (test()) {
+            callback();
+        }
+    }
+
+    function start(testFunc, callbackFunc) {
+        test = testFunc;
+        callback = callbackFunc;
+        executeTest();
+        monitorInterval = setInterval(executeTest, MONITOR_INTERVAL_LENGTH);
+    };
+
+    function stop() {
+        callback = null;
+        test = null;
+        clearInterval(executeTest);
+    };
+
+    return {
+        start: start,
+        stop: stop
+    };
+})();
+
+
 function attachHandlers() {
     // Run on page load
-    document.body.addEventListener('load', function() {
-        console.log('on load');
-        highlightLoginForms();
-    });
-    setInterval(function() {
-        highlightLoginForms();
-    },500);    
+    var passwordCounterTest;
+    (function() {
+        var passwordCount = null;
+        passwordCounterTest = function() {
+            var newPasswordCount = $('input[type=password]').length,
+                result = false;
+            if (passwordCount === null) {
+                passwordCount = newPasswordCount;
+                return false;
+            }
+            result = newPasswordCount > passwordCount;
+            passwordCount = newPasswordCount;
+            return result;
+        };
+    })();
+    highlightLoginForms();
+    DomMonitor.start(passwordCounterTest, highlightLoginForms);
 }
 
 function highlightLoginForms() {
     var res = PasswordFormInspector.detect();
     for (var formX = 0; formX < res.loginForms.length; formX++) {
-        res.loginForms[formX].usernameEl.style['border'] = '2px solid blue';
-        res.loginForms[formX].passwordEl.style['border'] = '2px solid green';
-        res.loginForms[formX].containingEl.style['border'] = '2px solid red';
+        if (res.loginForms[formX].usernameEl) {
+            res.loginForms[formX].usernameEl.style['border'] = '2px solid blue';
+            res.loginForms[formX].usernameEl.setAttribute('data-detected', 'true');
+        } else {
+            console.log("No username field found for", res.loginForms[formX]);
+        }
+        if (res.loginForms[formX].passwordEl) {
+            res.loginForms[formX].passwordEl.style['border'] = '2px solid green';
+            res.loginForms[formX].passwordEl.setAttribute('data-detected', 'true');
+        } else {
+            console.log("No password field found for", res.loginForms[formX]);
+        }
+        if (res.loginForms[formX].containingEl) {
+            res.loginForms[formX].containingEl.style['border'] = '2px solid red';
+            res.loginForms[formX].containingEl.setAttribute('data-detected', 'true');
+        } else {
+            console.log("No containing form field found for", res.loginForms[formX]);
+        }
+
     }
 }
 attachHandlers();
