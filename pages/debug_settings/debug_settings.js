@@ -16,10 +16,13 @@ $(document).ready(function() {
             newEl.addClass('storagekey');
             newEl.attr('data-storagekey',item);
             var saveButton = $("<button>Save</button>");
+            var deleteButton = $("<button>Delete</button>");
             newEl.append("<h2>" + item + "</h2>");
             newEl.append("<textarea>" + JSON.stringify(storedData[item]) + "</textarea><br/>");
             saveButton.addClass('btn').addClass('btn-primary').addClass('save-button');
+            deleteButton.addClass('btn').addClass('btn-danger').addClass('delete-button');
             newEl.append(saveButton);
+            newEl.append(deleteButton);
             $(document.body).append(newEl);   
         }
         $('.save-button').click(function() { 
@@ -30,6 +33,11 @@ $(document).ready(function() {
             storageObj[storageKeyDiv.attr('data-storagekey')] = parsedObj;
             chrome.storage.local.set(storageObj);
             console.log(storageKeyDiv.get()[0]);
+        });
+        $('.delete-button').click(function() { 
+            var storageKeyDiv = $(this).parent('.storagekey');
+            chrome.storage.local.remove(storageKeyDiv.attr('data-storagekey'));
+            location.reload();
         });
     });
 });
