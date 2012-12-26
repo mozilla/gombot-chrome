@@ -1,6 +1,6 @@
-var PasswordFormInspector = (function() {    
+var PasswordFormInspector = (function() {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
-    
+
     function getUsernameFieldForPasswordField(containerForm,passwordEl) {
         var inputsList = containerForm.find('input').get();
         var pwFieldIdx = inputsList.indexOf(passwordEl);
@@ -11,8 +11,8 @@ var PasswordFormInspector = (function() {
         }
         // Couldn't find a valid username input field.
         return null;
-    }   
-    
+    }
+
     function detect() {
         var $passwordInputs = $('input[type=password]'),
             result = { loginForms: [], signupForms: [], changePasswordForms: [] },
@@ -43,7 +43,7 @@ var PasswordFormInspector = (function() {
         });
         return result;
     }
-    
+
     return {
 
         detect: detect
