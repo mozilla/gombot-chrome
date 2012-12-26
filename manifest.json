@@ -22,9 +22,9 @@
         {
           "matches": ["<all_urls>"],
           "js": ["lib/jquery.js",
-                 "in_content/condition_monitor.js",
-                 "in_content/password_form_inspector.js",
-                 "in_content/main.js"]
+                 "content_scripts/input_monitor.js",
+                 "content_scripts/password_form_inspector.js",
+                 "content_scripts/main.js"]
         }
       ],
   "browser_action": {

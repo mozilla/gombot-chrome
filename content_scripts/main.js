@@ -1,8 +1,7 @@
 var Gombot = {};
 
 Gombot.PasswordFormInspector = PasswordFormInspector(jQuery);
-Gombot.ConditionMonitor = ConditionMonitor();
-
+Gombot.InputMonitor = InputMonitor(window.MutationObserver || window.WebKitMutationObserver);
 
 function markDetected(el, color) {
     el.style['border'] = '2px solid '+color;
@@ -35,19 +34,9 @@ function highlightLoginForms() {
 
 function start() {
     // Run on page load
-    var passwordCounterTest = (function() {
-        var passwordCount = $('input[type=password]').length;
-        return function() {
-            var newPasswordCount = $('input[type=password]').length,
-                result = false;
-            result = newPasswordCount > passwordCount;
-            passwordCount = newPasswordCount;
-            return result;
-        };
-    })(),
-        conditionMonitor = new Gombot.ConditionMonitor(passwordCounterTest, highlightLoginForms);
+    var inputMonitor = new Gombot.InputMonitor(highlightLoginForms);
     highlightLoginForms();
-    conditionMonitor.start();
+    inputMonitor.start();
 }
 
 start();
