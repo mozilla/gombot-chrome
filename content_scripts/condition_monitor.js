@@ -5,7 +5,7 @@
 //    start: starts the monitor
 //    stop: stops the monitor
 
-var ConditionMonitor = (function() {
+var ConditionMonitor = function() {
     const DEFAULT_MONITOR_INTERVAL_LENGTH = 1000;
 
     var ConditionMonitor = function(conditionFunc, callbackFunc, intervalLength) {
@@ -31,4 +31,4 @@ var ConditionMonitor = (function() {
     };
 
     return ConditionMonitor;
-})();
+};

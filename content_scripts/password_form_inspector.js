@@ -1,4 +1,4 @@
-var PasswordFormInspector = (function($) {
+var PasswordFormInspector = function($) {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
 
     function getUsernameFieldForPasswordField(containerForm,passwordEl) {
@@ -51,4 +51,4 @@ var PasswordFormInspector = (function($) {
     return {
         findForms: findForms
     };
-})(jQuery);
+};

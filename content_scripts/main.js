@@ -1,10 +1,16 @@
+var Gombot = {};
+
+Gombot.PasswordFormInspector = PasswordFormInspector(jQuery);
+Gombot.ConditionMonitor = ConditionMonitor();
+
+
 function markDetected(el, color) {
     el.style['border'] = '2px solid '+color;
     el.setAttribute('data-detected', 'true');
 }
 
 function highlightLoginForms() {
-    var res = PasswordFormInspector.findForms(),
+    var res = Gombot.PasswordFormInspector.findForms(),
         loginForms = res.loginForms,
         form;
     for (var formX = 0; formX < loginForms.length; formX++) {
@@ -39,7 +45,7 @@ function start() {
             return result;
         };
     })(),
-        conditionMonitor = new ConditionMonitor(passwordCounterTest, highlightLoginForms);
+        conditionMonitor = new Gombot.ConditionMonitor(passwordCounterTest, highlightLoginForms);
     highlightLoginForms();
     conditionMonitor.start();
 }
