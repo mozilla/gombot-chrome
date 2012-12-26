@@ -1,6 +1,8 @@
 $(document).ready(function() {
+    //var server = 'https://gombot.org';
     var server = 'http://dev.tobmog.org';
     var client = new GombotClient(server + '/api');
+    var busy = false;
 
     $('#pin-info-link').click(function (ev) {
         $('#account-form').toggleClass('show-info');
@@ -8,6 +10,9 @@ $(document).ready(function() {
 
     $('#account-form').submit(function(e) {
         e.preventDefault();
+        if (busy) return;
+        busy = true;
+
         // Validate form
         var ok = checkPINs();
         ok = checkEmail() && ok;
@@ -18,8 +23,9 @@ $(document).ready(function() {
                 pass: $('[name="password"]').get()[0].value,
                 newsletter: $('[name="newsletter"]').get()[0].value === 'subscribe',
             }, function (err, result){
+                busy = false;
                 console.log('result', err, result);
-                if (result.success) {
+                if (!err && result.success) {
                   window.location = 'success.html';
                 }
             });

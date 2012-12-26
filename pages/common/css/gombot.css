@@ -177,10 +177,10 @@ x-pin > div.x-pin-fields > input {
   width: 250px;
 }
 
-.gombot form .sign-in .invalid input[name="password"] {
+.gombot .sign-in .invalid input[name="password"] {
   background-color: #fee;
 }
-.gombot form .sign-in .invalid label[for="password"]:after {
+.gombot .sign-in .invalid label.pass:after {
   content: ' Invalid password.';
   color: red;
 }

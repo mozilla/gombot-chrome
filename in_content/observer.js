@@ -2,10 +2,10 @@
     var forms = document.getElementsByTagName('form');
     var formsByType = {};
     for (var formIdx = 0; formIdx < forms.length; formIdx++) {
-        
+
         var inputs = forms[formIdx].getElementsByTagName('input');
         var inputsList = Array.prototype.slice.call(inputs);
-        
+
         var pwFields = getPwFields(inputsList);
 
         // TODO: Remove this code (and anything else relying on addAutofillToForm)
@@ -13,7 +13,7 @@
         // if (pwFields.length == 1) {
         //     addAutofillToForm('login',forms[formIdx],pwFields);
         // }
-        
+
         // Keep in formsByType a map from nummber of password inputs to form elements.
         if (formsByType[pwFields.length] === undefined) {
             formsByType[pwFields.length] = [forms[formIdx]];
@@ -21,7 +21,7 @@
         else {
             formsByType[pwFields.length].push(forms[formIdx]);
         }
-        
+
         function makeOnSubmit(formEl,_inputsList,_pwFields) {
             return function(e) {
                 var newLoginObj = {
@@ -33,7 +33,7 @@
 
                 var usernameInput = null;
                 var pwInput = null;
-                
+
                 switch (determineFormType(formEl)) {
                     case 'login':
                         // Find the username input - the input before the password field
@@ -42,20 +42,20 @@
 
                         pwInput = _inputsList[_pwFields[0].idx];
                     break;
-                    
+
                     case 'signup':
                         usernameInput = getUsernameFieldForPasswordField(_inputsList,_pwFields[0].idx);
                         pwInput = _inputsList[_pwFields[0].idx];
                     break;
-                    
+
                     case 'change_password':
                         // TODO
                     break;
-                    
+
                     case 'unknown':
                     default:
                         return;
-                    
+
                     break;
                 }
                 //    pwInput = _inputsList[pwInputIdx];
@@ -71,12 +71,12 @@
            }
             // }
         }
-        
+
         forms[formIdx].addEventListener('submit',makeOnSubmit(forms[formIdx],inputsList,pwFields));
         console.log(formsByType);
     }
 
-    //  Returns the username field from inputsList that is 
+    //  Returns the username field from inputsList that is
     //  closest before the field at pwFieldIdx. Or null, if
     //  no valid field exists.
     function getUsernameFieldForPasswordField(inputsList,pwFieldIdx) {
@@ -85,7 +85,7 @@
         for (var inputIdx = pwFieldIdx-1; inputIdx >= 0; inputIdx--) {
             if (VALID_USERNAME_INPUT_TYPES.indexOf(inputsList[inputIdx].type) != -1) {
                 if (inputsList[inputIdx].val) {
-                    return inputsList[inputIdx];                    
+                    return inputsList[inputIdx];
                 }
                 else {
                     // If the input has nothing in it, add it as a "backup guess".
@@ -97,13 +97,13 @@
             return backupGuesses[backupGuesses.length-1];
         // Couldn't find a valid username input field.
         return null;
-    }   
-        
+    }
+
     function getInputsList(formEl) {
         var inputs = formEl.getElementsByTagName('input');
         return Array.prototype.slice.call(inputs);
     }
-    
+
     function getPwFields(_inputsList) {
         var pwFields = [],
             pwField = null;
@@ -117,21 +117,21 @@
                 pwFields.push({
                     idx: inputIdx,
                     val: pwField.value
-                });   
+                });
             }
         }
         return pwFields;
     }
-    
+
     // TODO: There's much more work to be done in improving heuristics.
-    // How Firefox does it: 
+    // How Firefox does it:
     // http://mxr.mozilla.org/mozilla-central/source/toolkit/components/passwordmgr/nsLoginManager.js#643
     function determineFormType(formEl) {
         var pwFields = getPwFields(getInputsList(formEl));
         switch (pwFields.length) {
             case 1:
                 return 'login';
-            
+
             case 2:
                 // Assume an account creation form. As long as the two passwords
                 // are equal, we should be good.
@@ -141,7 +141,7 @@
                 }
                 return 'signup';
             break;
-                
+
             case 3:
                 // Assume a password change form. Look for two passwords that are equal.
                 var pwInputIdx = null;
@@ -160,7 +160,7 @@
                 if (!pwInputIdx) return 'unknown';
                 return 'change_password';
             break;
-            
+
             default:
                 return 'unknown';
         }
@@ -184,7 +184,7 @@
             }
         }
     }
-    
+
     chrome.extension.onMessage.addListener(masterOnMessageListener);
 
     function getLoginFieldsForForm(formEl) {
@@ -232,7 +232,7 @@
     chrome.extension.sendMessage({
         type: 'observing_page',
         message: {
-            // TODO: make sure we can trust window.location (we probably can't) or find a 
+            // TODO: make sure we can trust window.location (we probably can't) or find a
             // way to get this chrome-side.
             location: window.location,
             hostname: window.location.host,
