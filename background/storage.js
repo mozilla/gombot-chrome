@@ -47,6 +47,14 @@ function setAndSavePIN(pin) {
     saveLoginsLock();
 }
 
+function loadLoginsLock() {
+    // Load PIN lock state from localStorage
+    chrome.storage.local.get('logins_lock', function(storageObj) {
+        if (storageObj.logins_lock === undefined) storageObj.logins_lock = {type: 'none'};
+        loginsLock = storageObj.logins_lock;
+    });
+}
+
 function saveLoginsLock() {
     // Persist loginsLock to localStorage, to preserve PIN across sessions
     chrome.storage.local.set({

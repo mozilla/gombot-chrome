@@ -11,11 +11,8 @@ initSkyCrane();
 function initSkyCrane() {
     // Load blacklisted sites from local storage
     getNeverSaveOnSites(function(siteNames) { neverSaveOnSites = siteNames; });
-    // Check to see if a PIN lock is enabled
-    chrome.storage.local.get('logins_lock', function(storageObj) {
-        if (storageObj.logins_lock === undefined) storageObj.logins_lock = {type: 'none'};
-        loginsLock = storageObj.logins_lock;
-    });
+    // Load PIN lock state from localStorage
+    loadLoginsLock();
 	checkIfDidFirstRun(function(didFirstRun) {
 		console.log('didFirstRun: ', didFirstRun);
 		if (!didFirstRun) {
