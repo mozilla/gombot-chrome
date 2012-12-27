@@ -23,10 +23,11 @@ def bundle():
     # Delete git stuff in temp directory
     if os.path.isdir('temp/.git'):
         shutil.rmtree('temp/.git')
-    
-    # Delete server code
-    shutil.rmtree('temp/server')
-    
+        
+    # Delete options page code, it's debug only
+    if os.path.isdir('temp/pages/debug_settings'):
+        shutil.rmtree('temp/pages/debug_settings')
+        
     # Delete infobar manifest
     os.unlink('temp/infobar/manifest.json')
     
@@ -49,6 +50,9 @@ def changeManifest(manifestFilename):
     # Remove update_url, web store does its own updating
     if manifest.get('update_url'):
         del manifest['update_url']
+    # Remove options page, it's debug-only
+    if manifest.get('options_page'):
+        del manifest['options_page']
     # Bump up minor version number
     version = map(int,manifest['version'].split('.'))
     version[-1] += 1
