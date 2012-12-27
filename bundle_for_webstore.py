@@ -17,6 +17,10 @@ def bundle():
     if os.path.isdir('temp'):
         shutil.rmtree('temp')
     
+    # Delete any existing zip file
+    if os.path.isfile('gombot-webstore.zip'):
+        os.unlink('gombot-webstore.zip')
+    
     # Copy this directory
     shutil.copytree('.','temp')
     
@@ -33,11 +37,7 @@ def bundle():
     
     # Update gombot manifest.json
     changeManifest('temp/manifest.json')
-    
-    # Delete any existing zip file
-    if os.path.isfile('gombot-webstore.zip'):
-        os.unlink('gombot-webstore.zip')
-    
+        
     # Zip up temp directory
     call(['/usr/bin/zip', '-r', 'gombot-webstore', 'temp'], stdout=PIPE, stderr=PIPE)
     
