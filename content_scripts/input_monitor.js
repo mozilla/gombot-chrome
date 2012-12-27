@@ -1,3 +1,8 @@
+// ConditionMonitor creates objects that monitor the DOM for added input objects,
+// and calls a callback function when new inputs are added to the DOM.
+// Public functions:
+//    start: starts the monitor
+//    stop: stops the monitor
 var InputMonitor = function(MutationObserver) {
 
     function mutationContainsAddedInput(mutation) {
@@ -5,7 +10,7 @@ var InputMonitor = function(MutationObserver) {
            addedNodesLength = addedNodes.length,
            i;
 
-        if (addedNodesLength == 0) {
+        if (addedNodesLength === 0) {
             return false;
         }
         for (i=0; i<addedNodesLength; i++) {
