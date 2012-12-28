@@ -17,26 +17,27 @@ def bundle():
     if os.path.isdir('temp'):
         shutil.rmtree('temp')
     
+    # Delete any existing zip file
+    if os.path.isfile('gombot-webstore.zip'):
+        os.unlink('gombot-webstore.zip')
+    
     # Copy this directory
     shutil.copytree('.','temp')
     
     # Delete git stuff in temp directory
     if os.path.isdir('temp/.git'):
         shutil.rmtree('temp/.git')
-    
-    # Delete server code
-    shutil.rmtree('temp/server')
-    
+        
+    # Delete options page code, it's debug only
+    if os.path.isdir('temp/pages/debug_settings'):
+        shutil.rmtree('temp/pages/debug_settings')
+        
     # Delete infobar manifest
     os.unlink('temp/infobar/manifest.json')
     
     # Update gombot manifest.json
     changeManifest('temp/manifest.json')
-    
-    # Delete any existing zip file
-    if os.path.isfile('gombot-webstore.zip'):
-        os.unlink('gombot-webstore.zip')
-    
+        
     # Zip up temp directory
     call(['/usr/bin/zip', '-r', 'gombot-webstore', 'temp'], stdout=PIPE, stderr=PIPE)
     
@@ -49,6 +50,9 @@ def changeManifest(manifestFilename):
     # Remove update_url, web store does its own updating
     if manifest.get('update_url'):
         del manifest['update_url']
+    # Remove options page, it's debug-only
+    if manifest.get('options_page'):
+        del manifest['options_page']
     # Bump up minor version number
     version = map(int,manifest['version'].split('.'))
     version[-1] += 1
