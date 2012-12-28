@@ -2,11 +2,11 @@
 *   main.js
 *
 *
-*   Main file that "boots up" the extension with initSkyCrane. Also handles popup notifications.
+*   Main file that "boots up" the extension with initGombot. Also handles popup notifications.
 *
 */
 
-//initSkyCrane();
+initGombot();
 
 var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
@@ -15,7 +15,7 @@ Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.TldService);
 Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage);
 
 
-function initSkyCrane() {
+function initGombot() {
     // Load blacklisted sites from local storage
     getNeverSaveOnSites(function(siteNames) { neverSaveOnSites = siteNames; });
     // Load PIN lock state from localStorage
