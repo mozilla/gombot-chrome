@@ -1,4 +1,4 @@
-var PasswordFormInspector = function($) {
+var PasswordFormInspector = function($, PasswordForm) {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
 
     var idCounter = 0;
@@ -28,7 +28,7 @@ var PasswordFormInspector = function($) {
             var $passwordEl = $(passwordEl),
                 $containingForm = $passwordEl.closest('form'),
                 usernameEl,
-                usernameFields = [],
+                usernameFields = {},
                 numPasswordInputs;
             if ($containingForm.length === 0) {
                 console.log("Could not find form element, passwordEl=", $passwordEl);
@@ -51,14 +51,9 @@ var PasswordFormInspector = function($) {
             if (numPasswordInputs > 1) return;
             usernameEl = getUsernameFieldForPasswordField($containingForm,passwordEl);
             if (usernameEl) {
-                usernameFields.push({el: usernameEl, name: "username"});
+                usernameFields["username"] = { el: usernameEl };
             }
-            result.loginForms.push({
-                usernameFields: usernameFields,
-                passwordField: { el: passwordEl },
-                containingEl: $containingForm.get()[0],
-                id: generateId()
-            });
+            result.loginForms.push(new PasswordForm(generateId(), usernameFields, { el: passwordEl }, $containingForm.get(0)));
         });
         return result;
     }
