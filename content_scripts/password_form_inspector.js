@@ -41,6 +41,10 @@ var PasswordFormInspector = function($) {
             if ($containingForm.length === 0) {
                 return;
             }
+            // Setting 'autocomplete' to 'off' will signal to the native
+            // password manager to ignore this login wrt filling and capturing.
+            // This solves the "double infobar" problem when linking.
+            passwordEl.setAttribute('autocomplete', 'off');
             numPasswordInputs = $containingForm.find('input[type=password]').length;
             // If the containing form contains multiple password field, then ignore
             // for now. This is probably a change password field.
