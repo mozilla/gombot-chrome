@@ -18,12 +18,14 @@ $(document).ready(function() {
         ok = checkEmail() && ok;
         ok = checkPasswords() && ok;
         if (ok) {
+            ProgressIndicator.show();
             client.account({
                 email: $('[name="email"]').get()[0].value,
                 pass: $('[name="password"]').get()[0].value,
                 newsletter: $('[name="newsletter"]').get()[0].value === 'subscribe',
             }, function (err, result){
                 busy = false;
+                ProgressIndicator.hide();
                 console.log('result', err, result);
                 if (!err && result.success) {
                   window.location = 'success.html';
@@ -37,6 +39,23 @@ $(document).ready(function() {
         }
     });
 });
+
+var ProgressIndicator = (function() {
+    var indicatorImage = $('<img>')
+    .addClass('progress-indicator-image')
+    .attr('src','/images/spinny.gif').get(0);
+    return {
+        show: function() {
+            if ($('.progress-indicator').has(indicatorImage).length == 0) {
+                $('.progress-indicator').append(indicatorImage);
+            }
+            $(indicatorImage).show();
+        },
+        hide: function() {
+            $(indicatorImage).hide();
+        }
+    }
+})();
 
 function checkPINs() {
     var pin = $('[name="pin"]').get()[0];
