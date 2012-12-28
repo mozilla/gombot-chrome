@@ -6,7 +6,6 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
     // Check to see if the user disabled password saving on this site
     if (neverSaveOnSites.indexOf(notificationObj.hostname) != -1) return;
     notificationObj.type = 'password_observed';
-    notificationObj.hash = SHA1(notificationObj.password);
     // Look for passwords in use on the current site
     getLoginsForSite(notificationObj.hostname,function(logins) {
       if (logins === undefined) logins = [];
@@ -22,7 +21,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
         }
         else {
           // Prompt user to update password
-                      notificationObj.type = 'update_password';
+          notificationObj.type = 'update_password';
           // If the existing login stored for this site was PIN locked,
           // make sure this new one will be also.
           notificationObj.pinLocked = logins[0].pinLocked;
@@ -123,6 +122,16 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   function deleteCapturedCredentials(message, sender, callback) {
     CapturedCredentialStorage.deleteCredentials(message, sender.tab);
   }
+  
+  function getSavedCredentials(message, sender, callback) {
+    var hostname = (new Uri(sender.tab.url)).host();
+    getLoginsForSite(hostname, function(logins) {
+      callback(logins);
+    });
+    // Chrome requires that we return true if we plan to call a callback
+    // after an onMessage function returns.
+    return true;
+  }
 
   var commandHandlers = {
     'add_login': addLogin,
@@ -130,7 +139,8 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
     'validate_pin': validatePin,
     'set_captured_credentials': setCapturedCredentials,
     'get_captured_credentials': getCapturedCredentials,
-    'delete_captured_credentials': deleteCapturedCredentials
+    'delete_captured_credentials': deleteCapturedCredentials,
+    'get_saved_credentials': getSavedCredentials
   };
 
   //
@@ -139,7 +149,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   Messaging.addContentMessageListener(function(request, sender, sendResponse) {
     if (request.type && commandHandlers[request.type]) {
       console.log("Msg received", request);
-      commandHandlers[request.type].call(commandHandlers,request.message,sender,sendResponse);
+      return commandHandlers[request.type].call(commandHandlers,request.message,sender,sendResponse);
     }
   });
 };
