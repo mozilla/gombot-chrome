@@ -109,7 +109,20 @@ function getLoginsForSite(hostname,callback) {
       if (storageObj[siteLoginsKey] == undefined) storageObj[siteLoginsKey] = {};
       var storedLogins = storageObj[siteLoginsKey].stored_logins;
       if (storedLogins === undefined) storedLogins = [];
-      callback(storedLogins);
+      function formatStoredLogin(login) {
+          return {
+              username: login.username,
+              password: login.password,
+              hostname: login.hostname,
+              
+              // Fields that may be missing
+              title: login['title'] || '',
+              url: login['url'] || '',
+              pinLocked: login['pinLocked'] || false,
+              supplementalInformation: login['supplementalInformation'] || {},   
+          };
+      }
+      callback(storedLogins.map(formatStoredLogin));
   });
 }
   

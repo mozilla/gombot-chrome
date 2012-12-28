@@ -60,6 +60,9 @@ function maybePromptToSaveCapturedCredentials() {
         Gombot.Messaging.messageToChrome(loginObj);
     };
     Gombot.Messaging.messageToChrome({ type: "get_captured_credentials" }, callback);
+    Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(x) {
+        console.log('saved credentials: ', x);
+    });
 }
 
 function start() {
