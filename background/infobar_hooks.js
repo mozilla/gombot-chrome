@@ -14,12 +14,8 @@ var infobarHooks = {
             break;
         
             case 'pin_lock':
-                notificationObj.notification.pin_locked = true;
+                notificationObj.notification.pinLocked = true;
                 saveToStorage(notificationObj.notification);
-    
-                if (loginsLock.type != 'pin') {
-                    createPIN();
-                }
             break;
         
             case 'never_for_this_site':

@@ -25,7 +25,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
                       notificationObj.type = 'update_password';
           // If the existing login stored for this site was PIN locked,
           // make sure this new one will be also.
-          notificationObj.pin_locked = logins[0].pin_locked;
+          notificationObj.pinLocked = logins[0].pinLocked;
         }
       }
       // Has the user signed up for a Gombot account?
@@ -65,7 +65,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
 
       if (logins.length == 1) {
         // Is the login for this site PIN locked?
-        if (logins[0].pin_locked) {
+        if (logins[0].pinLocked) {
           // If it is, show the PIN entry infobar.
           displayInfobar({
             notify: true,
@@ -73,7 +73,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
             notification: {
               type: 'pin_entry',
               // Include the tabID in the notification so the infobar handler
-              //  can trigger autofill in the correct tab.
+              // can trigger autofill in the correct tab.
               tabID: tabID
             }
           });
