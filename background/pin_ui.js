@@ -23,7 +23,7 @@ function promptUserForPIN(prompt,repeat,callback) {
     }, function(win) {
         var tabID = win.tabs[0].id;
         // Wait a beat for the page to load.
-        setTimeout(function() { 
+        setTimeout(function() {
             callbackMap[lastPopupID] = {
                 'callback': callback,
                 'tab_id': tabID
@@ -41,17 +41,17 @@ function promptUserForPIN(prompt,repeat,callback) {
     });
 }
 
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log('What was sent: ',request);
-    if (request.type == 'submit_pin') {
-        // Callback ID will be missing if the call comes from inside of an iframe.
-        // In that case, the PIN entry was created outside of pin_ui.js, and we don't
-        // need to do any handling here.
-        // FIXME: callback_id is null inside of iframe
-        if (request.callback_id === undefined) return;
-        chrome.tabs.remove(callbackMap[request.callback_id].tab_id);
-        var callbackFunc = callbackMap[request.callback_id].callback;
-        if (callbackFunc === undefined) return;
-        callbackFunc(request.pin);
-    }
-});
+// chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+//     console.log('What was sent: ',request);
+//     if (request.type == 'submit_pin') {
+//         // Callback ID will be missing if the call comes from inside of an iframe.
+//         // In that case, the PIN entry was created outside of pin_ui.js, and we don't
+//         // need to do any handling here.
+//         // FIXME: callback_id is null inside of iframe
+//         if (request.callback_id === undefined) return;
+//         chrome.tabs.remove(callbackMap[request.callback_id].tab_id);
+//         var callbackFunc = callbackMap[request.callback_id].callback;
+//         if (callbackFunc === undefined) return;
+//         callbackFunc(request.pin);
+//     }
+// });

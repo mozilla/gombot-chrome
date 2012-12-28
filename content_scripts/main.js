@@ -10,13 +10,6 @@ function markDetected(el, color) {
     el.setAttribute('data-detected', 'true');
 }
 
-function captureCredentials(form) {
-    console.log(form);
-    delete form.containingEl;
-    Gombot.Messaging.messageToChrome({ type: "set_captured_credentials",
-                                       message: form });
-}
-
 function highlightLoginForms() {
     var res = Gombot.PasswordFormInspector.findForms(),
         loginForms = res.loginForms,
@@ -45,9 +38,32 @@ function highlightLoginForms() {
     }
 }
 
+function captureCredentials(form) {
+    delete form.containingEl;
+    Gombot.Messaging.messageToChrome({ type: "set_captured_credentials",
+                                       message: form });
+}
+
+function maybePromptToSaveCapturedCredentials() {
+    var callback = function(credentials) {
+        if (!credentials) return;
+        var loginObj = {
+            message: {
+                hostname: credentials.domain,
+                username: credentials.usernames[0].username,
+                password: credentials.password
+            },
+            type: 'add_login'
+        }
+        // prompt for infobar TODO: factor this into client scripts
+        Gombot.Messaging.messageToChrome(loginObj);
+    };
+    Gombot.Messaging.messageToChrome({ type: "get_captured_credentials" }, callback);
+}
+
 function start() {
     // Run on page load
-    Gombot.Messaging.messageToChrome({ type: "get_captured_credentials" }, function(credentials) { console.log("Previously captured credentials", credentials); });
+    maybePromptToSaveCapturedCredentials();
     var inputMonitor = new Gombot.InputMonitor(highlightLoginForms);
     highlightLoginForms();
     inputMonitor.start();

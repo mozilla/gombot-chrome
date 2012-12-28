@@ -14,9 +14,12 @@ var CapturedCredentialStorage = function(TldService) {
 	//     id: identifier for the credential's source
 	//     url: url of the credential's source
 	function setCredentials(credentials, source) {
-		credentials.domain = source.url;//TldService.tldForUrl(source.url);
-		storage[source.id] = credentials;
-		console.log("Storing credentials", credentials);
+		var callback = function(tld) {
+			credentials.domain = tld;
+			storage[source.id] = credentials;
+			console.log("Storing credentials", credentials);
+		};
+		TldService.tldForDomain((new Uri(source.url)).host(), callback);
 	}
 
 	function getCrendentials(credentials, source, callback) {

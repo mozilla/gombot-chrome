@@ -5,7 +5,7 @@ var ContentMessaging = function() {
   }
 
   function messageToChrome(message, callback) {
-    callback = callback || function() {}; // chrome likes this to be something
+    callback = callback || function() {};
 		chrome.extension.sendMessage(message, callback);
   }
 

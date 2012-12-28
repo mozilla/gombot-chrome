@@ -1,8 +1,11 @@
 var PasswordFormInspector = function($) {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
 
+    var idCounter = 0;
+
     function generateId() {
-        return Math.floor(Math.random()*10000000);
+        idCounter += 1;
+        return idCounter;
     }
 
     function getUsernameFieldForPasswordField(containerForm,passwordEl) {
