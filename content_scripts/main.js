@@ -1,8 +1,8 @@
 var Gombot = {};
 
 Gombot.Messaging = ContentMessaging();
-Gombot.PasswordFormInspector = PasswordFormInspector(jQuery);
-Gombot.PasswordFormObserver = PasswordFormObserver(jQuery);
+Gombot.PasswordForm = PasswordForm(jQuery);
+Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm);
 Gombot.InputMonitor = InputMonitor(window.MutationObserver || window.WebKitMutationObserver);
 
 function markDetected(el, color) {
@@ -13,16 +13,31 @@ function markDetected(el, color) {
 function highlightLoginForms() {
     var res = Gombot.PasswordFormInspector.findForms(),
         loginForms = res.loginForms,
-        form,
-        observers = [];
+        form;
+    if (loginForms.length > 0) {
+        Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(credentials) {
+            if(_.any(credentials, function(credential) { return credential.pinLocked; })) {
+                //Gombot.Messaging.messageToChrome({ })
+            }
+            else {
+                if (credentials.length > 0) {
+                    loginForms.forEach(function(form) {
+                        form.fill({ username: credentials[0].username }, credentials[0].password);
+                    });
+                }
+            }
+        });
+    }
     loginForms.forEach(function(loginForm) {
-        observers.push(new Gombot.PasswordFormObserver(loginForm, captureCredentials));
+        loginForm.startObserver(captureCredentials);
     });
     for (var formX = 0; formX < loginForms.length; formX++) {
         form = loginForms[formX];
-        if (form.usernameFields.length > 0) {
-            markDetected(form.usernameFields[0].el, "blue");
-        } else {
+        var usernameFieldNames = Object.getOwnPropertyNames(form.usernameFields);
+        usernameFieldNames.forEach(function(usernameFieldName) {
+            markDetected(form.usernameFields[usernameFieldName].el, "blue");
+        });
+        if (usernameFieldNames.length === 0) {
             console.log("No username field found for", form);
         }
         if (form.passwordField.el) {
@@ -50,7 +65,7 @@ function maybePromptToSaveCapturedCredentials() {
         var loginObj = {
             message: {
                 hostname: credentials.domain,
-                username: credentials.usernames[0].username,
+                username: credentials.usernames.username,
                 password: credentials.password
             },
             type: 'add_login'
@@ -59,9 +74,6 @@ function maybePromptToSaveCapturedCredentials() {
         Gombot.Messaging.messageToChrome(loginObj);
     };
     Gombot.Messaging.messageToChrome({ type: "get_captured_credentials" }, callback);
-    Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(x) {
-        console.log('saved credentials: ', x);
-    });
 }
 
 function start() {
