@@ -14,6 +14,20 @@ function highlightLoginForms() {
     var res = Gombot.PasswordFormInspector.findForms(),
         loginForms = res.loginForms,
         form;
+    if (loginForms.length > 0) {
+        Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(credentials) {
+            if(_.any(credentials, function(credential) { return credential.pinLocked; })) {
+                //Gombot.Messaging.messageToChrome({ })
+            }
+            else {
+                if (credentials.length > 0) {
+                    loginForms.forEach(function(form) {
+                        form.fill({ username: credentials[0].username }, credentials[0].password);
+                    });
+                }
+            }
+        });
+    }
     loginForms.forEach(function(loginForm) {
         loginForm.startObserver(captureCredentials);
     });
@@ -60,9 +74,6 @@ function maybePromptToSaveCapturedCredentials() {
         Gombot.Messaging.messageToChrome(loginObj);
     };
     Gombot.Messaging.messageToChrome({ type: "get_captured_credentials" }, callback);
-    Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(x) {
-        console.log('saved credentials: ', x);
-    });
 }
 
 function start() {

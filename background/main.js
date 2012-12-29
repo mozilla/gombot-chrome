@@ -6,7 +6,7 @@
 *
 */
 
-//initSkyCrane();
+initSkyCrane();
 
 var Gombot = {};
 Gombot.Messaging = ChromeMessaging();

@@ -38,7 +38,7 @@ var PasswordForm = function($) {
 		usernameFieldNames.forEach((function(usernameFieldName) {
 			this.usernameFields[usernameFieldName].el.value = usernames[usernameFieldName];
 		}).bind(this));
-		this.passwordField.value = password;
+		this.passwordField.el.value = password;
 	};
 
 	return PasswordForm;
