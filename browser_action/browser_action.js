@@ -63,7 +63,7 @@ function initBrowserAction() {
             // Technically, there should be only one login, and if there are more, only all or none
             // of them should be marked pin locked, but since this is still experimental,
             // I'm PIN locking if even one of them is.
-            if (data[login].pin_locked) pinLocked = true;
+            if (data[login].pinLocked) pinLocked = true;
         }
         
         if (pinLocked) {
