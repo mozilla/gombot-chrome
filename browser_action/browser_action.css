@@ -44,6 +44,10 @@ x-pin > div.x-pin-fields > input {
     padding:10px;
 }
 
+#export-data-link {
+    display:none;
+}
+
 #logins {
     margin-bottom:10px;
 }
