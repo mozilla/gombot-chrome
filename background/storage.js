@@ -71,7 +71,7 @@ function saveToStorage(newLogin) {
       if (storageLogins.stored_logins === undefined) storageLogins.stored_logins = [];
       // Filter for similar logins.
       storageLogins.stored_logins = storageLogins.stored_logins.filter(function(_login) {
-          return _login.hostname != newLogin.hostname && _login.username != newLogin.username;
+          return _login.username != newLogin.username;
       });
       storageLogins.stored_logins.push(newLogin);
       storageObj[siteLoginsKey] = storageLogins;
