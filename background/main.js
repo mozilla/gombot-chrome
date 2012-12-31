@@ -201,17 +201,8 @@ function testInfobarNotification() {
 }
 
 //
-// PIN creation and validation
+// PIN validation
 //
-
-// Prompts the user to create a new PIN in a popup window. We should be able to
-// remove this soon, since PIN creation now happens in the first run flow.
-function createPIN() {
-  promptUserForPIN("Please enter a 4-digit PIN code to lock your sites.", true, function(newPIN) {
-	  setAndSavePIN(newPIN);
-  });
-}
-
 
 function validatePIN(_pin) {
     // If there's no PIN set, accept.

@@ -30,9 +30,6 @@
   },
   "update_url": "http://dev.tobmog.org/downloads/updates.xml",
   "web_accessible_resources": [
-    "common/pin_entry.html",
-    "common/pin_entry.js",
-    "common/pin_entry.css",
     "infobars/*"
   ]
 }
