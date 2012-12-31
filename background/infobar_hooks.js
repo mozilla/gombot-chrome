@@ -35,10 +35,15 @@ var infobarHooks = {
     'pin_entry': function(notificationObj,infobarResponse) {
         if (infobarResponse.pin_valid) {
             console.log(notificationObj)
-            chrome.tabs.get(notificationObj.tabID, function(tab) {
-                formFillTab(tab);
-            });
-        }   
+            if (notificationObj.notification.callback) {
+                notificationObj.notification.callback()
+            }
+            else {
+                chrome.tabs.get(notificationObj.tabID, function(tab) {
+                    formFillTab(tab);
+                });   
+            }
+        }
     },
     'update_password': function(notificationObj,infobarResponse) {
         saveToStorage(notificationObj.notification);

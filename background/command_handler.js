@@ -107,7 +107,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
 
   function validatePin(message, sender, callback) {
     callback({
-        'is_valid': validatePIN(args.pin) // TODO: need to port this over
+        'is_valid': validatePIN(message.pin) // TODO: need to port this over
     });
   }
 
@@ -132,11 +132,27 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
     // after an onMessage function returns.
     return true;
   }
+  
+  function showPINPromptInfobar(message, sender, callback) {
+      displayInfobar({
+        notify: true,
+        tabID: sender.tab,
+        notification: {
+          type: 'pin_entry',
+          // Include the tabID in the notification so the infobar handler
+          // can trigger autofill in the correct tab.
+          tabID: sender.tab.id,
+          callback: callback
+        }
+      });
+      return true;
+  }
 
   var commandHandlers = {
     'add_login': addLogin,
     'observing_page': observingPage,
     'validate_pin': validatePin,
+    'prompt_for_pin': showPINPromptInfobar,
     'set_captured_credentials': setCapturedCredentials,
     'get_captured_credentials': getCapturedCredentials,
     'delete_captured_credentials': deleteCapturedCredentials,

@@ -17,7 +17,14 @@ function highlightLoginForms() {
     if (loginForms.length > 0) {
         Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(credentials) {
             if(_.any(credentials, function(credential) { return credential.pinLocked; })) {
-                //Gombot.Messaging.messageToChrome({ })
+                console.log('Locked!');
+                Gombot.Messaging.messageToChrome({
+                    type: 'prompt_for_pin'
+                }, function() {
+                    loginForms.forEach(function(form) {
+                        form.fill({ username: credentials[0].username }, credentials[0].password);
+                    });                    
+                });
             }
             else {
                 if (credentials.length > 0) {
