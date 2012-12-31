@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <link href="../lib/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/pages/common/x-tags/pin/pin.css" media="screen" />
     <link href="../common/pin_entry.css" rel="stylesheet">
     <link href="browser_action.css" rel="stylesheet">
     <script src="../lib/jquery.js"></script>
+    <script src="/pages/common/js/libs/x-tag.js"></script>
+    <script src="/pages/common/x-tags/pin/pin.js"></script>
     <script src="browser_action.js"></script>
 </head>
 
@@ -21,7 +24,10 @@
             <a id="signup-link" href="#">Sign up</a> for Gombot to get started!
         </div>
         <hr>
-        <iframe src="../common/pin_entry.html" id="pin-entry-frame"></iframe>
+        <div id="pin-prompt">
+            Enter PIN to unlock site
+        </div>
+        <x-pin name="pin" size="4"></x-pin>
         <div id="logins"></div>
         <div id="no-logins-saved">
             No accounts saved for this site.

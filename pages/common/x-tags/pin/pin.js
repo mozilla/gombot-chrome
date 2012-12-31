@@ -9,12 +9,27 @@
       elem.setAttribute('size', '1');
       elem.setAttribute('maxlength', '1');
       elem.setAttribute('data-index', i);
+      function updateValue() {
+          var val = [].splice.call(pin.value, 0);
+          val[this.dataset.index] = this.value;
+          pin.xtag.input.value = val.join('');          
+      }
       elem.onchange = function (e){
-        var val = [].splice.call(pin.value, 0);
-        val[this.dataset.index] = this.value;
-        pin.xtag.input.value = val.join('');
+        updateValue.call(this);
+      };
+      elem.onkeypress = function (e){
+          // Only allow the user to type digits
+          if (e.charCode < '0'.charCodeAt(0) || e.charCode > '9'.charCodeAt(0)) {
+              e.preventDefault();
+              return;
+          }
+          var inputEl = this;
+          setTimeout(function() {
+              xtag.fireEvent(pin, 'changed', { pin: inputEl.value });
+          },1);
       };
       elem.oninput = function (e){
+        updateValue.call(this);
         var fields = pin.xtag.fields.childNodes;
         var i = parseInt(this.dataset.index, 10) + 1;
         if (this.value.length && i < pin.size) {
