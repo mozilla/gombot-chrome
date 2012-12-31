@@ -14,6 +14,13 @@ hr {
     margin:7px 0;
 }
 
+x-pin > div.x-pin-fields > input {
+    width:42px;
+    height:65px;
+    background:-webkit-linear-gradient(top, #DDD 0%,white 100%);
+    font-size:48pt;
+}
+
 .login .copy-button {
     display:none;
     padding:0px;
@@ -47,7 +54,13 @@ hr {
 }
 
 #pin-entry {
-    display:none;
+/*    display:none;*/
+}
+
+#pin-entry input {
+    font-size:48pt;
+    width:50px;
+    height:70px;
 }
 
 #pin-entry-frame {

@@ -4,7 +4,7 @@
 *
 *   This code runs inside of the browser action popup. Enables the user
 *   to choose a login and copy the corresponding password to their clipboard,
-*   as well as prompting them for a PIN inside of a iframe (pin_entry.html).
+*   as well as prompting them for a PIN to view their passwords..
 *
 */
 
@@ -69,43 +69,26 @@ function initBrowserAction() {
         if (pinLocked) {
             $('#logins').hide();
             $('#pin-entry-frame').show();
-            var pinEntryIframe = $('#pin-entry-frame').get()[0];
-            // Use setTimeout to wait a beat so the document ready handler in pin_entry.js
-            // has a chance to run.
-            setTimeout(function() {
-                pinEntryIframe.contentWindow.postMessage({
-                    'type': 'set_prompt',
-                    'prompt': "Enter your PIN to see your accounts for this site."
-                }, '*');
-                // This tells pin_entry.js to use window.postMessage instead of 
-                // chrome.extension.sendMessage.
-                pinEntryIframe.contentWindow.postMessage({
-                    'type': 'set_container',
-                    'in_iframe': true
-                }, '*');
-            },1);
-            pinEntryIframe.contentWindow.addEventListener('message',function(e) {
-				var msg = e.data;
-				switch(msg.type) {
-					case 'submit_pin':
-						if (backgroundPage.validatePIN(msg.pin)) {
-				            $('#logins').show();
-				            $('#pin-entry-frame').hide();
-                            // The user has successfully authenticatd with their PIN,
-                            // so fill in the forms on the current page.
-                            backgroundPage.formFillCurrentTab();
-						}
-						else {
-			                pinEntryIframe.contentWindow.postMessage({
-			                    'type': 'set_prompt',
-			                    'prompt': "Sorry, that was incorrect. Please try again."
-			                }, '*');
-			                pinEntryIframe.contentWindow.postMessage({
-			                    'type': 'reset_entry'
-			                }, '*');
-						}	
-					break;
-				}
+            var pinEntryWidget = $('[name="pin"]').get()[0];
+            // Focus on first PIN digit
+            $('x-pin input:first').focus();
+            pinEntryWidget.addEventListener('changed', function(e) {
+                // Ensure the user has finished entering their PIN.
+                if (pinEntryWidget.value.length == 4) {
+                    if (backgroundPage.validatePIN(pinEntryWidget.value)) {
+			            $('#logins').show();
+			            $('#pin-prompt').hide();
+			            $('x-pin').hide();
+                        // The user has successfully authenticatd with their PIN,
+                        // so fill in the forms on the current page.
+                        backgroundPage.formFillCurrentTab();
+                    }
+                    else {
+                        $('#pin-prompt').html('Sorry, that was incorrect. Please try again.');
+                        $('x-pin input').val('');
+                        $('x-pin input:visible:first').focus();
+                    }
+                }
             });
         } 
         $('.copy-button').click(function() {
