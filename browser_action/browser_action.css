@@ -59,13 +59,7 @@ x-pin > div.x-pin-fields > input {
 }
 
 #pin-entry {
-/*    display:none;*/
-}
-
-#pin-entry input {
-    font-size:48pt;
-    width:50px;
-    height:70px;
+    display:none;
 }
 
 #signup-nag {
