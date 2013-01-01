@@ -42,6 +42,7 @@ x-pin > div.x-pin-fields > input {
 
 #container {
     padding:10px;
+    min-width:275px;
 }
 
 #logins {
@@ -54,16 +55,6 @@ x-pin > div.x-pin-fields > input {
 }
 
 #pin-entry {
-/*    display:none;*/
-}
-
-#pin-entry input {
-    font-size:48pt;
-    width:50px;
-    height:70px;
-}
-
-#pin-entry-frame {
     display:none;
 }
 

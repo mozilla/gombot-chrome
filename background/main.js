@@ -49,7 +49,7 @@ var messageHandlers = {
                     notificationObj.type = 'update_password';
                     // If the existing login stored for this site was PIN locked,
                     // make sure this new one will be also.
-                    notificationObj.pin_locked = logins[0].pin_locked;
+                    notificationObj.pinLocked = logins[0].pinLocked;
                 }
             }
             // Has the user signed up for a Gombot account?
@@ -88,7 +88,7 @@ var messageHandlers = {
 
             if (logins.length == 1) {
                 // Is the login for this site PIN locked?
-                if (logins[0].pin_locked) {
+                if (logins[0].pinLocked) {
                     // If it is, show the PIN entry infobar.
                     displayInfobar({
                         notify: true,

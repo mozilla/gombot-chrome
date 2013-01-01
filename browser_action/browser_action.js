@@ -68,7 +68,7 @@ function initBrowserAction() {
         
         if (pinLocked) {
             $('#logins').hide();
-            $('#pin-entry-frame').show();
+            $('#pin-entry').show();
             var pinEntryWidget = $('[name="pin"]').get()[0];
             // Focus on first PIN digit
             $('x-pin input:first').focus();
