@@ -65,10 +65,10 @@ function initBrowserAction() {
             // I'm PIN locking if even one of them is.
             if (data[login].pinLocked) pinLocked = true;
         }
-        
+
         if (pinLocked) {
             $('#logins').hide();
-            $('#pin-entry-frame').show();
+            $('#pin-entry').show();
             var pinEntryWidget = $('[name="pin"]').get()[0];
             // Focus on first PIN digit
             $('x-pin input:first').focus();
@@ -90,7 +90,7 @@ function initBrowserAction() {
                     }
                 }
             });
-        } 
+        }
         $('.copy-button').click(function() {
             copyToClipboard($(this).attr('data-password'));
         });

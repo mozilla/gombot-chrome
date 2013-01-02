@@ -1,4 +1,4 @@
-// TODO: Unite this, common/pin_entry.js, and pages/common/x-tags/pin/pin.js into something
+// TODO: Unite this and pages/common/x-tags/pin/pin.js into something
 // reusable and not jQuery dependant.
 
 $(document).ready(function() {

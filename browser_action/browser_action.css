@@ -42,6 +42,7 @@ x-pin > div.x-pin-fields > input {
 
 #container {
     padding:10px;
+    min-width:275px;
 }
 
 #export-data-link {
@@ -65,10 +66,6 @@ x-pin > div.x-pin-fields > input {
     font-size:48pt;
     width:50px;
     height:70px;
-}
-
-#pin-entry-frame {
-    display:none;
 }
 
 #signup-nag {
