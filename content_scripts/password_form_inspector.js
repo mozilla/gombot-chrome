@@ -1,4 +1,4 @@
-var PasswordFormInspector = function($, PasswordForm, InputMonitor, Linker, Messaging) {
+var PasswordFormInspector = function($, PasswordForm, InputMonitor) {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
 
     var observers = [];
@@ -56,47 +56,71 @@ var PasswordFormInspector = function($, PasswordForm, InputMonitor, Linker, Mess
             // for now. This is probably a change password field.
             if (numPasswordInputs > 1) return;
             usernameEl = getUsernameFieldForPasswordField($containingForm,passwordEl);
-            if (usernameEl) {
-                usernameFields["username"] = { el: usernameEl };
-            }
-            passwordForms.push(new PasswordForm(generateId(), usernameFields, { el: passwordEl }, $containingForm.get(0)));
+            passwordForms.push(new PasswordForm(generateId(),
+                                                { el: usernameEl },
+                                                { el: passwordEl },
+                                                $containingForm.get(0)));
         });
+        observeForms();
     }
 
+    function credentialsCaptured(passwordForm) {
+        var creds = { formId: passwordForm.id,
+                      username: passwordForm.getUsername(),
+                      password: passwordForm.getPassword() };
+        visitObservers("credentialsCaptured", creds);
+    }
 
+    var passwordFormObserver = {
+        credentialsCaptured: credentialsCaptured
+    };
 
+    // internal function to start observing the form collection
+    // Currently just notifies observers of captured credentials
     function observeForms() {
-        var callback = function(capturedCredentials) {
-            visitObservers("credentialsCaptured", capturedCredentials);
-        }
         passwordForms.forEach(function(form) {
-            form.observe(callback);
+            form.observe(passwordFormObserver);
         });
     }
 
-    function getForms() {
-        return passwordForms;
+    function visitObservers(fn) {
+        var args = Array.prototype.slice.call(arguments,1);
+        args.unshift(self);
+        observers.forEach(function(o) {
+            if (o[fn]) {
+                o[fn].apply(o, args);
+            }
+        });
     }
+
+    // PUBLIC SECTION
 
     function observe(observer) {
         observers.push(observer);
         // if we have password forms, then notify observer immediately
         if (passwordForms.length > 0 && observer.formsFound) {
-            observer.formsFound(passwordForms);
+            observer.formsFound(self);
         }
     }
 
-    function visitObservers(fn, arg) {
-        console.log("visitObservers", observers);
-        observers.forEach(function(o) {
-            if (o[fn]) {
-                o[fn](arg);
-            }
+    // highlights all password forms on page
+    function highlight() {
+        passwordForms.forEach(function(form) {
+            form.highlight();
+        });
+    }
+
+    function fill(credentials) {
+        passwordForms.forEach(function(form) {
+            form.fill(credentials);
         });
     }
 
     function start() {
-        inputMonitor = new InputMonitor(function () { findForms(); visitObservers("formsFound", passwordForms); });
+        inputMonitor = new InputMonitor(function () {
+            findForms();
+            visitObservers("formsFound", passwordForms);
+        });
         findForms();
         inputMonitor.start();
     }
@@ -105,10 +129,12 @@ var PasswordFormInspector = function($, PasswordForm, InputMonitor, Linker, Mess
 
     }
 
-    return {
+    var self = {
         start: start,
         observe: observe,
-        getForms: getForms,
+        fillForms: fill,
+        highlightForms: highlight,
         cleanup: cleanup
     };
+    return self;
 };

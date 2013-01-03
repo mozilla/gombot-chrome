@@ -1,55 +1,66 @@
 var PasswordForm = function($) {
 
-	function extractCredentials(event) {
-		var result = { formId: this.id, usernames: {}, password: "" },
-		    usernameFieldNames;
-		usernameFieldNames = Object.getOwnPropertyNames(this.usernameFields);
-		usernameFieldNames.forEach((function(usernameFieldName) {
-			result.usernames[usernameFieldName] = this.usernameFields[usernameFieldName].el.value;
-		}).bind(this));
-		result.password = this.passwordField.el.value;
-		//console.log("Extracting credentials:", result);
-		this.observerCallback(result);
+	function notifyObserver(fn) {
+		var args;
+	  if (this.observer[fn]) {
+        args = Array.prototype.slice.call(arguments,1);
+        args.unshift(this);
+	      this.observer[fn].apply(this.observer, args);
+	  }
 	}
 
-	var PasswordForm = function(id, usernameFields, passwordField, containingEl) {
+	var PasswordForm = function(id, usernameField, passwordField, containingEl) {
 		this.id = id;
-		this.usernameFields = usernameFields;
+		this.usernameField = usernameField;
 		this.passwordField = passwordField;
 		this.containingEl = containingEl;
 		this.$containingEl = $(this.containingEl);
-		this.observerCallback = null;
 		// "input" event will capture paste input and key by key input on modern browsers
 		// Note: this will not trigger when values are filled by javsacript or the browser
 		this.inputEvents = "input."+this.id;
 		this.submitEvents = "submit."+this.id;
+		this.observer = null;
 	};
 
 	// TODO: consider whether to make this a multiple event thingy
 	// We could have each form individually monitor when it disappears or
 	// becomes visible, invisible, or removed.
-	PasswordForm.prototype.observe = function(observerCallback) {
-		this.observerCallback = observerCallback;
-		var boundExtractCredentials = extractCredentials.bind(this);
-		this.$containingEl.on(this.inputEvents, "input", boundExtractCredentials);
-		this.$containingEl.on(this.submitEvents, boundExtractCredentials);
+	PasswordForm.prototype.observe = function(observer) {
+		this.observer = observer;
+		var boundNotifyObserver = notifyObserver.bind(this);
+		var capturedCredentialsNotify = function(event) {
+			boundNotifyObserver("credentialsCaptured");
+		};
+		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsNotify);
+		this.$containingEl.on(this.submitEvents, capturedCredentialsNotify);
 		return this;
 	};
 
 	PasswordForm.prototype.unobserve = function() {
 		this.$containingEl.off(this.inputEvents);
 		this.$containingEl.off(this.submitEvents);
-		this.observerCallback = null;
+		this.observer = null;
 		return this;
 	};
 
-	PasswordForm.prototype.fill = function(usernames, password) {
-		var usernameFieldNames = Object.getOwnPropertyNames(this.usernameFields);
-		usernameFieldNames.forEach((function(usernameFieldName) {
-			this.usernameFields[usernameFieldName].el.value = usernames[usernameFieldName];
-		}).bind(this));
-		this.passwordField.el.value = password;
+	PasswordForm.prototype.fill = function(credentials) {
+		this.usernameField.el.value = credentials.username;
+		this.passwordField.el.value = credentials.password;
 		return this;
+	};
+
+	PasswordForm.prototype.getPassword = function() {
+		if (this.passwordField.el) {
+			return this.passwordField.el.value;
+		}
+		return "";
+	};
+
+	PasswordForm.prototype.getUsername = function() {
+		if (this.usernameField.el) {
+			return this.usernameField.el.value;
+		}
+		return "";
 	};
 
 	function highlightEl(el, color) {
@@ -58,11 +69,9 @@ var PasswordForm = function($) {
 	}
 
 	PasswordForm.prototype.highlight = function() {
-    var usernameFieldNames = Object.getOwnPropertyNames(this.usernameFields);
-    usernameFieldNames.forEach(function(usernameFieldName) {
-    	highlightEl(this.usernameFields[usernameFieldName].el, "blue");
-    }, this);
-    if (usernameFieldNames.length === 0) {
+    if (this.usernameField.el) {
+			highlightEl(this.usernameField.el, "blue");
+		} else {
     	console.log("No username field found for", this);
     }
     if (this.passwordField.el) {

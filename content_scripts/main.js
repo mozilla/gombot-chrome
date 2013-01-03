@@ -4,27 +4,22 @@ Gombot.Messaging = ContentMessaging();
 Gombot.PasswordForm = PasswordForm(jQuery);
 Gombot.InputMonitor = InputMonitor(window.MutationObserver || window.WebKitMutationObserver);
 Gombot.Linker = {};
-Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm, Gombot.InputMonitor, Gombot.Linker);
+Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm, Gombot.InputMonitor);
 
-function maybeGetAndFillCredentials(loginForms)
+function maybeGetAndFillCredentials(formInspector)
 {
     Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(credentials) {
+        if (credentials.length === 0) return;
         if(_.any(credentials, function(credential) { return credential.pinLocked; })) {
             console.log('Locked!');
             Gombot.Messaging.messageToChrome({
                 type: 'prompt_for_pin'
             }, function() {
-                loginForms.forEach(function(form) {
-                    form.fill({ username: credentials[0].username }, credentials[0].password);
-                });
+                formInspector.fillForms(credentials[0]);
             });
         }
         else {
-            if (credentials.length > 0) {
-                loginForms.forEach(function(form) {
-                    form.fill({ username: credentials[0].username }, credentials[0].password);
-                });
-            }
+            formInspector.fillForms(credentials[0]);
         }
     });
 }
@@ -37,7 +32,7 @@ function maybePromptToSaveCapturedCredentials() {
         var loginObj = {
             message: {
                 hostname: credentials.domain,
-                username: credentials.usernames.username,
+                username: credentials.username,
                 password: credentials.password
             },
             type: 'add_login'
@@ -48,33 +43,27 @@ function maybePromptToSaveCapturedCredentials() {
     Gombot.Messaging.messageToChrome({ type: "get_captured_credentials" }, callback);
 }
 
-function credentialsCaptured(form) {
+function credentialsCaptured(formInspector, credentials) {
     Gombot.Messaging.messageToChrome({ type: "set_captured_credentials",
-                                   message: form });
+                                   message: credentials });
 }
 
-function formsFound(forms) {
-    forms.forEach(function(form) {
-        form.highlight();
-    });
+function formsFound(formInspector) {
+    formInspector.highlightForms();
     // fill any saved credentials
-    if (forms.length > 0) {
-        maybeGetAndFillCredentials(forms);
-    }
+    maybeGetAndFillCredentials(formInspector);
 }
 
-var observer = {
+var formInspectorObserver = {
     formsFound: formsFound,
     credentialsCaptured: credentialsCaptured
 };
-
 
 function start() {
     // Run on page load
     maybePromptToSaveCapturedCredentials();
     Gombot.PasswordFormInspector.start();
-    Gombot.PasswordFormInspector.observe(observer);
-    // TODO: start password form inspector and add observer
+    Gombot.PasswordFormInspector.observe(formInspectorObserver);
 }
 
 start();
