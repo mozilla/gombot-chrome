@@ -15,6 +15,10 @@
 // Kept in sync with local storage.
 var neverSaveOnSites = [];
 
+// The key for the document in localStorage which holds all of the user
+// data synced with the server.
+const LOCAL_STORAGE_KEY = 'gombot_user_data';
+
 // Other type: 'pin' when PIN locking is enabled.
 var loginsLock = {
     type: 'none'
@@ -49,76 +53,117 @@ function setAndSavePIN(pin) {
 
 function loadLoginsLock() {
     // Load PIN lock state from localStorage
-    chrome.storage.local.get('logins_lock', function(storageObj) {
-        if (storageObj.logins_lock === undefined) storageObj.logins_lock = {type: 'none'};
-        loginsLock = storageObj.logins_lock;
+    fetchStoredData(function(userData) {
+        if (userData['pin']) {
+            loginsLock = {
+                type: 'pin',
+                pin: userData.pin
+            };
+        }
+        else {
+            loginsLock = {
+                type: 'none'
+            };
+        }
     });
 }
 
 function saveLoginsLock() {
     // Persist loginsLock to localStorage, to preserve PIN across sessions
-    chrome.storage.local.set({
-      'logins_lock': loginsLock
+    fetchStoredData(function(userData) {
+        userData['pin'] = loginsLock.pin || null;
+        updateStoredData(userData);
     });
 }
 
+function formatStoredLogin(login) {
+    return {
+        username: login.username,
+        password: login.password,
+        hostname: login.hostname,
+
+        // Fields that may be missing
+        title: login['title'] || '',
+        url: login['url'] || '',
+        pinLocked: login['pinLocked'] || false,
+        supplementalInformation: login['supplementalInformation'] || {}
+    };
+}
+
+function fetchStoredData(callback) {
+    chrome.storage.local.get(LOCAL_STORAGE_KEY, function(storageObj) {
+        var userData = storageObj[LOCAL_STORAGE_KEY];
+        if (userData === undefined) {
+            userData = {
+                version: "identity.mozilla.com/gombot/v1/userData",
+                logins: {},
+                pin: loginsLock.pin || null,
+                neverAsk: {}
+            };
+        }
+        callback(userData);
+    });
+}
+
+function updateStoredData(obj) {
+    var updatedObj = {};
+    updatedObj[LOCAL_STORAGE_KEY] = obj;
+    chrome.storage.local.set(updatedObj);
+}
+
 // Save a new login object to localStorage
-function saveToStorage(newLogin) {      
-  var siteLoginsKey = 'logins_' + newLogin.hostname;
-  chrome.storage.local.get(siteLoginsKey, function(storageObj) {
-      var storageLogins = storageObj[siteLoginsKey];
-      if (storageLogins === undefined) storageLogins = {};
-      if (storageLogins.stored_logins === undefined) storageLogins.stored_logins = [];
-      // Filter for similar logins.
-      storageLogins.stored_logins = storageLogins.stored_logins.filter(function(_login) {
-          return _login.hostname != newLogin.hostname && _login.username != newLogin.username;
-      });
-      storageLogins.stored_logins.push(newLogin);
-      storageObj[siteLoginsKey] = storageLogins;
-      chrome.storage.local.set(storageObj);
-  });
+function saveLoginToStorage(newLogin) {
+    var loginObj = formatStoredLogin(newLogin);
+    fetchStoredData(function(userData) {
+        // Filter for logins with the same username and hostname.
+        var existingLoginsForHost = userData.logins[newLogin.hostname] || [];
+        userData.logins[newLogin.hostname] = 
+            existingLoginsForHost.filter(function(_login) {
+                return _login.username != loginObj.username;
+            });
+        userData.logins[newLogin.hostname].push(loginObj);
+        updateStoredData(userData);
+    });
+}
+
+function loadNeverSaveOnSites() {
+    getNeverSaveOnSites(function(siteNames) { neverSaveOnSites = siteNames; });
 }
 
 // Add a hostname to the list of sites for which we never 
 // prompt to save passwords
 function neverSaveOnSite(siteHostname) {
-  getNeverSaveOnSites(function(storedSites) {
-      storedSites.push(siteHostname);
-      chrome.storage.local.set({
-          'never_save_on': storedSites
-      });
-      neverSaveOnSites = storedSites;
-  });
+    fetchStoredData(function(userData) {
+        if (!(siteHostname in userData.neverAsk)) {
+            userData.neverAsk[siteHostname] = 'all';
+            updateStoredData(userData);
+            loadNeverSaveOnSites();
+        }
+    });
 }
 
 // Takes a callback, and passes it a list of domains the user
 // has elected to never save logins on. 
 function getNeverSaveOnSites(callback) {
-  chrome.storage.local.get('never_save_on', function(storageObj) {
-      var storedSites = storageObj.never_save_on;
-      if (storedSites === undefined) storedSites = [];
-      callback(storedSites);
-  });
+    fetchStoredData(function(userData) {
+       callback(_.keys(userData.neverAsk));
+    });
 }
 
 // Takes a hostname and a callback, and passes it a list of login
 // objects the user has saved for that domain.
 function getLoginsForSite(hostname,callback) {
-  var siteLoginsKey = 'logins_' + hostname;
-  chrome.storage.local.get(siteLoginsKey, function(storageObj) {
-      if (storageObj[siteLoginsKey] == undefined) storageObj[siteLoginsKey] = {};
-      var storedLogins = storageObj[siteLoginsKey].stored_logins;
-      if (storedLogins === undefined) storedLogins = [];
-      callback(storedLogins);
-  });
+    fetchStoredData(function(userData) {
+        callback(userData.logins[hostname] || []);
+    });
 }
   
 // Mainly for debugging purposes.
 function deleteLoginsForSite(hostname) {
-  var loginsKey = 'logins_' + hostname;
-  var storageObj = {};
-  storageObj[loginsKey] = {};
-  chrome.storage.local.set(storageObj);
+    fetchStoredData(function(userData) {
+        delete userData[hostname];
+        updateStoredData(userData);
+    });
 }
 
 // Returns a string of a comma separated value file containing the hostname, username,
@@ -126,11 +171,11 @@ function deleteLoginsForSite(hostname) {
 function getLoginsCSV(callback) {
     // Add header
     var retVal = "hostname,username,password\n";
-    chrome.storage.local.get(null, function(storageObj) {
-        for (var item in storageObj) {
-            if (item.substr(0,7) == 'logins_' && item != 'logins_lock') {
-                var login = storageObj[item].stored_logins[0];
-                retVal += login.hostname + ',' + login.username + ',' + login.password + '\n';
+    fetchStoredData(function(userData) {
+        for (var item in _.keys(userData.logins)) {
+            for (var login in userData.logins[item]) {
+                retVal += login.hostname + ',' + login.username 
+                    + ',' + login.password + '\n';
             }
         }
         callback(retVal);
