@@ -122,7 +122,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   function deleteCapturedCredentials(message, sender, callback) {
     CapturedCredentialStorage.deleteCredentials(message, sender.tab);
   }
-  
+
   function getSavedCredentials(message, sender, callback) {
     var hostname = (new Uri(sender.tab.url)).host();
     getLoginsForSite(hostname, function(logins) {
@@ -132,7 +132,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
     // after an onMessage function returns.
     return true;
   }
-  
+
   function showPINPromptInfobar(message, sender, callback) {
       displayInfobar({
         notify: true,

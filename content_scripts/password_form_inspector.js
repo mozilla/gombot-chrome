@@ -1,7 +1,13 @@
-var PasswordFormInspector = function($, PasswordForm) {
+var PasswordFormInspector = function($, PasswordForm, InputMonitor, Linker, Messaging) {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
 
+    var observers = [];
+
+    var inputMonitor = null;
+
     var idCounter = 0;
+
+    var passwordForms = [];
 
     function generateId() {
         idCounter += 1;
@@ -21,9 +27,9 @@ var PasswordFormInspector = function($, PasswordForm) {
     }
 
     function findForms() {
-        var $passwordInputs = $('input[type=password]'),
-            result = { loginForms: [], signupForms: [], changePasswordForms: [] };
-
+        var $passwordInputs = $('input[type=password]');
+        var oldPasswordForms = passwordForms; // TODO: clean these up
+        passwordForms = [];
         $passwordInputs.each(function(idx,passwordEl) {
             var $passwordEl = $(passwordEl),
                 $containingForm = $passwordEl.closest('form'),
@@ -53,11 +59,56 @@ var PasswordFormInspector = function($, PasswordForm) {
             if (usernameEl) {
                 usernameFields["username"] = { el: usernameEl };
             }
-            result.loginForms.push(new PasswordForm(generateId(), usernameFields, { el: passwordEl }, $containingForm.get(0)));
+            passwordForms.push(new PasswordForm(generateId(), usernameFields, { el: passwordEl }, $containingForm.get(0)));
         });
-        return result;
     }
+
+
+
+    function observeForms() {
+        var callback = function(capturedCredentials) {
+            visitObservers("credentialsCaptured", capturedCredentials);
+        }
+        passwordForms.forEach(function(form) {
+            form.observe(callback);
+        });
+    }
+
+    function getForms() {
+        return passwordForms;
+    }
+
+    function observe(observer) {
+        observers.push(observer);
+        // if we have password forms, then notify observer immediately
+        if (passwordForms.length > 0 && observer.formsFound) {
+            observer.formsFound(passwordForms);
+        }
+    }
+
+    function visitObservers(fn, arg) {
+        console.log("visitObservers", observers);
+        observers.forEach(function(o) {
+            if (o[fn]) {
+                o[fn](arg);
+            }
+        });
+    }
+
+    function start() {
+        inputMonitor = new InputMonitor(function () { findForms(); visitObservers("formsFound", passwordForms); });
+        findForms();
+        inputMonitor.start();
+    }
+
+    function cleanup() {
+
+    }
+
     return {
-        findForms: findForms
+        start: start,
+        observe: observe,
+        getForms: getForms,
+        cleanup: cleanup
     };
 };
