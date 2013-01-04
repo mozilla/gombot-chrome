@@ -17,8 +17,8 @@ Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredenti
 
 
 function initGombot() {
-    // Load blacklisted sites from local storage
-    getNeverSaveOnSites(function(siteNames) { neverSaveOnSites = siteNames; });
+    // Load blacklisted sites from localStorage
+    loadNeverSaveOnSites();
     // Load PIN lock state from localStorage
     loadLoginsLock();
 	checkIfDidFirstRun(function(didFirstRun) {

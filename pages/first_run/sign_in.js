@@ -4,6 +4,11 @@ $(document).ready(function() {
     var client = new GombotClient(server + '/api');
     var busy = false;
 
+    // seed entropy
+    client.context({}, function(err, data) {
+        client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
+    });
+
     $('#sign-in-form').submit(function(e) {
         e.preventDefault();
         if (busy) return;

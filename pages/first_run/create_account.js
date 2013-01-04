@@ -4,7 +4,12 @@ $(document).ready(function() {
     var client = new GombotClient(server + '/api');
     var busy = false;
 
-    $('#pin-info-link').click(function (ev) {
+    // seed entropy
+    client.context({}, function(err, data) {
+        client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
+    });
+
+    $('#pin-info-link').click(function(ev) {
         $('#account-form').toggleClass('show-info');
     });
 
@@ -22,8 +27,8 @@ $(document).ready(function() {
             client.account({
                 email: $('[name="email"]').get()[0].value,
                 pass: $('[name="password"]').get()[0].value,
-                newsletter: $('[name="newsletter"]').get()[0].value === 'subscribe',
-            }, function (err, result){
+                newsletter: $('[name="newsletter"]').get()[0].value === 'subscribe'
+            }, function(err, result) {
                 busy = false;
                 ProgressIndicator.hide();
                 console.log('result', err, result);
@@ -43,7 +48,7 @@ $(document).ready(function() {
 var ProgressIndicator = (function() {
     var indicatorImage = $('<img>')
     .addClass('progress-indicator-image')
-    .attr('src','/images/spinny.gif').get(0);
+    .attr('src', '/images/spinny.gif').get(0);
     return {
         show: function() {
             if ($('.progress-indicator').has(indicatorImage).length == 0) {
@@ -54,7 +59,7 @@ var ProgressIndicator = (function() {
         hide: function() {
             $(indicatorImage).hide();
         }
-    }
+    };
 })();
 
 function checkPINs() {
@@ -108,7 +113,7 @@ function verifyEmail(address) {
            && parts[0] && parts[0].length <= 64
            // domain side allowed to be up to 253 bytes long
            && parts[1] && parts[1].length <= 253;
-};
+}
 
 function checkEmail() {
     var email = $('[name="email"]').get()[0].value;
