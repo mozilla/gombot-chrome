@@ -120,7 +120,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   }
 
   function deleteCapturedCredentials(message, sender, callback) {
-    CapturedCredentialStorage.deleteCredentials(message, sender.tab);
+    CapturedCredentialStorage.deleteCredentials(sender.tab);
   }
 
   function getSavedCredentials(message, sender, callback) {
@@ -169,7 +169,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   //
   Messaging.addContentMessageListener(function(request, sender, sendResponse) {
     if (request.type && commandHandlers[request.type]) {
-      console.log("Msg received", request);
+      console.log("Msg received", request, sender);
       return commandHandlers[request.type].call(commandHandlers,request.message,sender,sendResponse);
     }
   });
