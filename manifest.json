@@ -24,7 +24,7 @@
           "js": ["lib/jquery.js",
                  "lib/underscore.js",
                  "content_scripts/content_messaging.js",
-                 "content_scripts/input_monitor.js",
+                 "content_scripts/dom_monitor.js",
                  "content_scripts/password_form_inspector.js",
                  "content_scripts/password_form.js",
                  "content_scripts/main.js"]

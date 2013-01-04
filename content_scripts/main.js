@@ -1,10 +1,12 @@
 var Gombot = {};
 
 Gombot.Messaging = ContentMessaging();
-Gombot.PasswordForm = PasswordForm(jQuery);
-Gombot.InputMonitor = InputMonitor(window.MutationObserver || window.WebKitMutationObserver);
+Gombot.MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+Gombot.DomMonitor = DomMonitor(jQuery, Gombot.MutationObserver);
+Gombot.PasswordForm = PasswordForm(jQuery, Gombot.DomMonitor);
+//Gombot.InputMonitor = InputMonitor(Gombot.MutationObserver); not used, replaced by DomMonitor
 Gombot.Linker = {};
-Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm, Gombot.InputMonitor);
+Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm, Gombot.DomMonitor);
 
 function maybeGetAndFillCredentials(formInspector)
 {
@@ -62,7 +64,7 @@ var formInspectorObserver = {
 function start() {
     // Run on page load
     maybePromptToSaveCapturedCredentials();
-    Gombot.PasswordFormInspector.start();
+    Gombot.DomMonitor.start();
     Gombot.PasswordFormInspector.observe(formInspectorObserver);
 }
 

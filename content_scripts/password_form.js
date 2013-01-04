@@ -1,4 +1,4 @@
-var PasswordForm = function($) {
+var PasswordForm = function($, DomMonitor) {
 
 	function notifyObserver(fn) {
 		var args;
@@ -7,6 +7,14 @@ var PasswordForm = function($) {
         args.unshift(this);
 	      this.observer[fn].apply(this.observer, args);
 	  }
+	}
+
+	function passwordFieldRemovedCallback(domMonitor) {
+		DomMonitor.off("isRemoved.pwdEl"+this.id);
+		// Notify observers they should link if they have captured creds
+		// TODO: maybe should qualify this a bit, e.g., only notify if user
+		// actually entered credentials into this form
+		notifyObserver.call(this, "link");
 	}
 
 	var PasswordForm = function(id, usernameField, passwordField, containingEl) {
@@ -19,7 +27,10 @@ var PasswordForm = function($) {
 		// Note: this will not trigger when values are filled by javsacript or the browser
 		this.inputEvents = "input."+this.id;
 		this.submitEvents = "submit."+this.id;
+		// This is an external observer interested in events on the PasswordForm,
+		// most likely the PasswordFormInspector.
 		this.observer = null;
+		DomMonitor.on("isRemoved.pwdEl"+this.id, this.passwordField.el, passwordFieldRemovedCallback.bind(this))
 	};
 
 	// TODO: consider whether to make this a multiple event thingy
@@ -27,12 +38,11 @@ var PasswordForm = function($) {
 	// becomes visible, invisible, or removed.
 	PasswordForm.prototype.observe = function(observer) {
 		this.observer = observer;
-		var boundNotifyObserver = notifyObserver.bind(this);
 		var capturedCredentialsNotify = function(event) {
-			boundNotifyObserver("credentialsCaptured");
+			notifyObserver.call(this, "credentialsCaptured");
 		};
-		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsNotify);
-		this.$containingEl.on(this.submitEvents, capturedCredentialsNotify);
+		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsNotify.bind(this));
+		this.$containingEl.on(this.submitEvents, capturedCredentialsNotify.bind(this));
 		return this;
 	};
 

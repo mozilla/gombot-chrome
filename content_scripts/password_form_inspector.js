@@ -1,9 +1,9 @@
-var PasswordFormInspector = function($, PasswordForm, InputMonitor) {
+var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
     const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
 
-    var observers = [];
+    var running = false;
 
-    var inputMonitor = null;
+    var observers = [];
 
     var idCounter = 0;
 
@@ -72,7 +72,8 @@ var PasswordFormInspector = function($, PasswordForm, InputMonitor) {
     }
 
     var passwordFormObserver = {
-        credentialsCaptured: credentialsCaptured
+        credentialsCaptured: credentialsCaptured,
+        link: function() { visitObservers("link"); }
     };
 
     // internal function to start observing the form collection
@@ -93,9 +94,17 @@ var PasswordFormInspector = function($, PasswordForm, InputMonitor) {
         });
     }
 
+    function domMonitorCallback() {
+        findForms();
+        visitObservers("formsFound", passwordForms);
+    }
+
     // PUBLIC SECTION
 
     function observe(observer) {
+        if (!running) {
+            start();
+        }
         observers.push(observer);
         // if we have password forms, then notify observer immediately
         if (passwordForms.length > 0 && observer.formsFound) {
@@ -117,16 +126,18 @@ var PasswordFormInspector = function($, PasswordForm, InputMonitor) {
     }
 
     function start() {
-        inputMonitor = new InputMonitor(function () {
+        if (!running) {
+            running = true;
             findForms();
-            visitObservers("formsFound", passwordForms);
-        });
-        findForms();
-        inputMonitor.start();
+            DomMonitor.on("addedNodes", "input", domMonitorCallback);
+        }
     }
 
-    function cleanup() {
-
+    function stop() {
+        if (running) {
+            DomMonitor.off("addedNodes", domMonitorCallback);
+            running = false;
+        }
     }
 
     var self = {
@@ -134,7 +145,7 @@ var PasswordFormInspector = function($, PasswordForm, InputMonitor) {
         observe: observe,
         fillForms: fill,
         highlightForms: highlight,
-        cleanup: cleanup
+        stop: stop
     };
     return self;
 };
