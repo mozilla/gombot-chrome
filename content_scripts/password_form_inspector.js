@@ -71,9 +71,13 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
         visitObservers("credentialsCaptured", creds);
     }
 
+    function link(passwordForm) {
+        visitObservers("link");
+    }
+
     var passwordFormObserver = {
         credentialsCaptured: credentialsCaptured,
-        link: function() { visitObservers("link"); }
+        link: link
     };
 
     // internal function to start observing the form collection

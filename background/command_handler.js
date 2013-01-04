@@ -124,7 +124,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   }
 
   function getSavedCredentials(message, sender, callback) {
-    var hostname = (new Uri(sender.tab.url)).host();
+    var hostname = Gombot.TldService.getDomain((new Uri(sender.tab.url)).host());
     getLoginsForSite(hostname, function(logins) {
       callback(logins);
     });
@@ -148,6 +148,10 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
       return true;
   }
 
+  function getSiteConfig(message, sender, callback) {
+    callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(new Uri(sender.tab.url).host())] || {});
+  }
+
   var commandHandlers = {
     'add_login': addLogin,
     'observing_page': observingPage,
@@ -156,7 +160,8 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
     'set_captured_credentials': setCapturedCredentials,
     'get_captured_credentials': getCapturedCredentials,
     'delete_captured_credentials': deleteCapturedCredentials,
-    'get_saved_credentials': getSavedCredentials
+    'get_saved_credentials': getSavedCredentials,
+    'get_site_config': getSiteConfig
   };
 
   //

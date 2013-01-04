@@ -3,8 +3,8 @@ var Gombot = {};
 Gombot.Messaging = ContentMessaging();
 Gombot.MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 Gombot.DomMonitor = DomMonitor(jQuery, Gombot.MutationObserver);
-Gombot.PasswordForm = PasswordForm(jQuery, Gombot.DomMonitor);
-//Gombot.InputMonitor = InputMonitor(Gombot.MutationObserver); not used, replaced by DomMonitor
+Gombot.SiteConfig = {};
+Gombot.PasswordForm = PasswordForm(jQuery, Gombot.DomMonitor, Gombot.SiteConfig);
 Gombot.Linker = {};
 Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm, Gombot.DomMonitor);
 
@@ -58,7 +58,8 @@ function formsFound(formInspector) {
 
 var formInspectorObserver = {
     formsFound: formsFound,
-    credentialsCaptured: credentialsCaptured
+    credentialsCaptured: credentialsCaptured,
+    link: maybePromptToSaveCapturedCredentials
 };
 
 function start() {
@@ -68,4 +69,7 @@ function start() {
     Gombot.PasswordFormInspector.observe(formInspectorObserver);
 }
 
-start();
+Gombot.Messaging.messageToChrome({type: "get_site_config"}, function(config) {
+    Gombot.SiteConfig.config = config;
+    start();
+});

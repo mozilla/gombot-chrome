@@ -1,20 +1,31 @@
-var PasswordForm = function($, DomMonitor) {
+var PasswordForm = function($, DomMonitor, SiteConfig) {
 
 	function notifyObserver(fn) {
 		var args;
 	  if (this.observer[fn]) {
         args = Array.prototype.slice.call(arguments,1);
+        // Add self as first argument
         args.unshift(this);
 	      this.observer[fn].apply(this.observer, args);
 	  }
 	}
 
 	function passwordFieldRemovedCallback(domMonitor) {
+		//console.log("PasswordForm.passwordFieldRemovedCallback username=",this.getUsername(),"password=",this.getPassword());
+		// Stop listening for the password field to be removed
 		DomMonitor.off("isRemoved.pwdEl"+this.id);
+		if (this.getPassword()) { // if we have a password in the form
+			// Notify observer of credentials in the form
+			notifyObserver.call(this, "credentialsCaptured");
+		}
 		// Notify observers they should link if they have captured creds
-		// TODO: maybe should qualify this a bit, e.g., only notify if user
-		// actually entered credentials into this form
+		// Note: this should be called even if the password field is empty because
+		// the page may have deleted the password field contents before removing it.
 		notifyObserver.call(this, "link");
+	}
+
+	function capturedCredentialsCallback(event) {
+		notifyObserver.call(this, "credentialsCaptured");
 	}
 
 	var PasswordForm = function(id, usernameField, passwordField, containingEl) {
@@ -38,11 +49,8 @@ var PasswordForm = function($, DomMonitor) {
 	// becomes visible, invisible, or removed.
 	PasswordForm.prototype.observe = function(observer) {
 		this.observer = observer;
-		var capturedCredentialsNotify = function(event) {
-			notifyObserver.call(this, "credentialsCaptured");
-		};
-		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsNotify.bind(this));
-		this.$containingEl.on(this.submitEvents, capturedCredentialsNotify.bind(this));
+		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsCallback.bind(this));
+		this.$containingEl.on(this.submitEvents, capturedCredentialsCallback.bind(this));
 		return this;
 	};
 
@@ -54,6 +62,10 @@ var PasswordForm = function($, DomMonitor) {
 	};
 
 	PasswordForm.prototype.fill = function(credentials) {
+		var clickOn = SiteConfig.config.clickOn;
+		if (clickOn) {
+			$(clickOn).click();
+		}
 		this.usernameField.el.value = credentials.username;
 		this.passwordField.el.value = credentials.password;
 		return this;
