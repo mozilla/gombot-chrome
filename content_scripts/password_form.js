@@ -1,4 +1,4 @@
-var PasswordForm = function($, DomMonitor, SiteConfig) {
+var PasswordForm = function($, DomMonitor) {
 
 	function notifyObserver(fn) {
 		var args;
@@ -28,12 +28,13 @@ var PasswordForm = function($, DomMonitor, SiteConfig) {
 		notifyObserver.call(this, "credentialsCaptured");
 	}
 
-	var PasswordForm = function(id, usernameField, passwordField, containingEl) {
+	var PasswordForm = function(id, usernameField, passwordField, containingEl, siteConfig) {
 		this.id = id;
 		this.usernameField = usernameField;
 		this.passwordField = passwordField;
 		this.containingEl = containingEl;
 		this.$containingEl = $(this.containingEl);
+		this.config = siteConfig || {};
 		// "input" event will capture paste input and key by key input on modern browsers
 		// Note: this will not trigger when values are filled by javsacript or the browser
 		this.inputEvents = "input."+this.id;
@@ -62,7 +63,7 @@ var PasswordForm = function($, DomMonitor, SiteConfig) {
 	};
 
 	PasswordForm.prototype.fill = function(credentials) {
-		var clickOn = SiteConfig.config.clickOn;
+		var clickOn = this.config.clickOn;
 		if (clickOn) {
 			$(clickOn).click();
 		}

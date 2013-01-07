@@ -9,6 +9,8 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
 
     var passwordForms = [];
 
+    var siteConfig = {};
+
     function generateId() {
         idCounter += 1;
         return idCounter;
@@ -59,7 +61,8 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
             passwordForms.push(new PasswordForm(generateId(),
                                                 { el: usernameEl },
                                                 { el: passwordEl },
-                                                $containingForm.get(0)));
+                                                $containingForm.get(0),
+                                                siteConfig));
         });
         observeForms();
     }
@@ -116,6 +119,11 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
         }
     }
 
+    function setConfig(config) {
+        siteConfig = config;
+        passwordForms.forEach(function(form) { form.config = siteConfig; });
+    }
+
     // highlights all password forms on page
     function highlight() {
         passwordForms.forEach(function(form) {
@@ -147,6 +155,7 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
     var self = {
         start: start,
         observe: observe,
+        setConfig: setConfig,
         fillForms: fill,
         highlightForms: highlight,
         stop: stop
