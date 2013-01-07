@@ -1,2 +1,26 @@
+# IMPORTANT: After any change to this file, you must run build_site_configs.rb
+# In general, we want to minimize the number of site specific configurations. If you add
+# a new configuration to this file, please add a comment with the URL of the page that motiviated
+# the adding of this option and an explaination of why it was added.
+
+# This file defines site specific configurations for password capture and filling.
+# It is in YAML format with following basic structure:
+#
+# <domain>:
+#   <config option>: <config option value>
+#
+# The site configuration options are applied to all pages that are a subdomain of <domain>.
+#
+# Supported configuation options:
+#
+# clickOn: A jQuery expression specifying elements that must be clicked on before
+#   capturing or filling will work properly. The expression must be contained within a string.
+#
+#   Example:
+#     hulu.com:
+#       clickOn: "input.inactive.dummy.user"
+
+# The dynamic login on Hulu's main (http://www.hulu.comn) has watermarked fake username/password
+# fields. The real fields appear after clicking on the specified element.
 hulu.com:
   clickOn: "input.inactive.dummy.user"
