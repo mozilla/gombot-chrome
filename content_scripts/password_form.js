@@ -1,5 +1,9 @@
+// - refactor "clickon" so that it detects fake password and username fields individually and clicks on each individually before each is filled
+// - add domains to relier configs
 var PasswordForm = function($, DomMonitor) {
 	const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
+  const FAKE_USERNAME_FIELD_HINTS = ["email", "username"];
+  const FAKE_PASSWORD_FIELD_HINTS = ["password"];
 
 	function notifyObserver(fn) {
 		var args;
@@ -26,6 +30,12 @@ var PasswordForm = function($, DomMonitor) {
 	}
 
 	function capturedCredentialsCallback(event) {
+		if (event.target === this.usernameField.el) {
+			this.usernameField.val = this.usernameField.el.value;
+		}
+		else if (event.target === this.passwordField.el) {
+			this.passwordField.val = this.passwordField.el.value;
+		}
 		notifyObserver.call(this, "credentialsCaptured");
 	}
 
@@ -64,20 +74,34 @@ var PasswordForm = function($, DomMonitor) {
 			// change the focus (for example, swap out a fake field for a real one)
 			// and we should then type the value into the newly focused field
 			var activeElement = document.activeElement;
-			if (inputIsPossibleUsernameField(activeElement) || inputIsPasswordField(activeElement)) {
+			if (isPossibleUsernameField(activeElement) || isPasswordField(activeElement)) {
 				$el = $(activeElement);
 			}
 			typeValueInElementHelper($el, value, 0, blur);
 		}, 0);
 	}
 
-	function inputIsPossibleUsernameField(input) {
+	function isPossibleUsernameField(input, mustBeVisible) {
 		return input.tagName.toLowerCase() === "input" &&
-		       VALID_USERNAME_INPUT_TYPES.indexOf(input.type.toLowerCase()) !== -1;
+		       VALID_USERNAME_INPUT_TYPES.indexOf(input.type.toLowerCase()) !== -1 &&
+		       !isFakePasswordField(input) &&
+		       (!mustBeVisible || $(input).is(":visible"));
 	}
 
-	function inputIsPasswordField(input) {
+	function isFakeUsernameField(input) {
+		return input.tagName.toLowerCase() === "input" &&
+		       input.type.toLowerCase() === "text" &&
+		       FAKE_USERNAME_FIELD_HINTS.indexOf(input.value.toLowerCase()) !== -1;
+	}
+
+	function isPasswordField(input) {
 		return input.tagName.toLowerCase() === "input" && input.type.toLowerCase() === "password";
+	}
+
+	function isFakePasswordField(input) {
+		return input.tagName.toLowerCase() === "input" &&
+		       input.type.toLowerCase() === "text" &&
+		       FAKE_PASSWORD_FIELD_HINTS.indexOf(input.value.toLowerCase()) !== -1;
 	}
 
   function maybeGetConfiguredUsernameField() {
@@ -89,16 +113,21 @@ var PasswordForm = function($, DomMonitor) {
       }
   }
 
-  function findBestUsernameFieldCandidate() {
+  function findBestUsernameFieldCandidate(mustBeVisible) {
 		var inputsList = this.$containingEl.find('input').get();
 		var pwFieldIdx = inputsList.indexOf(this.passwordField.el);
     for (var inputIdx = pwFieldIdx-1; inputIdx >= 0; inputIdx--) {
-        if (inputIsPossibleUsernameField(inputsList[inputIdx])) {
+        if (isPossibleUsernameField(inputsList[inputIdx], mustBeVisible)) {
             return inputsList[inputIdx];
         }
     }
-    // Couldn't find a valid username input field.
-    return null;
+    // Couldn't find a valid username input field. So try again, but don't require it
+    // to be visible.
+    return findBestUsernameFieldCandidate.call(this, false /* mustBeVisible */);
+  }
+
+  function createFieldObjForEl(el) {
+  	return { el: el, $el: $(el), val: "" };
   }
 
   function findUsernameField() {
@@ -107,9 +136,9 @@ var PasswordForm = function($, DomMonitor) {
     // If we didn't find a configured username field for the form, then
     // look for one
     if (!usernameEl) {
-        usernameEl = findBestUsernameFieldCandidate.call(this);
+        usernameEl = findBestUsernameFieldCandidate.call(this, true /* mustBeVisible */);
     }
-    return { el: usernameEl, $el: $(usernameEl) };
+    return createFieldObjForEl(usernameEl);
   }
 
   function handlePossibleUsernameFieldChange() {
@@ -118,21 +147,21 @@ var PasswordForm = function($, DomMonitor) {
 		// we should update what our notion of the username field is.
 		// See https://online.citibank.com for where this is needed.
 		if (activeElement !== this.usernameField.el &&
-			  inputIsPossibleUsernameField(activeElement)) {
+			  isPossibleUsernameField(activeElement)) {
 			this.usernameField.$el.off(this.focusEvents);
-			this.usernameField = { el: activeElement, $el: $(activeElement) };
+			this.usernameField = createFieldObjForEl(activeElement);
 		}
   }
 
-  const TICKLE_TRIGGERS = ["password", "email", "username"];
-  function maybeTickleFakeLoginInputFields() {
+
+  function maybeTickleFakeInputFields(triggers) {
     var $inputFields = this.$containingEl.find(":text"),
         thisUsernameEl = this.usernameField.el;
     $inputFields.each(function(i, el) {
       var $el = $(el);
       if (el !== thisUsernameEl &&
           $el.is(":visible") &&
-          TICKLE_TRIGGERS.indexOf($el.val().toLowerCase()) !== -1) {
+          triggers.indexOf($el.val().toLowerCase()) !== -1) {
         $el.click();
       }
     });
@@ -140,7 +169,7 @@ var PasswordForm = function($, DomMonitor) {
 
 	var PasswordForm = function(id, passwordEl, $containingEl, siteConfig) {
 		this.id = id;
-		this.passwordField = { el: passwordEl, $el: $(passwordEl) };
+		this.passwordField = createFieldObjForEl(passwordEl);
 		this.$containingEl = $containingEl;
 		this.config = siteConfig || {};
 
@@ -181,14 +210,16 @@ var PasswordForm = function($, DomMonitor) {
 	};
 
 	PasswordForm.prototype.fill = function(credentials) {
-    maybeTickleFakeLoginInputFields.call(this);
+    maybeTickleFakeInputFields.call(this, FAKE_USERNAME_FIELD_HINTS);
 		fillField(this.usernameField.el, credentials.username, (function() {
+			maybeTickleFakeInputFields.call(this, FAKE_PASSWORD_FIELD_HINTS);
 			fillField(this.passwordField.el, credentials.password);
 		}).bind(this));
 		return this;
 	};
 
 	PasswordForm.prototype.getPassword = function() {
+		if (this.passwordField.val) return this.passwordField.val;
 		if (this.passwordField.el) {
 			return this.passwordField.el.value;
 		}
@@ -196,6 +227,7 @@ var PasswordForm = function($, DomMonitor) {
 	};
 
 	PasswordForm.prototype.getUsername = function() {
+		if (this.usernameField.val) return this.usernameField.val;
 		if (this.usernameField.el) {
 			return this.usernameField.el.value;
 		}
