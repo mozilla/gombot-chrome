@@ -27,3 +27,6 @@
 
 citi.com:
   domains: ["citibank.com", "accountonline.com", "citicards.com"]
+
+att.com:
+  fakePasswordFill: "#password"

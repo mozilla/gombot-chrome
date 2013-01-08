@@ -53,7 +53,7 @@ var PasswordForm = function($, DomMonitor) {
 		var partialValue = value.substring(0, currentIndex+1);
 		setTimeout(function() {
 			$el.keydown();
-			$el.val(value);
+			$el.val(partialValue);
 			setTimeout(function() {
 				$el.keyup();
 				setTimeout(function() {
@@ -75,9 +75,6 @@ var PasswordForm = function($, DomMonitor) {
 			setTimeout(callback, 0);
 		}
 		value = value || "";
-		// if typeValueInElementHelper is too slow, then use this code below.
-		// $el.val(value);
-		// blur();
 		setTimeout(function() {
 			// After focusing on the given element, the page's javascript may
 			// change the focus (for example, swap out a fake field for a real one)
@@ -86,7 +83,10 @@ var PasswordForm = function($, DomMonitor) {
 			if (isPossibleUsernameField(activeElement) || isPasswordField(activeElement)) {
 				$el = $(activeElement);
 			}
-			typeValueInElementHelper($el, value, 0, blur);
+			// keep it simple for now
+			$el.val(value);
+			blur();
+			//typeValueInElementHelper($el, value, 0, blur);
 		}, 0);
 	}
 
@@ -195,6 +195,16 @@ var PasswordForm = function($, DomMonitor) {
     });
   }
 
+  function maybeFillFakePassword(value, callback) {
+  	var fakePasswordEl = $(this.config.fakePasswordFill).get(0);
+  	console.log("maybeFillFakePassword", fakePasswordEl);
+  	if (fakePasswordEl) {
+  		fillField(fakePasswordEl, value, callback);
+  		return true;
+  	}
+  	return false;
+  }
+
   // Create an object that representing username and password fields.
   // el is the raw DOM element, $el is the jQuery wrapped DOM element, and val
   // is for storing captured credentials.
@@ -269,6 +279,7 @@ var PasswordForm = function($, DomMonitor) {
     maybeTickleFakeInputFields.call(this, FAKE_USERNAME_FIELD_HINTS);
 		fillField(this.usernameField.el, credentials.username, (function() {
 			maybeTickleFakeInputFields.call(this, FAKE_PASSWORD_FIELD_HINTS);
+			maybeFillFakePassword.call(this, credentials.password);
 			fillField(this.passwordField.el, credentials.password);
 		}).bind(this));
 		return this;
@@ -323,3 +334,4 @@ var PasswordForm = function($, DomMonitor) {
 
 	return PasswordForm;
 };
+
