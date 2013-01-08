@@ -24,3 +24,5 @@
 # fields. The real fields appear after clicking on the specified element.
 hulu.com:
   clickOn: "input.inactive.dummy.user"
+
+

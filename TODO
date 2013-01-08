@@ -1,5 +1,8 @@
+get multistage working
 HTTP auth capture/fill
 capturing and filling lone password fields
 tdameritrade may need some type like a human for lone password field on transfer page
 AJAX login: https://www.select-a-spot.com
 bayareacurling has annoying change password page
+
+start capturing login url and title

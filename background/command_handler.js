@@ -169,7 +169,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   //
   Messaging.addContentMessageListener(function(request, sender, sendResponse) {
     if (request.type && commandHandlers[request.type]) {
-      console.log("Msg received", request, sender);
+      //console.log("Msg received", request, sender);
       return commandHandlers[request.type].call(commandHandlers,request.message,sender,sendResponse);
     }
   });
