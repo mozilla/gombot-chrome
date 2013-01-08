@@ -10,10 +10,11 @@ initGombot();
 
 var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
-Gombot.TldService = Tld;
+Gombot.TldService = TldService(Tld, Uri);
 Gombot.SiteConfigs = SiteConfigs || {};
-Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.TldService);
-Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage);
+Gombot.Realms = Realms(Gombot.SiteConfigs, Gombot.TldService);
+Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms);
+Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage, Gombot.Realms);
 
 
 function initGombot() {

@@ -5,4 +5,6 @@ tdameritrade may need some type like a human for lone password field on transfer
 AJAX login: https://www.select-a-spot.com
 bayareacurling has annoying change password page
 
+consider supporting grabbing username from select elements (online.citibank.com when remember me is enabled). This site also has a dynamic username box when you say log in as another user
+
 start capturing login url and title

@@ -25,4 +25,5 @@
 #hulu.com:
 #  clickOn: "input.inactive.dummy.user"
 
-
+citi.com:
+  domains: ["citibank.com", "accountonline.com", "citicards.com"]

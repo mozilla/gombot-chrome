@@ -1,4 +1,4 @@
-var CapturedCredentialStorage = function(TldService) {
+var CapturedCredentialStorage = function(Realms) {
 
 	var storage = {};
 
@@ -14,7 +14,8 @@ var CapturedCredentialStorage = function(TldService) {
 	//     id: identifier for the credential's source
 	//     url: url of the credential's source
 	function setCredentials(credentials, source) {
-		credentials.domain = TldService.getDomain((new Uri(source.url)).host());
+		credentials.domain = new Uri(source.url).host();
+		credentials.realm = Realms.getRealm(credentials.domain);
 		storage[source.id] = credentials;
 		console.log("Storing credentials", credentials);
 	}

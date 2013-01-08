@@ -1,4 +1,4 @@
-var CommandHandler = function(Messaging, CapturedCredentialStorage) {
+var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
 
   function addLogin(message, sender) {
     var notificationObj = message,
@@ -124,7 +124,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   }
 
   function getSavedCredentials(message, sender, callback) {
-    var hostname = Gombot.TldService.getDomain((new Uri(sender.tab.url)).host());
+    var hostname = Realms.getRealm(sender.tab.url);
     getLoginsForSite(hostname, function(logins) {
       callback(logins);
     });
@@ -149,7 +149,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage) {
   }
 
   function getSiteConfig(message, sender, callback) {
-    callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(new Uri(sender.tab.url).host())] || {});
+    callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(sender.tab.url)] || {});
   }
 
   var commandHandlers = {

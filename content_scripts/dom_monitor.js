@@ -14,7 +14,7 @@ var DomMonitor = function($, MutationObserver) {
 			$node = $(node);
 			subscriberList.forEach(function(subscriber) {
 				if (subscriber.arg) {
-					if ($node.has(subscriber.arg).length > 0) {
+					if ($node.is(subscriber.arg) || $node.has(subscriber.arg).length > 0) {
 						subscriber.notify = true;
 					}
 				} else {
