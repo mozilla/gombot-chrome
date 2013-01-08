@@ -41,7 +41,7 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
             if (numPasswordInputs > 1) return;
             passwordForms.push(new PasswordForm(generateId(),
                                                 passwordEl,
-                                                $containingForm,
+                                                $containingForm.get(0),
                                                 siteConfig));
         });
         observeForms();
