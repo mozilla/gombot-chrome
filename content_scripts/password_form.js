@@ -124,9 +124,23 @@ var PasswordForm = function($, DomMonitor) {
 		}
   }
 
+  const TICKLE_TRIGGERS = ["password", "email", "username"];
+  function maybeTickleFakeLoginInputFields() {
+    var $inputFields = this.$containingEl.find(":text"),
+        thisUsernameEl = this.usernameField.el;
+    $inputFields.each(function(i, el) {
+      var $el = $(el);
+      if (el !== thisUsernameEl &&
+          $el.is(":visible") &&
+          TICKLE_TRIGGERS.indexOf($el.val().toLowerCase()) !== -1) {
+        $el.click();
+      }
+    });
+  }
+
 	var PasswordForm = function(id, passwordEl, $containingEl, siteConfig) {
 		this.id = id;
-		this.passwordField = { el: passwordEl };
+		this.passwordField = { el: passwordEl, $el: $(passwordEl) };
 		this.$containingEl = $containingEl;
 		this.config = siteConfig || {};
 
@@ -151,9 +165,6 @@ var PasswordForm = function($, DomMonitor) {
 		DomMonitor.on("isRemoved.pwdEl"+this.id, this.passwordField.el, passwordFieldRemovedCallback.bind(this))
 	};
 
-	// TODO: consider whether to make this a multiple event thingy
-	// We could have each form individually monitor when it disappears or
-	// becomes visible, invisible, or removed.
 	PasswordForm.prototype.observe = function(observer) {
 		this.observer = observer;
 		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsCallback.bind(this));
@@ -170,10 +181,7 @@ var PasswordForm = function($, DomMonitor) {
 	};
 
 	PasswordForm.prototype.fill = function(credentials) {
-		var clickOn = this.config.clickOn;
-		if (clickOn) {
-			$(clickOn).click();
-		}
+    maybeTickleFakeLoginInputFields.call(this);
 		fillField(this.usernameField.el, credentials.username, (function() {
 			fillField(this.passwordField.el, credentials.password);
 		}).bind(this));

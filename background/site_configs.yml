@@ -15,14 +15,14 @@
 #
 # clickOn: A jQuery expression specifying elements that must be clicked on before
 #   capturing or filling will work properly. The expression must be contained within a string.
-#
+#   NOTE: This is currently disabled
 #   Example:
 #     hulu.com:
 #       clickOn: "input.inactive.dummy.user"
 
 # The dynamic login on Hulu's main (http://www.hulu.comn) has watermarked fake username/password
 # fields. The real fields appear after clicking on the specified element.
-hulu.com:
-  clickOn: "input.inactive.dummy.user"
+#hulu.com:
+#  clickOn: "input.inactive.dummy.user"
 
 

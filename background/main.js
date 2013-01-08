@@ -11,7 +11,7 @@ initGombot();
 var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
 Gombot.TldService = Tld;
-Gombot.SiteConfigs = SiteConfigs;
+Gombot.SiteConfigs = SiteConfigs || {};
 Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.TldService);
 Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage);
 
