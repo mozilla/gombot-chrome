@@ -1,6 +1,5 @@
 $(document).ready(function() {
-    //var server = 'https://gombot.org';
-    var server = 'http://dev.tobmog.org';
+    var server = 'https://gombot.org';
     var client = new GombotClient(server + '/api');
     var busy = false;
 

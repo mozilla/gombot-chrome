@@ -1,6 +1,5 @@
 $(document).ready(function() {
-    //var server = 'https://gombot.org';
-    var server = 'http://dev.tobmog.org';
+    var server = 'https://gombot.org';
     var client = new GombotClient(server + '/api');
     var busy = false;
 
@@ -48,7 +47,7 @@ $(document).ready(function() {
 var ProgressIndicator = (function() {
     var indicatorImage = $('<img>')
     .addClass('progress-indicator-image')
-    .attr('src', '/images/spinny.gif').get(0);
+    .attr('src', '../common/img/spinner.gif').get(0);
     return {
         show: function() {
             if ($('.progress-indicator').has(indicatorImage).length == 0) {
