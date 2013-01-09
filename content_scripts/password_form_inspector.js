@@ -14,28 +14,42 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
         return idCounter;
     }
 
+    function findMultistageForms() {
+        var $un;
+        if (!siteConfig.multiStage) {
+            return [];
+        }
+        $un = $(siteConfig.un);
+        if ($un.length === 0) return [];
+        return [ new PasswordForm(generateId(),
+                                  null,
+                                  getFormForElement($un),
+                                  siteConfig) ];
+    }
+
+    function getFormForElement($el) {
+        var $closestForm = $el.closest('form');
+        if ($closestForm.length === 0) {
+            // Could not find an HTML form, so now just look for any element that
+            // contains both the password field and some other input field with type=text.
+            // Note: this will also find inputs with no type specified, which defaults to text.
+            console.log("Could not find form element for el=", $el.get(0));
+            $closestForm = $el.parents().has('input:text');
+            if ($closestForm.length === 0) {
+                $closestForm = $('body');
+            }
+        }
+        return $closestForm;
+    }
+
     function findForms() {
         var $passwordInputs = $('input[type=password]');
         var oldPasswordForms = passwordForms; // TODO: clean these up
         passwordForms = [];
         $passwordInputs.each(function(idx,passwordEl) {
             var $passwordEl = $(passwordEl),
-                $containingForm = $passwordEl.closest('form'),
-                usernameEl,
-                usernameFields = {},
-                numPasswordInputs;
-            if ($containingForm.length === 0) {
-                console.log("Could not find form element, passwordEl=", passwordEl);
-                // Could not find an HTML form, so now just look for any element that
-                // contains both the password field and some other input field with type=text.
-                // Note: this will also find inputs with no type specified, which defaults to text.
-                $containingForm = $passwordEl.parents().has('input:text').first();
-            }
-
-            if ($containingForm.length === 0) {
-                return;
-            }
-            numPasswordInputs = $containingForm.find('input[type=password]').length;
+                $containingForm = getFormForElement($passwordEl),
+                numPasswordInputs = $containingForm.find('input[type=password]').length;
             // If the containing form contains multiple password field, then ignore
             // for now. This is probably a change password field.
             if (numPasswordInputs > 1) return;
@@ -44,6 +58,7 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
                                                 $containingForm.get(0),
                                                 siteConfig));
         });
+        passwordForms = passwordForms.concat(findMultistageForms());
         observeForms();
     }
 

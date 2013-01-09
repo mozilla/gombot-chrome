@@ -25,6 +25,14 @@
 #hulu.com:
 #  clickOn: "input.inactive.dummy.user"
 
+bankofamerica.com:
+  multiStage: true
+  un: "#id"
+
+vanguard.com:
+  multiStage: true
+  un: "#USER"
+
 citi.com:
   domains: ["citibank.com", "accountonline.com", "citicards.com"]
 

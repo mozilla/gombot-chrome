@@ -125,12 +125,7 @@ var PasswordForm = function($, DomMonitor) {
 	// If the configuration explicitly specifies a username field, then try to
 	// find that one and return it.
   function maybeGetConfiguredUsernameField() {
-      var $username = $(this.config.un);
-      if ($username.length > 0 && this.$containingForm.has($username)) {
-          return $username.get(0);
-      } else {
-          return null;
-      }
+      return this.$containingEl.find(this.config.un).get(0);
   }
 
   // Helper function used by findUsernameField() to find the best username field
@@ -197,7 +192,7 @@ var PasswordForm = function($, DomMonitor) {
 
   function maybeFillFakePassword(value, callback) {
   	var fakePasswordEl = $(this.config.fakePasswordFill).get(0);
-  	console.log("maybeFillFakePassword", fakePasswordEl);
+  	//console.log("maybeFillFakePassword", fakePasswordEl);
   	if (fakePasswordEl) {
   		fillField(fakePasswordEl, value, callback);
   		return true;
@@ -231,11 +226,6 @@ var PasswordForm = function($, DomMonitor) {
 		this.focusEvents = "focus.username"+this.id;
 		this.removedEvents = "isRemoved.pwdEl"+this.id;
 
-    // Setting 'autocomplete' to 'off' will signal to the native
-    // password manager to ignore this login wrt filling and capturing.
-    // This solves the "double infobar" problem when linking.
-    this.passwordField.el.setAttribute('autocomplete', 'off');
-
     // This must be called after passwordField and $containingEl are set
     this.usernameField = findUsernameField.call(this);
     // We may have detected detected a "fake" username field that after the user focuses on it,
@@ -247,9 +237,15 @@ var PasswordForm = function($, DomMonitor) {
 		// most likely the PasswordFormInspector.
 		this.observer = null;
 
-		// Add a handler for when the password field is removed from the DOM. This will generally
-		// trigger a linking.
-		DomMonitor.on(this.removedEvents, this.passwordField.el, passwordFieldRemovedCallback.bind(this))
+    if (this.passwordField.el) {
+  		// Add a handler for when the password field is removed from the DOM. This will generally
+  		// trigger a linking.
+  		DomMonitor.on(this.removedEvents, this.passwordField.el, passwordFieldRemovedCallback.bind(this))
+      // Setting 'autocomplete' to 'off' will signal to the native
+      // password manager to ignore this login wrt filling and capturing.
+      // This solves the "double infobar" problem when linking.
+      this.passwordField.el.setAttribute('autocomplete', 'off');
+    }
 	};
 
 	// Notify the observer whenever we detect interesting input events or form submits.

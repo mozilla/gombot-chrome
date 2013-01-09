@@ -2,6 +2,21 @@ var CapturedCredentialStorage = function(Realms) {
 
 	var storage = {};
 
+	function mergeCredentials(newCredentials, source) {
+		var oldCredentials = storage[source.id];
+		if (!oldCredentials || newCredentials.realm !== oldCredentials.realm) {
+			storage[source.id] = newCredentials;
+			return;
+		}
+		if (newCredentials.password) {
+			oldCredentials.password = newCredentials.password;
+		}
+		if (newCredentials.username) {
+			oldCredentials.username = newCredentials.username;
+		}
+	}
+
+
 	// Stores captured credentials
 	// Input:
 	//   credentials: object with properties:
@@ -16,8 +31,8 @@ var CapturedCredentialStorage = function(Realms) {
 	function setCredentials(credentials, source) {
 		credentials.domain = new Uri(source.url).host();
 		credentials.realm = Realms.getRealm(credentials.domain);
-		storage[source.id] = credentials;
-		console.log("Storing credentials", credentials);
+		mergeCredentials(credentials, source);
+		console.log("Storing credentials", storage[source.id]);
 	}
 
 	function getCrendentials(credentials, source, callback) {
