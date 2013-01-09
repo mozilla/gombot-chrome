@@ -16,9 +16,7 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
 
     function findMultistageForms() {
         var $un;
-        if (!siteConfig.multiStage) {
-            return [];
-        }
+        if (!siteConfig.multiStage) return [];
         $un = $(siteConfig.un);
         if ($un.length === 0) return [];
         return [ new PasswordForm(generateId(),
