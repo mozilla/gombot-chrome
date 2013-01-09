@@ -19,10 +19,10 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
         if (!siteConfig.multiStage) return [];
         $un = $(siteConfig.un);
         if ($un.length === 0) return [];
-        return [ new PasswordForm(generateId(),
-                                  null,
-                                  getFormForElement($un),
-                                  siteConfig) ];
+        return [ new PasswordForm({ id: generateId(),
+                                    usernameEl: $un.get(0),
+                                    containingEl: getFormForElement($un).get(0),
+                                    siteConfig: siteConfig }) ];
     }
 
     function getFormForElement($el) {
@@ -51,10 +51,10 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
             // If the containing form contains multiple password field, then ignore
             // for now. This is probably a change password field.
             if (numPasswordInputs > 1) return;
-            passwordForms.push(new PasswordForm(generateId(),
-                                                passwordEl,
-                                                $containingForm.get(0),
-                                                siteConfig));
+            passwordForms.push(new PasswordForm({ id: generateId(),
+                                                  passwordEl: passwordEl,
+                                                  containingEl: $containingForm.get(0),
+                                                  siteConfig: siteConfig }));
         });
         passwordForms = passwordForms.concat(findMultistageForms());
         observeForms();

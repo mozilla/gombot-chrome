@@ -207,13 +207,20 @@ var PasswordForm = function($, DomMonitor) {
   	return { el: el, $el: $(el), val: "" };
   }
 
-  // PasswordForm constructor function
+  // PasswordForm constructor function. <args> should contain the following:
   //   id: unqiue id value
-  //   passwordEl: DOM element representing the password element in this form
+  //   passwordEl: (optional) DOM element representing the password element in this form
+  //   usernameEl: (optional) DOM element representing the username element in this form
   //   containingEl: DOM element representing the "form" element that contains
   //                 the passwordEl (note: need not be an HTML form)
   //   siteConfig: site configuration hash for special site specific handling
-	var PasswordForm = function(id, passwordEl, containingEl, siteConfig) {
+  // Generally, either the passwordEl or usernameEl is provided.
+	var PasswordForm = function(args) {
+		var id = args.id,
+		    passwordEl = args.passwordEl,
+		    usernameEl = args.usernameEl,
+		    containingEl = args.containingEl,
+		    siteConfig = args.siteConfig;
 		this.id = id;
 		this.passwordField = createFieldObjForEl(passwordEl);
 		this.$containingEl = $(containingEl);
@@ -226,8 +233,12 @@ var PasswordForm = function($, DomMonitor) {
 		this.focusEvents = "focus.username"+this.id;
 		this.removedEvents = "isRemoved.pwdEl"+this.id;
 
-    // This must be called after passwordField and $containingEl are set
-    this.usernameField = findUsernameField.call(this);
+		if (usernameEl) {
+			this.usernameField = createFieldObjForEl(usernameEl);
+		} else {
+    	// This must be called after passwordField and $containingEl are set
+    	this.usernameField = findUsernameField.call(this);
+    }
     // We may have detected detected a "fake" username field that after the user focuses on it,
     // the site switches focus to the "real" username field. This handler will update
     // this.usernameField appropriately.
