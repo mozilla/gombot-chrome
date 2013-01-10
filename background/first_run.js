@@ -18,17 +18,10 @@ function startFirstRunFlow() {
 	});
     // Updates the browserAction popup, stores that we haven't
     // yet completed first run in localStorage.
-    setIfDidFirstRun(false);
+    User.firstRun.setIfCompleted(false);
 }
 
 function closeFirstRunTab() {
 	chrome.tabs.remove(firstRunTab);
 	firstRunTab = -1;
-}
-
-function firstRunFinished() {
-    // Save the fact that the first run flow has been completed, 
-    // so that the splash screen doesn't reopen the next time the 
-    // add-on starts, and the regular interface appears in the browserAction.
-    setIfDidFirstRun(true);
 }

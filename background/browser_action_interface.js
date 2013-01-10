@@ -37,18 +37,14 @@ function formFillCurrentTab() {
 function getPageDataForPopup(callback) {
     getActiveTab(function(tab) {
         var newURL = new Uri(tab.url); 
-        getLoginsForSite(newURL.host(),function(logins) {
-            callback(logins);
-        });
+        callback(User.Logins.getForHostname(newURL.host()));
     });
 }
 
 function formFillTab(tab) {
     var newURL = new Uri(tab.url);
-    getLoginsForSite(newURL.host(),function(logins) {
-        chrome.tabs.sendMessage(tab.id,{
-            type: 'fill_form',
-            login: logins[0]
-        });
+    chrome.tabs.sendMessage(tab.id,{
+        type: 'fill_form',
+        login: User.Logins.getForHostname(newURL.host())[0]
     });
 }
