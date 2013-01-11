@@ -38,8 +38,8 @@ $(document).ready(function() {
 
             var backgroundPage = chrome.extension.getBackgroundPage();
             // Set user PIN
-            backgroundPage.setAndSavePIN($('[name="pin"]').get()[0].value);
-            backgroundPage.firstRunFinished();
+            backgroundPage.User.PIN.set($('[name="pin"]').get()[0].value);
+            backgroundPage.User.firstRun.setIfCompleted(true);
         }
     });
 });

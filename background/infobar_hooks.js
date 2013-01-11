@@ -10,16 +10,16 @@ var infobarHooks = {
     'password_observed': function (notificationObj,infobarResponse) {
         switch (infobarResponse.user_action) {
             case 'save':
-                saveLoginToStorage(notificationObj.notification);
+                User.Logins.add(notificationObj.notification);
             break;
         
             case 'pin_lock':
                 notificationObj.notification.pinLocked = true;
-                saveLoginToStorage(notificationObj.notification);
+                User.Logins.add(notificationObj.notification);
             break;
         
             case 'never_for_this_site':
-                neverSaveOnSite(notificationObj.notification.hostname);
+                User.neverAsk.add(notificationObj.notification.hostname);
             break;
                         
             default:
@@ -46,6 +46,6 @@ var infobarHooks = {
         }
     },
     'update_password': function(notificationObj,infobarResponse) {
-        saveLoginToStorage(notificationObj.notification);
+        User.Logins.add(notificationObj.notification);
     }
 }
