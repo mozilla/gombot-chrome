@@ -22,6 +22,7 @@ $(document).ready(function() {
           if (err) {
             $('#sign-in-form').addClass('invalid');
           } else {
+            backgroundPage.firstRunFinished();
             window.location = 'success.html';
           }
         });
