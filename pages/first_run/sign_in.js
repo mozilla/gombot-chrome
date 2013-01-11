@@ -22,7 +22,8 @@ $(document).ready(function() {
           if (err) {
             $('#sign-in-form').addClass('invalid');
           } else {
-            backgroundPage.firstRunFinished();
+            // Mark first run experience finished
+            chrome.extension.getBackgroundPage().firstRunFinished();
             window.location = 'success.html';
           }
         });
