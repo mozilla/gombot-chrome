@@ -6,7 +6,7 @@
 *
 */
 
-initGombot();
+//initGombot();
 
 var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
@@ -16,18 +16,38 @@ Gombot.Realms = Realms(Gombot.SiteConfigs, Gombot.TldService);
 Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms);
 Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage, Gombot.Realms);
 
-Gombot.Storage = Storage();
-Gombot.User = User(Gombot.Storage);
+Gombot.LocalStorage = LocalStorage();
+Gombot.Storage = Storage(Backbone, _, Gombot.LocalStorage);
 
+Gombot.LinkedSite = LinkedSite(Backbone, _);
+Gombot.LinkedSiteCollection = LinkedSiteCollection(Backbone, _, Gombot.LinkedSite);
+Gombot.User = User(Backbone, _, Gombot.LinkedSiteCollection);
+
+//Gombot.LocalStorage = LocalSync(Backbone, _, Gombot.Storage);
+
+
+var usersStore = new Gombot.Storage("users", function() {
+    Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, usersStore);
+    initGombot();
+});
+
+
+// var Users = new Gombot.UserCollection();
+// var currentUser;
 
 function initGombot() {
+    var users = new Gombot.UserCollection();
+    users.fetch();
+    // Users.fetch({ success: function(collection, response, options) {
+    //     currentUser = collection
+    // }});
     // Load blacklisted sites from localStorage
 //    loadNeverSaveOnSites();
     // Load PIN lock state from localStorage
 //    loadLoginsLock();
-    if (!User.firstRun.wasCompleted()) {
-        startFirstRunFlow();
-    }
+    // if (!User.firstRun.wasCompleted()) {
+    //     startFirstRunFlow();
+    // }
 }
 
 //

@@ -1,13 +1,24 @@
-var LinkedSiteCollection = function(Backbone, LinkedSite) {
+var LinkedSiteCollection = function(Backbone, _, LinkedSite) {
 
 	var LinkedSiteCollection = Backbone.Collection.extend({
 		model: LinkedSite,
-		initializeFromRealmLoginMap: function(logins) {
-			var realms = _.keys(logins);
-			realms.forEach((function(realm) {
-				this.add(linkedSites[realm]);
-			}).bind(this));
-		});
+
+		parse: function(resp) {
+			return _.flatten(_.values(resp), true);
+		},
+
+		toJSON: function(options) {
+			var result = {};
+			this.each(function(model) {
+				var realm = model.get("realm");
+				if (!result[realm]) {
+					result[realm] = [];
+				}
+				result[realm].push(model.toJSON(options));
+			});
+			return result;
+		}
+
 	});
 
 	return LinkedSiteCollection;

@@ -27,19 +27,20 @@ var User = function(Backbone, _, LinkedSiteCollection) {
 	var User = Backbone.Model.extend({
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
-  		pin: null
+  		pin: null,
+  		linkedSites: new LinkedSiteCollection()
 		},
 
-  	initialize: function(args) {
-  		var logins = args.logins || [];
-  		delete args.logins;
-  		this.set(args);
-  		this.linkedSites = new LinkedSiteCollection();
-  		this.linkedSites.initalizeFromLoginMap(logins);
+    parse: function(resp) {
+    	resp.linkedSites = new LinkedSiteCollection(resp.logins, { parse: true });
+    	delete resp.logins;
+    	return resp;
     },
 
-    toJSON: function() {
-
+    toJSON: function(options) {
+    	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
+    	delete result.linkedSites;
+    	return _.extend(result, { logins: this.get("linkedSites").toJSON(options) });
     }
 
 	},

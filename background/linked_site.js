@@ -1,4 +1,4 @@
-var LinkedSite = function(Backbone) {
+var LinkedSite = function(Backbone, _) {
 
 	// LinkedSite constructor
 	// data is:
