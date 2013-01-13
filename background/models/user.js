@@ -1,4 +1,4 @@
-var User = function(Backbone, _, LinkedSiteCollection) {
+var User = function(Backbone, _, LoginCredentialCollection) {
 
 	const USER_DATA_VERSIONS = [
 		"identity.mozilla.com/gombot/v1/userData"
@@ -28,19 +28,17 @@ var User = function(Backbone, _, LinkedSiteCollection) {
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
   		pin: null,
-  		linkedSites: new LinkedSiteCollection()
+  		logins: new LoginCredentialCollection()
 		},
 
     parse: function(resp) {
-    	resp.linkedSites = new LinkedSiteCollection(resp.logins, { parse: true });
-    	delete resp.logins;
+    	resp.logins = new LoginCredentialCollection(resp.logins, { parse: true });
     	return resp;
     },
 
     toJSON: function(options) {
     	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
-    	delete result.linkedSites;
-    	return _.extend(result, { logins: this.get("linkedSites").toJSON(options) });
+    	return _.extend(result, { logins: this.get("logins").toJSON(options) });
     }
 
 	},
@@ -54,7 +52,7 @@ var User = function(Backbone, _, LinkedSiteCollection) {
 
 
 
-// var User = function(Storage, LinkedSite) {
+// var User = function(Storage, LoginCredential) {
 
 // 	// mapping of user ids -> User objects
 // 	var users = {};

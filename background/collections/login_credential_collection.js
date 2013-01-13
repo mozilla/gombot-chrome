@@ -1,7 +1,7 @@
-var LinkedSiteCollection = function(Backbone, _, LinkedSite) {
+var LoginCredentialCollection = function(Backbone, _, LoginCredential) {
 
-	var LinkedSiteCollection = Backbone.Collection.extend({
-		model: LinkedSite,
+	var LoginCredentialCollection = Backbone.Collection.extend({
+		model: LoginCredential,
 
 		parse: function(resp) {
 			return _.flatten(_.values(resp), true);
@@ -21,5 +21,5 @@ var LinkedSiteCollection = function(Backbone, _, LinkedSite) {
 
 	});
 
-	return LinkedSiteCollection;
+	return LoginCredentialCollection;
 };

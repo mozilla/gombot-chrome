@@ -19,9 +19,9 @@ Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredenti
 Gombot.LocalStorage = LocalStorage();
 Gombot.Storage = Storage(Backbone, _, Gombot.LocalStorage);
 
-Gombot.LinkedSite = LinkedSite(Backbone, _);
-Gombot.LinkedSiteCollection = LinkedSiteCollection(Backbone, _, Gombot.LinkedSite);
-Gombot.User = User(Backbone, _, Gombot.LinkedSiteCollection);
+Gombot.LoginCredential = LoginCredential(Backbone, _);
+Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential);
+Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
 
 //Gombot.LocalStorage = LocalSync(Backbone, _, Gombot.Storage);
 
@@ -34,10 +34,11 @@ var usersStore = new Gombot.Storage("users", function() {
 
 // var Users = new Gombot.UserCollection();
 // var currentUser;
-
+var users;
 function initGombot() {
-    var users = new Gombot.UserCollection();
-    users.fetch();
+    users = new Gombot.UserCollection();
+    users.fetch({ success: function() { console.log("users collection", users); }});
+
     // Users.fetch({ success: function(collection, response, options) {
     //     currentUser = collection
     // }});

@@ -1,6 +1,6 @@
-var LinkedSite = function(Backbone, _) {
+var LoginCredential = function(Backbone, _) {
 
-	// LinkedSite constructor
+	// LoginCredential constructor
 	// data is:
   // {
   // "hostname": "www.mozilla.com",
@@ -13,7 +13,7 @@ var LinkedSite = function(Backbone, _) {
   // "supplementalInformation": {
   //     "ffNumber": "234324"
   // }
-	var LinkedSite = Backbone.Model.extend({
+	var LoginCredential = Backbone.Model.extend({
 		defaults: {
 			hostname: "",
 			realm: "",
@@ -26,5 +26,5 @@ var LinkedSite = function(Backbone, _) {
 		}
 	});
 
-	return LinkedSite;
+	return LoginCredential;
 };
