@@ -28,17 +28,57 @@ var User = function(Backbone, _, LoginCredentialCollection) {
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
   		pin: null,
-  		logins: new LoginCredentialCollection()
+  		logins: {}
 		},
 
-    parse: function(resp) {
-    	resp.logins = new LoginCredentialCollection(resp.logins, { parse: true });
-    	return resp;
+    initialize: function() {
+      Backbone.Model.prototype.initialize.apply(this, arguments);
+      this.addSaveListener();
+      console.log("INIT DONE", this);
+    },
+
+    // parse: function(resp) {
+    // 	resp.logins = new LoginCredentialCollection(resp.logins, { parse: true });
+    // 	return resp;
+    // },
+
+    addSaveListener: function() {
+      this.listenTo(this.get("logins"), "save", this.save);
     },
 
     toJSON: function(options) {
     	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
     	return _.extend(result, { logins: this.get("logins").toJSON(options) });
+    },
+
+    // TODO: fix up the cleaning up of save listeners here, esp if prevLogins is null
+    set: function(attributes, options) {
+      var result = false,
+          logins = null,
+          prevLogins = null;
+      if (attributes.logins !== undefined) {
+        if (!(attributes.logins instanceof LoginCredentialCollection)) {
+          logins = attributes.logins;
+          attributes.logins = this.get("logins") || new LoginCredentialCollection();
+        }
+        else {
+          prevLogins = this.get("logins");
+        }
+      }
+      result = Backbone.Model.prototype.set.call(this, attributes, options);
+      if (result) {
+        if (logins) this.get("logins").reset(logins);
+        if (prevLogins) {
+          this.stopListening(prevLogins, "save");
+          this.addSaveListener();
+        }
+      }
+      return result;
+    },
+
+    save: function() {
+      console.log("USER: save");
+      Backbone.Model.prototype.save.apply(this, arguments);
     }
 
 	},

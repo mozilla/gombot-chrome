@@ -23,7 +23,12 @@ var LoginCredential = function(Backbone, _) {
 			pinLocked: false,
 			username: "",
 			supplementalInformation: {}
-		}
+		},
+
+    save: function(attributes, options) {
+      this.trigger("save");
+      console.log("triggered save");
+    }
 	});
 
 	return LoginCredential;

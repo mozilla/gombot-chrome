@@ -3,6 +3,8 @@ var LoginCredentialCollection = function(Backbone, _, LoginCredential) {
 	var LoginCredentialCollection = Backbone.Collection.extend({
 		model: LoginCredential,
 
+		// We can probably remove this after using the new format. Also need to change
+		// toJSON below as well.
 		parse: function(resp) {
 			return _.flatten(_.values(resp), true);
 		},
