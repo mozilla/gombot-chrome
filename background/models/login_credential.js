@@ -32,8 +32,8 @@ var LoginCredential = function(Backbone, _) {
       }
     },
 
-    save: function(attributes, options) {
-      if (this.hasChanged()) this.trigger("save");
+    sync: function(attributes, options) {
+      if (this.hasChanged()) this.trigger("sync");
     }
 
 	});

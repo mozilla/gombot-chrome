@@ -25,30 +25,31 @@ var User = function(Backbone, _, LoginCredentialCollection) {
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
   		pin: null,
-  		logins: null
+  		logins: null,
+  		email: ""
 		},
 
     initialize: function() {
       Backbone.Model.prototype.initialize.apply(this, arguments);
-      this.addSaveListener(this.get("logins"));
+      this.addSyncListener(this.get("logins"));
       // Add change handler to update listener when login collection changes
       // Note: this won't fire if elements of <logins> are changed, only if
       // the entire collection is replaced with a new one.
       this.listenTo(this, "change:logins", function(model, logins) {
         var prevLogins = model.previous("logins");
         if (prevLogins !== logins) {
-          if (prevLogins) model.removeSaveListener(prevLogins);
-          model.addSaveListener(logins);
+          if (prevLogins) model.removeSyncListener(prevLogins);
+          model.addSyncListener(logins);
         }
       });
     },
 
-    addSaveListener: function(logins) {
-      this.listenTo(logins, "save", this.save);
+    addSyncListener: function(logins) {
+      this.listenTo(logins, "sync", this.save);
     },
 
-    removeSaveListener: function(logins) {
-      this.stopListening(logins, "save");
+    removeSyncListener: function(logins) {
+      this.stopListening(logins, "sync");
     },
 
     toJSON: function() {
