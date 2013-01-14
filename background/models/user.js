@@ -26,7 +26,8 @@ var User = function(Backbone, _, LoginCredentialCollection) {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
   		pin: null,
   		logins: null,
-  		email: ""
+  		email: "",
+      disabledSites: {}
 		},
 
     initialize: function() {

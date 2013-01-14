@@ -33,6 +33,15 @@ Gombot.LoginCredential = LoginCredential(Backbone, _);
 Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential);
 Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
 
+Gombot.getCurrentUser = function() {
+  return this.currentUser;
+};
+
+Gombot.setCurrentUser = function(user) {
+  this.currentUser = user;
+}
+
+
 var usersStore = new Gombot.Storage("users", function() {
     Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, usersStore);
     initGombot();
@@ -49,82 +58,6 @@ function initGombot() {
         var showSignInPage = Gombot.users.size() > 0;
         startFirstRunFlow(showSignInPage);
       }});
-    // Users.fetch({ success: function(collection, response, options) {
-    //     currentUser = collection
-    // }});
-    // Load blacklisted sites from localStorage
-//    loadNeverSaveOnSites();
-    // Load PIN lock state from localStorage
-//    loadLoginsLock();
-    // if (!User.firstRun.wasCompleted()) {
-    //     startFirstRunFlow();
-    // }
-}
-
-//
-// Content-to-chrome message handlers
-//
-
-
-// TODO: merge into command handlers
-var messageHandlers = {
-  'add_login': function(message,tabID) {
-    var notificationObj = message;
-    // Check to see if the user disabled password saving on this site
-    User.NeverAsk.checkForHostname(notificationObj.hostname, function(shouldAsk) {
-      if (!shouldAsk) return;
-      notificationObj.type = 'password_observed';
-      notificationObj.hash = SHA1(notificationObj.password);
-      // Look for passwords in use on the current site
-      getLoginsForSite(notificationObj.hostname,function(logins) {
-        if (logins === undefined) logins = [];
-        var loginsForSameUsername = logins.filter(
-          function(l) { return l.username == notificationObj.username; }
-        );
-        if (loginsForSameUsername.length == 1) {
-          // User already has a login saved for this site.
-          if (loginsForSameUsername[0].password == notificationObj.password) {
-            // We're just logging into a site with an existing login. Bail.
-            return;
-          }
-          else {
-            // Prompt user to update password
-            notificationObj.type = 'update_password';
-            // If the existing login stored for this site was PIN locked,
-            // make sure this new one will be also.
-            notificationObj.pinLocked = logins[0].pinLocked;
-          }
-        }
-        // Has the user signed up for a Gombot account?
-        checkIfDidFirstRun(function(didFirstRun) {
-          if (didFirstRun) {
-            // Prompt the user to save the login
-            displayInfobar({
-              notify: true,
-              tabID: tabID,
-              notification: notificationObj
-            });
-          }
-          else {
-            // Browser not associated with Gombot account, offer
-            // to create one/log in.
-            displayInfobar({
-              notify: true,
-              tabID: tabID,
-              notification: {
-                type: 'signup_nag'
-              }
-            });
-          }
-        });
-      });
-    });
-  },
-  'validate_pin': function(message,tabID,sendResponse) {
-    sendResponse({
-      'is_valid': validatePIN(message.pin)
-    });
-  }
 }
 
 //

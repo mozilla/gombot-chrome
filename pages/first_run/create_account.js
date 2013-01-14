@@ -42,11 +42,12 @@ $(document).ready(function() {
                     'email': email,
                     'pin': pin
                   });
-                  // Copy authKey/cryptKey to user object
-                  user.keys = client.keys;
                   userCollection.add(user);
                   user.save(null,{
                     success: function() {
+                      // Copy authKey/cryptKey to user object
+                      user.keys = client.keys;
+                      Gombot.setCurrentUser(user);
                       window.location = '/pages/first_run/success.html';
                     }
                   });

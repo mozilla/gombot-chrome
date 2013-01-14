@@ -1,56 +1,59 @@
 var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
-
   function addLogin(message, sender) {
+    var currentUser = Gombot.getCurrentUser();
     var notificationObj = message,
         tabID = sender.tab.id;
+    // User.NeverAsk.checkForHostname(notificationObj.hostname, function(shouldAsk) {
     // Check to see if the user disabled password saving on this site
-    if (neverSaveOnSites.indexOf(notificationObj.hostname) != -1) return;
+    if (currentUser.get('disabledSites')[notificationObj.hostname]) return;
     notificationObj.type = 'password_observed';
     // Look for passwords in use on the current site
-    getLoginsForSite(notificationObj.hostname,function(logins) {
-      if (logins === undefined) logins = [];
-      var loginsForSameUsername = logins.filter(
-        function(l) { return l.username == notificationObj.username; }
-        );
-      if (loginsForSameUsername.length == 1) {
-        // User already has a login saved for this site.
-
-        if (loginsForSameUsername[0].password == notificationObj.password) {
-          // We're just logging into a site with an existing login. Bail.
-          return;
-        }
-        else {
-          // Prompt user to update password
-          notificationObj.type = 'update_password';
-          // If the existing login stored for this site was PIN locked,
-          // make sure this new one will be also.
-          notificationObj.pinLocked = logins[0].pinLocked;
-        }
-      }
-      // Has the user signed up for a Gombot account?
-      checkIfDidFirstRun(function(didFirstRun) {
-        if (didFirstRun) {
-          // Prompt the user to save the login
-          displayInfobar({
-            notify: true,
-            tabID: tabID,
-            notification: notificationObj
-          });
-        }
-        else {
-          // Browser not associated with Gombot account, offer
-          // to create one/log in.
-          displayInfobar({
-            notify: true,
-            tabID: tabID,
-            notification: {
-              type: 'signup_nag'
-            }
-          });
-        }
-      });
-      // TODO: Send new login to server
+    var logins = currentUser.get('logins').filter(function(login) {
+      return login.get('hostname') === notificationObj.hostname;
     });
+    if (logins === undefined) logins = [];
+    var loginsForSameUsername = logins.filter(
+      function(l) { return l.username == notificationObj.username; }
+      );
+    if (loginsForSameUsername.length == 1) {
+      // User already has a login saved for this site.
+
+      if (loginsForSameUsername[0].password == notificationObj.password) {
+        // We're just logging into a site with an existing login. Bail.
+        return;
+      }
+      else {
+        // Prompt user to update password
+        notificationObj.type = 'update_password';
+        // If the existing login stored for this site was PIN locked,
+        // make sure this new one will be also.
+        notificationObj.pinLocked = logins[0].pinLocked;
+      }
+    }
+    // Has the user signed up for a Gombot account?
+    checkIfDidFirstRun(function(didFirstRun) {
+      if (didFirstRun) {
+        // Prompt the user to save the login
+        displayInfobar({
+          notify: true,
+          tabID: tabID,
+          notification: notificationObj
+        });
+      }
+      else {
+        // Browser not associated with Gombot account, offer
+        // to create one/log in.
+        displayInfobar({
+          notify: true,
+          tabID: tabID,
+          notification: {
+            type: 'signup_nag'
+          }
+        });
+      }
+    });
+    // TODO: Send new login to server
+
   }
 
   function observingPage(message, sender) {

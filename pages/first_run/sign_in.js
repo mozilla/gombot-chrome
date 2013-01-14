@@ -30,6 +30,7 @@ $(document).ready(function() {
             });
             if (user) {
               user.keys = client.keys;
+              Gombot.setCurrentUser(user);
               window.location = 'success.html';
             }
             else {
