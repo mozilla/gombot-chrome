@@ -43,32 +43,11 @@ var usersStore = new Gombot.Storage("users", function() {
 // var currentUser;
 var users;
 function initGombot() {
-    users = new Gombot.UserCollection();
-    users.fetch({
-      success: function() { console.log("users collection", users);
-        if (users.length === 0) {
-          var u = new Gombot.User({ "version": "identity.mozilla.com/gombot/v1/userData",
-                                    "logins":
-                                      [{
-                                      "hostname": "mozilla.com",
-                                      "title": "<Site Name>",
-                                      "url": "<full url to login page>",
-                                      "password": "grëën",
-                                      "pinLocked": false,
-                                      "username": "gömbottest",
-                                      "supplementalInformation": {
-                                          "ffNumber": "234324"
-                                      }}],
-                                    "pin": "1234" });
-          users.add(u);
-          u.save();
-        }
-        u = users.at(0);
-        var lc = u.get("logins").at(0);
-        lc.set({ title: "Mozilla1"});
-        lc.save();
-        u.get("logins").add(new Gombot.LoginCredential());
-        u.save();
+    Gombot.users = new Gombot.UserCollection();
+    Gombot.users.fetch({
+      success: function() { console.log("users collection", Gombot.users);
+        var showSignInPage = Gombot.users.size() > 0;
+        startFirstRunFlow(showSignInPage);
       }});
     // Users.fetch({ success: function(collection, response, options) {
     //     currentUser = collection

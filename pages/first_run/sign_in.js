@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    var Gombot = chrome.extension.getBackgroundPage().Gombot;
+    var userCollection = Gombot.users;
     var server = 'https://gombot.org';
     var client = new GombotClient(server + '/api');
     var busy = false;
@@ -13,16 +15,27 @@ $(document).ready(function() {
         if (busy) return;
         busy = true;
         $('#sign-in-form').removeClass('invalid');
-
+        var email = $('[name="email"]').get()[0].value;
+        var password = $('[name="password"]').get()[0].value;
         client.signIn({
-            email: $('[name="email"]').get()[0].value,
-            pass: $('[name="password"]').get()[0].value
+            email: email,
+            pass: password
         }, function (err) {
           busy = false;
           if (err) {
             $('#sign-in-form').addClass('invalid');
           } else {
-            window.location = 'success.html';
+            var user = userCollection.find(function(obj) {
+              return obj.get('email') === email;
+            });
+            if (user) {
+              user.keys = client.keys;
+              window.location = 'success.html';
+            }
+            else {
+              // TODO: getPayload
+              console.log("Can't find a backbone object for this email!");
+            }
           }
         });
     });

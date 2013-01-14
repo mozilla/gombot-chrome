@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    var Gombot = chrome.extension.getBackgroundPage().Gombot;
+    var userCollection = Gombot.users;
     var server = 'https://gombot.org';
     var client = new GombotClient(server + '/api');
     var busy = false;
@@ -19,27 +21,37 @@ $(document).ready(function() {
 
         // Validate form
         var ok = checkPINs();
+        // TODO: canonicalize email
         ok = checkEmail() && ok;
         ok = checkPasswords() && ok;
         if (ok) {
+            var email = $('[name="email"]').get()[0].value.trim();
+            var password = $('[name="password"]').get()[0].value;
+            var pin = $('[name="pin"]').get()[0].value;
             ProgressIndicator.show();
             client.account({
-                email: $('[name="email"]').get()[0].value,
-                pass: $('[name="password"]').get()[0].value,
+                email: email,
+                pass: password,
                 newsletter: $('[name="newsletter"]').get()[0].value === 'subscribe'
             }, function(err, result) {
                 busy = false;
                 ProgressIndicator.hide();
                 console.log('result', err, result);
                 if (!err && result.success) {
-                  window.location = 'success.html';
+                  var user = new Gombot.User({
+                    'email': email,
+                    'pin': pin
+                  });
+                  // Copy authKey/cryptKey to user object
+                  user.keys = client.keys;
+                  userCollection.add(user);
+                  user.save(null,{
+                    success: function() {
+                      window.location = '/pages/first_run/success.html';
+                    }
+                  });
                 }
             });
-
-            var backgroundPage = chrome.extension.getBackgroundPage();
-            // Set user PIN
-            backgroundPage.User.PIN.set($('[name="pin"]').get()[0].value);
-            backgroundPage.User.firstRun.setIfCompleted(true);
         }
     });
 });
