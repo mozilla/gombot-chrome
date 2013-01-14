@@ -8,6 +8,18 @@
 
 //initGombot();
 
+_.mixin({
+  guid: (function() {
+    function S4() {
+      return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    // Generate a pseudo-GUID by concatenating random hexadecimal.
+    return function() {
+      return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    };
+  })()
+});
+
 var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
 Gombot.TldService = TldService(Tld, Uri);
@@ -15,16 +27,11 @@ Gombot.SiteConfigs = SiteConfigs || {};
 Gombot.Realms = Realms(Gombot.SiteConfigs, Gombot.TldService);
 Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms);
 Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage, Gombot.Realms);
-
 Gombot.LocalStorage = LocalStorage();
-Gombot.Storage = Storage(Backbone, _, Gombot.LocalStorage);
-
+Gombot.Storage = Storage(Backbone, _, Gombot.LocalStorage); // defined by backbone.localStorage.js
 Gombot.LoginCredential = LoginCredential(Backbone, _);
 Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential);
 Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
-
-//Gombot.LocalStorage = LocalSync(Backbone, _, Gombot.Storage);
-
 
 var usersStore = new Gombot.Storage("users", function() {
     Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, usersStore);
@@ -41,8 +48,7 @@ function initGombot() {
       success: function() { console.log("users collection", users);
         if (users.length === 0) {
           var u = new Gombot.User({ "version": "identity.mozilla.com/gombot/v1/userData",
-                                    "logins": {
-                                      "mozilla.com":
+                                    "logins":
                                       [{
                                       "hostname": "mozilla.com",
                                       "title": "<Site Name>",
@@ -52,16 +58,17 @@ function initGombot() {
                                       "username": "gömbottest",
                                       "supplementalInformation": {
                                           "ffNumber": "234324"
-                                      }}]
-                                    },
+                                      }}],
                                     "pin": "1234" });
           users.add(u);
           u.save();
         }
         u = users.at(0);
         var lc = u.get("logins").at(0);
-        console.log("saving lc");
+        lc.set({ title: "Mozilla1"});
         lc.save();
+        u.get("logins").add(new Gombot.LoginCredential());
+        u.save();
       }});
     // Users.fetch({ success: function(collection, response, options) {
     //     currentUser = collection

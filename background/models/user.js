@@ -9,8 +9,6 @@ var User = function(Backbone, _, LoginCredentialCollection) {
 	// {
 	//     "version": "identity.mozilla.com/gombot/v1/userData",
 	//     "logins": {
-
-	//             "mozilla.com":
 	//             [{
 	//             "hostname": "mozilla.com",
 	//             "title": <Site Name>,
@@ -20,132 +18,57 @@ var User = function(Backbone, _, LoginCredentialCollection) {
 	//             "username": "gömbottest",
 	//             "supplementalInformation": {
 	//                 "ffNumber": "234324"
-	//             }}]
-	//     },
+	//             }}],
 	//     "pin": "1234"
 	// }
 	var User = Backbone.Model.extend({
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
   		pin: null,
-  		logins: {}
+  		logins: null
 		},
 
     initialize: function() {
       Backbone.Model.prototype.initialize.apply(this, arguments);
-      this.addSaveListener();
-      console.log("INIT DONE", this);
+      this.addSaveListener(this.get("logins"));
+      // Add change handler to update listener when login collection changes
+      // Note: this won't fire if elements of <logins> are changed, only if
+      // the entire collection is replaced with a new one.
+      this.listenTo(this, "change:logins", function(model, logins) {
+        var prevLogins = model.previous("logins");
+        if (prevLogins !== logins) {
+          if (prevLogins) model.removeSaveListener(prevLogins);
+          model.addSaveListener(logins);
+        }
+      });
     },
 
-    // parse: function(resp) {
-    // 	resp.logins = new LoginCredentialCollection(resp.logins, { parse: true });
-    // 	return resp;
-    // },
-
-    addSaveListener: function() {
-      this.listenTo(this.get("logins"), "save", this.save);
+    addSaveListener: function(logins) {
+      this.listenTo(logins, "save", this.save);
     },
 
-    toJSON: function(options) {
+    removeSaveListener: function(logins) {
+      this.stopListening(logins, "save");
+    },
+
+    toJSON: function() {
     	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
-    	return _.extend(result, { logins: this.get("logins").toJSON(options) });
+    	return _.extend(result, { logins: this.get("logins").toJSON() });
     },
 
-    // TODO: fix up the cleaning up of save listeners here, esp if prevLogins is null
     set: function(attributes, options) {
       var result = false,
-          logins = null,
-          prevLogins = null;
-      if (attributes.logins !== undefined) {
-        if (!(attributes.logins instanceof LoginCredentialCollection)) {
+          logins;
+      if (attributes.logins !== undefined && !(attributes.logins instanceof LoginCredentialCollection)) {
           logins = attributes.logins;
           attributes.logins = this.get("logins") || new LoginCredentialCollection();
-        }
-        else {
-          prevLogins = this.get("logins");
-        }
       }
       result = Backbone.Model.prototype.set.call(this, attributes, options);
-      if (result) {
-        if (logins) this.get("logins").reset(logins);
-        if (prevLogins) {
-          this.stopListening(prevLogins, "save");
-          this.addSaveListener();
-        }
+      if (result && logins) {
+        this.get("logins").reset(logins);
       }
       return result;
-    },
-
-    save: function() {
-      console.log("USER: save");
-      Backbone.Model.prototype.save.apply(this, arguments);
     }
-
-	},
-  {
-
-
-
 	});
 	return User;
 }
-
-
-
-// var User = function(Storage, LoginCredential) {
-
-// 	// mapping of user ids -> User objects
-// 	var users = {};
-
-// 	const USERS_KEY = "users";
-
-
-// 	// User object constructor
-
-// 	var User = function(attributes) {
-// 		attributes = attributes || {};
-// 		attributes.version = attributes.version ||
-// 		attributes.logins = attributes.logins || [];
-// 		attributes.pin = attributes.pin || "";
-
-// 		this.logins = attributes.logins.forEach(function(loginData))
-// 		this.attributes = {  = data;
-// 	}
-
-// 	User.prototype.save = function(callback) {
-// 		Storage.get(USERS_KEY, function(userDataCollection) {
-// 			userDataCollection[this.id] = this.data;
-// 			Storage.set(USERS_KEY, userDataCollection, callback);
-// 		};
-// 	};
-
-// 	User.prototype.delete = function(callback) {
-// 		Storage.get(USERS_KEY, function(userDataCollection) {
-// 			delete userDataCollection[this.id];
-// 			Storage.set(USERS_KEY, userDataCollection, callback);
-// 		};
-// 	};
-
-// 	User.init = function(callback) {
-// 		Storage.get(USERS_KEY, function(userDataCollection) {
-// 			var ids;
-// 			if (result) {
-// 				ids = Object.getOwnPropertyNames(result);
-// 				ids.forEach(function(id) {
-// 					users[id] = new User(userDataCollection[id]);
-// 				});
-// 			}
-// 			callback();
-// 		}
-// 	}
-
-// 	User.fetchAll() = function() {
-// 		return users;
-// 	};
-
-// 	User.fetch(id) = function() {
-// 		return users[id];
-// 	};
-
-// 	return User;
-// }

@@ -25,10 +25,17 @@ var LoginCredential = function(Backbone, _) {
 			supplementalInformation: {}
 		},
 
+    initialize: function() {
+      if (!this.id) {
+        this.id = _.guid();
+        this.set("id", this.id);
+      }
+    },
+
     save: function(attributes, options) {
-      this.trigger("save");
-      console.log("triggered save");
+      if (this.hasChanged()) this.trigger("save");
     }
+
 	});
 
 	return LoginCredential;
