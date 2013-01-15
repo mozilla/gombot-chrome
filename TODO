@@ -1,3 +1,7 @@
+get server sync going
+implement origins in capture, linking, filling, and configs
+
+
 get multistage working
 HTTP auth capture/fill
 capturing and filling lone password fields
