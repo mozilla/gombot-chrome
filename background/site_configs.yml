@@ -33,8 +33,9 @@ vanguard.com:
   multiStage: true
   un: "#USER"
 
-citi.com:
+citi.com: # change domains -> origins
   domains: ["citibank.com", "accountonline.com", "citicards.com"]
+  title: "Citi"
 
 att.com:
   fakePasswordFill: "#password"
