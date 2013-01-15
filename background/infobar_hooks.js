@@ -10,7 +10,7 @@ function formatStoredLogin(login) {
   return {
     username: login.username,
     password: login.password,
-    hostname: login.hostname,
+    origins: [ login.origin ],
 
     // Fields that may be missing
     title: login['title'] || '',
@@ -19,8 +19,6 @@ function formatStoredLogin(login) {
     supplementalInformation: login['supplementalInformation'] || {}
   };
 }
-
-// Gombot.getCurrentUser().get('logins').filter(function(x) { return x.hostname == 'facebook.com'; } )
 
 var infobarHooks = {
     'password_observed': function (notificationObj,infobarResponse) {
@@ -43,8 +41,8 @@ var infobarHooks = {
             break;
 
             case 'never_for_this_site':
-                var hostname = formattedLoginObj.hostname;
-                currentUser.get('disabledSites')[hostname] = 'all';
+                var origin = formattedLoginObj.origins[0];
+                currentUser.get('disabledSites')[origin] = 'all';
                 currentUser.save();
             break;
 
@@ -71,6 +69,7 @@ var infobarHooks = {
             }
         }
     },
+    // TODO: fix this
     'update_password': function(notificationObj,infobarResponse) {
         User.Logins.add(notificationObj.notification);
     }

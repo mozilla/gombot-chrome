@@ -1,30 +1,35 @@
 var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
   function addLogin(message, sender) {
     var currentUser = Gombot.getCurrentUser();
-    var notificationObj = message,
-        tabID = sender.tab.id,
-        username = notificationObj.username;
+    var tabID = sender.tab.id,
+        origin = message.origin,
+        username = message.username,
+        password = message.password;
+
     // Check to see if the user disabled password saving on this site
-    if (currentUser.get('disabledSites')[notificationObj.hostname] === 'all') {
+    if (currentUser.get('disabledSites')[origin] === 'all') {
       return;
     }
-    notificationObj.type = 'password_observed';
+    message.type = 'password_observed';
     // Look for passwords in use on the current site
-    var loginForSameUsername = currentUser.get('logins').find(function(login) {
-      return login.get('hostname') === hostname &&
-              login.get('username') === username;
+    var loginForSavedUsername = currentUser.get('logins').find(function(login) {
+      // TODO, FIXME: This assumes non-user-edited realms, meaning each realm will be an
+      //              array of 1 non-wildcarded realm
+      return Realms.isOriginMemberOfRealm(origin,
+        Realms.getRealmForOrigin(login.get('origins')[0])) &&
+             login.get('username') === username;
     });
-    if (loginForSameUsername) {
-      if (loginForSameUsername.get("password") === password) {
+    if (loginForSavedUsername) {
+      if (loginForSavedUsername.get("password") === password) {
         // We're just logging into a site with an existing login. Bail.
         return;
       }
       else {
         // Prompt user to update password
-        notificationObj.type = 'update_password';
+        message.type = 'update_password';
         // If the existing login stored for this site was PIN locked,
         // make sure this new one will be also.
-        notificationObj.pinLocked = loginForSameUsername.get("pinLocked");
+        message.pinLocked = loginForSameUsername.get("pinLocked");
       }
     }
     if (currentUser && currentUser.keys) {
@@ -32,7 +37,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
       displayInfobar({
         notify: true,
         tabID: tabID,
-        notification: notificationObj
+        notification: message
       });
     } else {
       displayInfobar({
@@ -64,13 +69,13 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
   }
 
   function getSavedCredentials(message, sender, callback) {
-    var hostname = Realms.getRealm(sender.tab.url);
+    var pageOrigin = Realms.getOriginForUri(sender.tab.url);
     var currentUser = Gombot.getCurrentUser();
     var logins = [];
     if (currentUser) {
-      logins = currentUser.get('logins').filter(function(x) { 
-        return x.hostname === hostname;
-      }); 
+      logins = currentUser.get('logins').filter(function(login) {
+        return Realms.isOriginMemberOfRealm(pageOrigin, Realms.getRealmForOrigin(login.get('origins')[0]));
+      });
     }
     callback(logins);
     // Chrome requires that we return true if we plan to call a callback
@@ -93,6 +98,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
       return true;
   }
 
+  // probably will need to tweak this
   function getSiteConfig(message, sender, callback) {
     callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(sender.tab.url)] || {});
   }

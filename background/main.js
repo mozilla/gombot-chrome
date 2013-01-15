@@ -24,7 +24,7 @@ var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
 Gombot.TldService = TldService(Tld, Uri);
 Gombot.SiteConfigs = SiteConfigs || {};
-Gombot.Realms = Realms(Gombot.SiteConfigs, Gombot.TldService);
+Gombot.Realms = Realms(Gombot.SiteConfigs, Uri);
 Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms);
 Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage, Gombot.Realms);
 Gombot.LocalStorage = LocalStorage();
@@ -44,9 +44,9 @@ Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
   }
 })(Gombot);
 
-var usersStore = new Gombot.Storage("users", function() {
-    Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, usersStore);
-    initGombot();
+new Gombot.Storage("users", function(store) {
+  Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, store);
+  initGombot();
 });
 
 function initGombot() {

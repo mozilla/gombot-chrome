@@ -1,8 +1,12 @@
 get server sync going
 implement origins in capture, linking, filling, and configs
+need busy indicator on login page
+fix update_password in infobar_hooks.js
+figure out downloadExportDataFile function (does it work, is it exposed?)
+login success goes to successful install page
+start capturing login url and title
+seems to be race condition with citi realm (problems with capturing on accountonline.com and filling on https://creditcards.citi.com/)
 
-
-get multistage working
 HTTP auth capture/fill
 capturing and filling lone password fields
 tdameritrade may need some type like a human for lone password field on transfer page
@@ -11,4 +15,3 @@ bayareacurling has annoying change password page
 
 consider supporting grabbing username from select elements (online.citibank.com when remember me is enabled). This site also has a dynamic username box when you say log in as another user
 
-start capturing login url and title

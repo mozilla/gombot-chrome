@@ -3,10 +3,9 @@ var LoginCredential = function(Backbone, _) {
 	// LoginCredential constructor
 	// data is:
   // {
-  // "hostname": "www.mozilla.com",
-  // "realm": "mozilla.com",
+  // "origins": [ "https://www.mozilla.com" ],
   // "title": Mozilla,
-  // "url": <full url to login page>,
+  // "url": "https://www.mozilla.com/login",
   // "password": "grëën",
   // "pinLocked": false,
   // "username": "gömbottest",

@@ -32,7 +32,7 @@ function maybePromptToSaveCapturedCredentials() {
         if (!credentials || !credentials.password) return;
         var loginObj = {
             message: {
-                hostname: credentials.realm,
+                origin: credentials.origin,
                 username: credentials.username,
                 password: credentials.password
             },

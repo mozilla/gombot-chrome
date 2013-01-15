@@ -25,6 +25,8 @@
 #hulu.com:
 #  clickOn: "input.inactive.dummy.user"
 
+# CONFIGS
+
 bankofamerica.com:
   multiStage: true
   un: "#id"
@@ -33,9 +35,11 @@ vanguard.com:
   multiStage: true
   un: "#USER"
 
-citi.com: # change domains -> origins
-  domains: ["citibank.com", "accountonline.com", "citicards.com"]
-  title: "Citi"
-
 att.com:
   fakePasswordFill: "#password"
+
+# REALMS
+
+realms:
+  - origins: ["https://online.citibank.com", "https://www.accountonline.com", "https://creditcards.citi.com" ]
+    title: "Citi"
