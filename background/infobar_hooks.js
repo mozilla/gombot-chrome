@@ -43,7 +43,7 @@ var infobarHooks = {
             break;
 
             case 'never_for_this_site':
-                var hostname = notificationObj.notification.hostname;
+                var hostname = formattedLoginObj.hostname;
                 currentUser.get('disabledSites')[hostname] = 'all';
                 currentUser.save();
             break;

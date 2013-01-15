@@ -4,10 +4,10 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
     var notificationObj = message,
         tabID = sender.tab.id,
         username = notificationObj.username;
-    // User.NeverAsk.checkForHostname(notificationObj.hostname, function(shouldAsk) {
     // Check to see if the user disabled password saving on this site
-    console.log("addLogin:", notificationObj);
-    if (currentUser.get('disabledSites')[notificationObj.hostname]) return;
+    if (currentUser.get('disabledSites')[notificationObj.hostname] === 'all') {
+      return;
+    }
     notificationObj.type = 'password_observed';
     // Look for passwords in use on the current site
     var loginForSameUsername = currentUser.get('logins').find(function(login) {
