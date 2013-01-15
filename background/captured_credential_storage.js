@@ -1,4 +1,4 @@
-var CapturedCredentialStorage = function(Realms) {
+var CapturedCredentialStorage = function(Realms, Uri) {
 
 	var storage = {};
 
@@ -18,6 +18,12 @@ var CapturedCredentialStorage = function(Realms) {
 		}
 	}
 
+	function cleanupLoginUrl(url) {
+		var u = new Uri(url);
+		u.anchor("");
+		u.query("");
+		return u.toString();
+	}
 
 	// Stores captured credentials
 	// Input:
@@ -30,6 +36,7 @@ var CapturedCredentialStorage = function(Realms) {
 	//     url: url of the credential's source
 	function setCredentials(credentials, source) {
 		credentials.origin = Realms.getOriginForUri(source.url);
+		credentials.url = cleanupLoginUrl(source.url);
 		mergeCredentials(credentials, source);
 	}
 

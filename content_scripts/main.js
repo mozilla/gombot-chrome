@@ -31,11 +31,7 @@ function maybePromptToSaveCapturedCredentials() {
         // if missing credentials or missing password then return
         if (!credentials || !credentials.password) return;
         var loginObj = {
-            message: {
-                origin: credentials.origin,
-                username: credentials.username,
-                password: credentials.password
-            },
+            message: credentials,
             type: 'add_login'
         }
         // prompt for infobar TODO: factor this into client scripts

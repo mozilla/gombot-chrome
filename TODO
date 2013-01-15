@@ -1,4 +1,8 @@
 get server sync going
+handle email already in use error on signup
+test intranet domains
+test ip address sites with ports
+figure out sessions for client (browser session, explicit logout?)
 implement origins in capture, linking, filling, and configs
 need busy indicator on login page
 fix update_password in infobar_hooks.js

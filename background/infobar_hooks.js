@@ -7,43 +7,26 @@
 */
 
 function formatStoredLogin(login) {
-  return {
-    username: login.username,
-    password: login.password,
-    origins: [ login.origin ],
 
-    // Fields that may be missing
-    title: login['title'] || '',
-    url: login['url'] || '',
-    pinLocked: login['pinLocked'] || false,
-    supplementalInformation: login['supplementalInformation'] || {}
-  };
 }
 
 var infobarHooks = {
     'password_observed': function (notificationObj,infobarResponse) {
         console.log(notificationObj);
-        var formattedLoginObj = formatStoredLogin(notificationObj.notification);
-        var newLogin = new Gombot.LoginCredential(formattedLoginObj);
+        var loginInfo = notificationObj.notification;
         var currentUser = Gombot.getCurrentUser();
         switch (infobarResponse.user_action) {
             case 'save':
-                currentUser.get('logins').add(newLogin);
-                currentUser.save();
+                Gombot.Linker.link(currentUser, loginInfo);
             break;
 
             case 'pin_lock':
-                newLogin.set({
-                  'pinLocked': true
-                });
-                currentUser.get('logins').add(newLogin);
-                currentUser.save();
+                loginInfo.pinLocked = true;
+                Gombot.Linker.link(currentUser, loginInfo);
             break;
 
             case 'never_for_this_site':
-                var origin = formattedLoginObj.origins[0];
-                currentUser.get('disabledSites')[origin] = 'all';
-                currentUser.save();
+                Gombot.Linker.disableSite(user, loginInfo);
             break;
 
             default:

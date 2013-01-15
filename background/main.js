@@ -24,14 +24,19 @@ var Gombot = {};
 Gombot.Messaging = ChromeMessaging();
 Gombot.TldService = TldService(Tld, Uri);
 Gombot.SiteConfigs = SiteConfigs || {};
-Gombot.Realms = Realms(Gombot.SiteConfigs, Uri);
-Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms);
-Gombot.CommandHandler = CommandHandler(Gombot.Messaging, Gombot.CapturedCredentialStorage, Gombot.Realms);
 Gombot.LocalStorage = LocalStorage();
 Gombot.Storage = Storage(Backbone, _, Gombot.LocalStorage); // defined by backbone.localStorage.js
 Gombot.LoginCredential = LoginCredential(Backbone, _);
 Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential);
 Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
+Gombot.Realms = Realms(Gombot.SiteConfigs, Uri, Gombot.TldService);
+Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms, Uri);
+Gombot.Linker = Linker(Gombot.Realms, Gombot.LoginCredential);
+Gombot.CommandHandler = CommandHandler(Gombot.Messaging,
+    Gombot.CapturedCredentialStorage,
+    Gombot.Realms,
+    Gombot.Linker);
+
 
 (function(Gombot) {
   var currentUser = null;

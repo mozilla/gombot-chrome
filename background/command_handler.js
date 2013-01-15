@@ -1,37 +1,13 @@
-var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
+var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Linker) {
   function addLogin(message, sender) {
-    var currentUser = Gombot.getCurrentUser();
-    var tabID = sender.tab.id,
-        origin = message.origin,
-        username = message.username,
-        password = message.password;
+    var currentUser = Gombot.getCurrentUser(),
+        tabID = sender.tab.id;
 
-    // Check to see if the user disabled password saving on this site
-    if (currentUser.get('disabledSites')[origin] === 'all') {
+    var linkingInfo = Linker.shouldShowLinkingNotification(currentUser, message);
+    if (!linkingInfo) {
       return;
     }
-    message.type = 'password_observed';
-    // Look for passwords in use on the current site
-    var loginForSavedUsername = currentUser.get('logins').find(function(login) {
-      // TODO, FIXME: This assumes non-user-edited realms, meaning each realm will be an
-      //              array of 1 non-wildcarded realm
-      return Realms.isOriginMemberOfRealm(origin,
-        Realms.getRealmForOrigin(login.get('origins')[0])) &&
-             login.get('username') === username;
-    });
-    if (loginForSavedUsername) {
-      if (loginForSavedUsername.get("password") === password) {
-        // We're just logging into a site with an existing login. Bail.
-        return;
-      }
-      else {
-        // Prompt user to update password
-        message.type = 'update_password';
-        // If the existing login stored for this site was PIN locked,
-        // make sure this new one will be also.
-        message.pinLocked = loginForSameUsername.get("pinLocked");
-      }
-    }
+    _.extend(message, linkingInfo);
     if (currentUser && currentUser.keys) {
       // Prompt the user to save the login
       displayInfobar({
@@ -69,12 +45,12 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
   }
 
   function getSavedCredentials(message, sender, callback) {
-    var pageOrigin = Realms.getOriginForUri(sender.tab.url);
+    var pageRealm = Realms.getRealmForUri(sender.tab.url);
     var currentUser = Gombot.getCurrentUser();
     var logins = [];
     if (currentUser) {
-      logins = currentUser.get('logins').filter(function(login) {
-        return Realms.isOriginMemberOfRealm(pageOrigin, Realms.getRealmForOrigin(login.get('origins')[0]));
+      logins = currentUser.get('logins').filter(function(loginCredential) {
+        return Realms.loginCredentialMatchesRealm(loginCredential, pageRealm);
       });
     }
     callback(logins);
