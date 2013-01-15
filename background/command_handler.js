@@ -2,23 +2,22 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
   function addLogin(message, sender) {
     var currentUser = Gombot.getCurrentUser();
     var notificationObj = message,
-        tabID = sender.tab.id;
+        tabID = sender.tab.id,
+        username = notificationObj.username;
     // User.NeverAsk.checkForHostname(notificationObj.hostname, function(shouldAsk) {
     // Check to see if the user disabled password saving on this site
+    console.log("addLogin:", notificationObj);
     if (currentUser.get('disabledSites')[notificationObj.hostname]) return;
     notificationObj.type = 'password_observed';
     // Look for passwords in use on the current site
     var logins = currentUser.get('logins').filter(function(login) {
-      return login.get('hostname') === notificationObj.hostname;
+      return login.get('hostname') === hostname;
     });
-    if (logins === undefined) logins = [];
-    var loginsForSameUsername = logins.filter(
-      function(l) { return l.username == notificationObj.username; }
-      );
-    if (loginsForSameUsername.length == 1) {
-      // User already has a login saved for this site.
-
-      if (loginsForSameUsername[0].password == notificationObj.password) {
+    var loginForSameUsername = logins.find(
+      function(l) { return login.get("username") === username; }
+    );
+    if (loginsForSameUsername) {
+      if (loginsForSameUsername.get("password") === password) {
         // We're just logging into a site with an existing login. Bail.
         return;
       }
@@ -27,33 +26,25 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
         notificationObj.type = 'update_password';
         // If the existing login stored for this site was PIN locked,
         // make sure this new one will be also.
-        notificationObj.pinLocked = logins[0].pinLocked;
+        notificationObj.pinLocked = loginForSameUserUsername.get("pinLocked");
       }
     }
-    // Has the user signed up for a Gombot account?
-    checkIfDidFirstRun(function(didFirstRun) {
-      if (didFirstRun) {
-        // Prompt the user to save the login
-        displayInfobar({
-          notify: true,
-          tabID: tabID,
-          notification: notificationObj
-        });
-      }
-      else {
-        // Browser not associated with Gombot account, offer
-        // to create one/log in.
-        displayInfobar({
-          notify: true,
-          tabID: tabID,
-          notification: {
-            type: 'signup_nag'
-          }
-        });
-      }
-    });
-    // TODO: Send new login to server
-
+    if (currentUser && currentUser.keys) {
+      // Prompt the user to save the login
+      displayInfobar({
+        notify: true,
+        tabID: tabID,
+        notification: notificationObj
+      });
+    } else {
+      displayInfobar({
+        notify: true,
+        tabID: tabID,
+        notification: {
+          type: 'signup_nag'
+        }
+      });
+    }
   }
 
   function observingPage(message, sender) {

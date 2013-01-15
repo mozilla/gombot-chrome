@@ -7,21 +7,22 @@
 */
 
 var infobarHooks = {
+    // TODO:
     'password_observed': function (notificationObj,infobarResponse) {
         switch (infobarResponse.user_action) {
             case 'save':
                 User.Logins.add(notificationObj.notification);
             break;
-        
+
             case 'pin_lock':
                 notificationObj.notification.pinLocked = true;
                 User.Logins.add(notificationObj.notification);
             break;
-        
+
             case 'never_for_this_site':
                 User.neverAsk.add(notificationObj.notification.hostname);
             break;
-                        
+
             default:
                 console.log("Unknown response from password_observed infobar!");
             break;
@@ -41,7 +42,7 @@ var infobarHooks = {
             else {
                 chrome.tabs.get(notificationObj.tabID, function(tab) {
                     formFillTab(tab);
-                });   
+                });
             }
         }
     },

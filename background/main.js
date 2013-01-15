@@ -6,8 +6,8 @@
 *
 */
 
-//initGombot();
 
+// mixin guid creation into underscore
 _.mixin({
   guid: (function() {
     function S4() {
@@ -33,28 +33,26 @@ Gombot.LoginCredential = LoginCredential(Backbone, _);
 Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential);
 Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
 
-Gombot.getCurrentUser = function() {
-  return this.currentUser;
-};
+(function(Gombot) {
+  var currentUser = null;
+  Gombot.getCurrentUser = function() {
+    return currentUser;
+  };
 
-Gombot.setCurrentUser = function(user) {
-  this.currentUser = user;
-}
-
+  Gombot.setCurrentUser = function(user) {
+    currentUser = user;
+  }
+})(Gombot);
 
 var usersStore = new Gombot.Storage("users", function() {
     Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, usersStore);
     initGombot();
 });
 
-
-// var Users = new Gombot.UserCollection();
-// var currentUser;
-var users;
 function initGombot() {
     Gombot.users = new Gombot.UserCollection();
     Gombot.users.fetch({
-      success: function() { console.log("users collection", Gombot.users);
+      success: function() {
         var showSignInPage = Gombot.users.size() > 0;
         startFirstRunFlow(showSignInPage);
       }});

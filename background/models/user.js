@@ -8,19 +8,26 @@ var User = function(Backbone, _, LoginCredentialCollection) {
 	// attributes should be something like:
 	// {
 	//     "version": "identity.mozilla.com/gombot/v1/userData",
-	//     "logins": {
+	//     "id": "1534a27f-13f3-27bb-15cf-0960aadda2c5",
+	//     "email": "awesomeuser@mail.com",
+	//     "logins":
 	//             [{
-	//             "hostname": "mozilla.com",
-	//             "title": <Site Name>,
-	//             "url": <full url to login page>,
+	//             "id": "6760ab7f-e8f8-a7a5-e5ca-0960ccdba4c6",
+	//             "hostname": "www.mozilla.com",
+	//             "realm": "mozilla.com",
+	//             "title": "Mozilla",
+	//             "url": "https://www.mozilla.com/login",
+	//             "username": "gömbottest",
 	//             "password": "grëën",
 	//             "pinLocked": false,
-	//             "username": "gömbottest",
 	//             "supplementalInformation": {
 	//                 "ffNumber": "234324"
-	//             }}],
+	//             }
+  //             }],
+	//     "disabledSites": { "www.google.com": true },
 	//     "pin": "1234"
 	// }
+	// test string: '{ "version": "identity.mozilla.com/gombot/v1/userData","id": "1534a27f-13f3-27bb-15cf-0960aadda2c5","email": "awesomeuser@mail.com","logins":[{"id": "6760ab7f-e8f8-a7a5-e5ca-0960ccdba4c6","hostname": "www.mozilla.com","realm": "mozilla.com","title": "Mozilla","url": "https://www.mozilla.com/login","username": "gömbottest","password": "grëën","pinLocked": false,"supplementalInformation": {"ffNumber": "234324"}}],"disabledSites": { "www.google.com": true },"pin": "1234"}'
 	var User = Backbone.Model.extend({
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
@@ -29,6 +36,9 @@ var User = function(Backbone, _, LoginCredentialCollection) {
   		email: "",
       disabledSites: {}
 		},
+
+		// derived keys from user's master password
+		keys: null,
 
     initialize: function() {
       Backbone.Model.prototype.initialize.apply(this, arguments);
@@ -58,9 +68,16 @@ var User = function(Backbone, _, LoginCredentialCollection) {
     	return _.extend(result, { logins: this.get("logins").toJSON() });
     },
 
-    set: function(attributes, options) {
+    set: function(key, value, options) {
       var result = false,
-          logins;
+          logins,
+          attributes;
+      if (_.isObject(key)) {
+        attributes = key;
+        options = val;
+      } else {
+        (attributes = {})[key] = val;
+      }
       if (attributes.logins !== undefined && !(attributes.logins instanceof LoginCredentialCollection)) {
           logins = attributes.logins;
           attributes.logins = this.get("logins") || new LoginCredentialCollection();
@@ -74,3 +91,5 @@ var User = function(Backbone, _, LoginCredentialCollection) {
 	});
 	return User;
 }
+
+
