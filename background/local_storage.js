@@ -44,24 +44,24 @@ var LocalStorage = function() {
 
 //   // NB: remove every call to fetchStoredData and updateStoredData before commit!
 
-//   function fetchStoredData(callback) {
-//     var keysToFetch = [
-//       SYNC_DOCUMENT_KEY,
-//       'did_first_run'
-//     ];
-//     chrome.storage.local.get(SYNC_DOCUMENT_KEY, function(storageObj) {
-//       var userData = storageObj;//[SYNC_DOCUMENT_KEY];
-//       if (userData === undefined) {
-//         userData = {
-//           version: DATA_VERSION,
-//           logins: {},
-//           pin: loginsLock.pin || null,
-//           neverAsk: {}
-//         };
-//       }
-//       callback(userData);
-//     });
-//   }
+  // function fetchStoredData(callback) {
+  //   var keysToFetch = [
+  //     SYNC_DOCUMENT_KEY,
+  //     'did_first_run'
+  //   ];
+  //   chrome.storage.local.get(SYNC_DOCUMENT_KEY, function(storageObj) {
+  //     var userData = storageObj;//[SYNC_DOCUMENT_KEY];
+  //     if (userData === undefined) {
+  //       userData = {
+  //         version: DATA_VERSION,
+  //         logins: {},
+  //         pin: loginsLock.pin || null,
+  //         neverAsk: {}
+  //       };
+  //     }
+  //     callback(userData);
+  //   });
+  // }
 
 //   // function updateStoredData(obj) {
 //   //   var updatedObj = {};
@@ -94,19 +94,19 @@ var LocalStorage = function() {
 //   var userData = {};
 
 //   var loginsObj = (function() {
-//     function formatStoredLogin(login) {
-//       return {
-//         username: login.username,
-//         password: login.password,
-//         hostname: login.hostname,
-
-//         // Fields that may be missing
-//         title: login['title'] || '',
-//         url: login['url'] || '',
-//         pinLocked: login['pinLocked'] || false,
-//         supplementalInformation: login['supplementalInformation'] || {}
-//       };
-//     }
+// function formatStoredLogin(login) {
+//   return {
+//     username: login.username,
+//     password: login.password,
+//     hostname: login.hostname,
+// 
+//     // Fields that may be missing
+//     title: login['title'] || '',
+//     url: login['url'] || '',
+//     pinLocked: login['pinLocked'] || false,
+//     supplementalInformation: login['supplementalInformation'] || {}
+//   };
+// }
 //     return {
 //       // Save a new login object to localStorage
 //       add: function(newLogin) {

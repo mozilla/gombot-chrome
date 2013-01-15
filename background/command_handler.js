@@ -10,14 +10,12 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
     if (currentUser.get('disabledSites')[notificationObj.hostname]) return;
     notificationObj.type = 'password_observed';
     // Look for passwords in use on the current site
-    var logins = currentUser.get('logins').filter(function(login) {
-      return login.get('hostname') === hostname;
+    var loginForSameUsername = currentUser.get('logins').find(function(login) {
+      return login.get('hostname') === hostname &&
+              login.get('username') === username;
     });
-    var loginForSameUsername = logins.find(
-      function(l) { return login.get("username") === username; }
-    );
-    if (loginsForSameUsername) {
-      if (loginsForSameUsername.get("password") === password) {
+    if (loginForSameUsername) {
+      if (loginForSameUsername.get("password") === password) {
         // We're just logging into a site with an existing login. Bail.
         return;
       }
@@ -26,7 +24,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
         notificationObj.type = 'update_password';
         // If the existing login stored for this site was PIN locked,
         // make sure this new one will be also.
-        notificationObj.pinLocked = loginForSameUserUsername.get("pinLocked");
+        notificationObj.pinLocked = loginForSameUsername.get("pinLocked");
       }
     }
     if (currentUser && currentUser.keys) {
@@ -45,58 +43,6 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
         }
       });
     }
-  }
-
-  function observingPage(message, sender) {
-    var tabID = sender.tab.id;
-    // See if there are login forms on this page. If not, there's nothing to do
-    // on the observing_page notification, so bail.
-    if (message.num_login_forms == 0) return;
-    // Search for logins for this particular site
-    getLoginsForSite(message.hostname, function(logins) {
-      if (logins.length == 0) return;
-
-      if (logins.length == 1) {
-        // Is the login for this site PIN locked?
-        if (logins[0].pinLocked) {
-          // If it is, show the PIN entry infobar.
-          displayInfobar({
-            notify: true,
-            tabID: tabID,
-            notification: {
-              type: 'pin_entry',
-              // Include the tabID in the notification so the infobar handler
-              // can trigger autofill in the correct tab.
-              tabID: tabID
-            }
-          });
-        }
-        else {
-          // If it's not, form fill the page now.
-          Messaging.messageToContent(sender,{
-            type: 'fill_form',
-            login: logins[0]
-          });
-        }
-
-        // If there's only a single login form on the page, we're fine. Otherwise,
-        // see if we were able to record an id or a name for the form when we observed
-        // the login.
-        // TODO: Check to see if the id/name is still valid
-
-        // If we remember specifics about a login form, check to see if it's there.
-        // If it is, offer to autologin.
-        if (logins[0].formEl && (logins[0].formEl.name || logins[0].formEl.id)) {
-          Messaging.messageToContent(sender, {
-            type: 'confirm_form_exists',
-            login: logins[0]
-          });
-        }
-      }
-      else {
-        // TODO: Prompt user for choice of logins
-      }
-    });
   }
 
   function validatePin(message, sender, callback) {
@@ -119,9 +65,14 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
 
   function getSavedCredentials(message, sender, callback) {
     var hostname = Realms.getRealm(sender.tab.url);
-    getLoginsForSite(hostname, function(logins) {
-      callback(logins);
-    });
+    var currentUser = Gombot.getCurrentUser();
+    var logins = [];
+    if (currentUser) {
+      logins = currentUser.get('logins').filter(function(x) { 
+        return x.hostname === hostname;
+      }); 
+    }
+    callback(logins);
     // Chrome requires that we return true if we plan to call a callback
     // after an onMessage function returns.
     return true;
@@ -148,7 +99,6 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms) {
 
   var commandHandlers = {
     'add_login': addLogin,
-    'observing_page': observingPage,
     'validate_pin': validatePin,
     'prompt_for_pin': showPINPromptInfobar,
     'set_captured_credentials': setCapturedCredentials,
