@@ -15,8 +15,7 @@ var LoginCredential = function(Backbone, _) {
   // }
 	var LoginCredential = Backbone.Model.extend({
 		defaults: {
-			hostname: "",
-			realm: "",
+			origins: [],
 			title: "",
 			url: "",
 			password: "",
