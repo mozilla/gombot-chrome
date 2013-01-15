@@ -68,7 +68,7 @@ var User = function(Backbone, _, LoginCredentialCollection) {
     	return _.extend(result, { logins: this.get("logins").toJSON() });
     },
 
-    set: function(key, value, options) {
+    set: function(key, val, options) {
       var result = false,
           logins,
           attributes;

@@ -6,21 +6,46 @@
 *
 */
 
+function formatStoredLogin(login) {
+  return {
+    username: login.username,
+    password: login.password,
+    hostname: login.hostname,
+
+    // Fields that may be missing
+    title: login['title'] || '',
+    url: login['url'] || '',
+    pinLocked: login['pinLocked'] || false,
+    supplementalInformation: login['supplementalInformation'] || {}
+  };
+}
+
+// Gombot.getCurrentUser().get('logins').filter(function(x) { return x.hostname == 'facebook.com'; } )
+
 var infobarHooks = {
-    // TODO:
     'password_observed': function (notificationObj,infobarResponse) {
+        console.log(notificationObj);
+        var formattedLoginObj = formatStoredLogin(notificationObj.notification);
+        var newLogin = new Gombot.LoginCredential(formattedLoginObj);
+        var currentUser = Gombot.getCurrentUser();
         switch (infobarResponse.user_action) {
             case 'save':
-                User.Logins.add(notificationObj.notification);
+                currentUser.get('logins').add(newLogin);
+                currentUser.save();
             break;
 
             case 'pin_lock':
-                notificationObj.notification.pinLocked = true;
-                User.Logins.add(notificationObj.notification);
+                newLogin.set({
+                  'pinLocked': true
+                });
+                currentUser.get('logins').add(newLogin);
+                currentUser.save();
             break;
 
             case 'never_for_this_site':
-                User.neverAsk.add(notificationObj.notification.hostname);
+                var hostname = formattedLoginObj.hostname;
+                currentUser.get('disabledSites')[hostname] = 'all';
+                currentUser.save();
             break;
 
             default:
