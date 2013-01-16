@@ -66,5 +66,6 @@ function start() {
 
 Gombot.Messaging.messageToChrome({type: "get_site_config"}, function(config) {
     Gombot.PasswordFormInspector.setConfig(config);
-    start();
+    // Give the page time to get it's shit together before we start doing stuff
+    setTimeout(start, 250);
 });

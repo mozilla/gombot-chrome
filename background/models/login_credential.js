@@ -1,4 +1,4 @@
-var LoginCredential = function(Backbone, _) {
+var LoginCredential = function(Backbone, _, Realms) {
 
 	// LoginCredential constructor
 	// data is:
@@ -14,7 +14,7 @@ var LoginCredential = function(Backbone, _) {
   // }
 	var LoginCredential = Backbone.Model.extend({
 		defaults: {
-			origins: [],
+			//origins: null, // not currently used but in the future this is for user edited origins
 			title: "",
 			url: "",
 			password: "",
@@ -32,6 +32,12 @@ var LoginCredential = function(Backbone, _) {
 
     sync: function(attributes, options) {
       if (this.hasChanged()) this.trigger("sync");
+    },
+
+    decorateWithRealm: function() {
+      // Enable this line when we start supporting user edited origins
+      //this.origins = this.get("origins") || Realms.getRealmForUri(this.get("url"));
+      this.origins = Realms.getRealmForUri(this.get("url"));
     }
 
 	});

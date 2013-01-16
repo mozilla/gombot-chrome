@@ -72,7 +72,7 @@ var PasswordForm = function($, DomMonitor) {
 		$el.focus();
 		var blur = function() {
 			$el.blur();
-			setTimeout(callback, 0);
+			setTimeout(callback, 50);
 		}
 		value = value || "";
 		setTimeout(function() {
@@ -85,9 +85,9 @@ var PasswordForm = function($, DomMonitor) {
 			}
 			// keep it simple for now
 			$el.val(value);
-			blur();
+			setTimeout(blur, 50);;
 			//typeValueInElementHelper($el, value, 0, blur);
-		}, 0);
+		}, 50);
 	}
 
 	// Determines if an input field is a password field.
@@ -165,6 +165,7 @@ var PasswordForm = function($, DomMonitor) {
 		var activeElement = document.activeElement;
 		if (activeElement !== this.usernameField.el &&
 			  isPossibleUsernameField(activeElement)) {
+			console.log("PasswordForm: switching usernameField old=",this.usernameField.el,"new=",activeElement);
 			this.usernameField.$el.off(this.focusEvents);
 			this.usernameField = createFieldObjForEl(activeElement);
 		}
@@ -194,7 +195,7 @@ var PasswordForm = function($, DomMonitor) {
   	var fakePasswordEl = $(this.config.fakePasswordFill).get(0);
   	//console.log("maybeFillFakePassword", fakePasswordEl);
   	if (fakePasswordEl) {
-  		fillField(fakePasswordEl, value, callback);
+  		fillField.call(this, fakePasswordEl, value, callback);
   		return true;
   	}
   	return false;
@@ -284,10 +285,10 @@ var PasswordForm = function($, DomMonitor) {
 	// some cortortions to "type like a human" and handle dynamic username field "switch-outs".
 	PasswordForm.prototype.fill = function(credentials) {
     maybeTickleFakeInputFields.call(this, FAKE_USERNAME_FIELD_HINTS);
-		fillField(this.usernameField.el, credentials.username, (function() {
+		fillField.call(this, this.usernameField.el, credentials.username, (function() {
 			maybeTickleFakeInputFields.call(this, FAKE_PASSWORD_FIELD_HINTS);
 			maybeFillFakePassword.call(this, credentials.password);
-			fillField(this.passwordField.el, credentials.password);
+			fillField.call(this, this.passwordField.el, credentials.password);
 		}).bind(this));
 		return this;
 	};

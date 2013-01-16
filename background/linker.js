@@ -1,20 +1,19 @@
 var Linker = function(Realms, LoginCredential) {
 
 	function shouldShowLinkingNotification(user, loginInfo) {
-  	var origin = loginInfo.origin,
-  		  realm = Realms.getRealmForOrigin(origin),
+  	var url = loginInfo.url,
         username = loginInfo.username,
         password = loginInfo.password,
         result = {};
 
     // Check to see if the user disabled password saving on this site
-    if (user.get('disabledSites')[origin] === 'all') {
+    if (user.get('disabledSites')[Realms.getOriginForUri(url)] === 'all') {
       return false;;
     }
 
     // Look for passwords in use on the current site
     var loginForSavedUsername = user.get('logins').find(function(loginCredential) {
-      return Realms.loginCredentialMatchesRealm(loginCredential, realm) &&
+      return Realms.isUriMemberOfRealm(url, loginCredential.origins) &&
              loginCredential.get('username') === username;
     });
     if (loginForSavedUsername) {
@@ -41,10 +40,9 @@ var Linker = function(Realms, LoginCredential) {
   	var attrs = {
   		    username: loginInfo.username,
           password: loginInfo.password,
-          origins: [ loginInfo.origin ],
     			// Fields that may be missing
-    			title: loginInfo.title || Realms.getTitleFromOrigin(loginInfo.origin),
-    	    url: loginInfo.url || loginInfo.origin + "/",
+    			title: loginInfo.title || Realms.getTitleFromUri(loginInfo.url),
+    	    url: loginInfo.url,
     			pinLocked: loginInfo.pinLocked || false,
     		  supplementalInformation: loginInfo.supplementalInformation || {}
   	    };
