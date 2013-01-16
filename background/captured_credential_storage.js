@@ -36,7 +36,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 	//     url: url of the credential's source
 	function setCredentials(credentials, source) {
 		credentials.origin = Realms.getOriginForUri(source.url);
-		credentials.url = cleanupLoginUrl(source.url);
+		credentials.loginurl = cleanupLoginUrl(source.url);
 		mergeCredentials(credentials, source);
 	}
 

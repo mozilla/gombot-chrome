@@ -16,7 +16,7 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
 	//             "hostname": "www.mozilla.com",
 	//             "realm": "mozilla.com",
 	//             "title": "Mozilla",
-	//             "url": "https://www.mozilla.com/login",
+	//             "loginurl": "https://www.mozilla.com/login",
 	//             "username": "gömbottest",
 	//             "password": "grëën",
 	//             "pinLocked": false,
@@ -27,7 +27,6 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
 	//     "disabledSites": { "www.google.com": true },
 	//     "pin": "1234"
 	// }
-	// test string: '{ "version": "identity.mozilla.com/gombot/v1/userData","id": "1534a27f-13f3-27bb-15cf-0960aadda2c5","email": "awesomeuser@mail.com","logins":[{"id": "6760ab7f-e8f8-a7a5-e5ca-0960ccdba4c6","hostname": "www.mozilla.com","realm": "mozilla.com","title": "Mozilla","url": "https://www.mozilla.com/login","username": "gömbottest","password": "grëën","pinLocked": false,"supplementalInformation": {"ffNumber": "234324"}}],"disabledSites": { "www.google.com": true },"pin": "1234"}'
 	var User = Backbone.Model.extend({
 		defaults: {
   		version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],

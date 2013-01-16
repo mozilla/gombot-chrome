@@ -3,9 +3,8 @@ var LoginCredential = function(Backbone, _, Realms) {
 	// LoginCredential constructor
 	// data is:
   // {
-  // "origins": [ "https://www.mozilla.com" ],
   // "title": Mozilla,
-  // "url": "https://www.mozilla.com/login",
+  // "loginurl": "https://www.mozilla.com/login",
   // "password": "grëën",
   // "pinLocked": false,
   // "username": "gömbottest",
@@ -16,7 +15,7 @@ var LoginCredential = function(Backbone, _, Realms) {
 		defaults: {
 			//origins: null, // not currently used but in the future this is for user edited origins
 			title: "",
-			url: "",
+			loginurl: "",
 			password: "",
 			pinLocked: false,
 			username: "",
@@ -36,8 +35,8 @@ var LoginCredential = function(Backbone, _, Realms) {
 
     decorateWithRealm: function() {
       // Enable this line when we start supporting user edited origins
-      //this.origins = this.get("origins") || Realms.getRealmForUri(this.get("url"));
-      this.origins = Realms.getRealmForUri(this.get("url"));
+      //this.origins = this.get("origins") || Realms.getRealmForUri(this.get("loginurl"));
+      this.origins = Realms.getRealmForUri(this.get("loginurl"));
     }
 
 	});
