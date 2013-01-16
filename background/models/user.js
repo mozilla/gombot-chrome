@@ -67,6 +67,57 @@ var User = function(Backbone, _, LoginCredentialCollection) {
     	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
     	return _.extend(result, { logins: this.get("logins").toJSON() });
     },
+    
+    sync: function(method, model, options) {
+      // Need to have sync keys attached to this object (outside of attributes) to sync
+      if (!model.keys) {
+        console.log('No keys on user object!');
+        return;
+      }
+      var client = GombotClient({
+        keys: model.keys
+      });
+      if (method === 'update') {
+        // TODO: get and store timestamp
+        client.createEncryptedPayload({
+          payload: model
+        }, function(err, cipherText) {
+          client.storePayload({
+            cipherText: cipherText
+          }, function(err) {
+            if (!err) {
+              model.cipherText = cipherText;
+            }
+            if (options.success) options.success(model,{},options);
+          });
+        }); 
+      }
+      else if (method === 'read') {
+        client.getPayload({}, function(err, result) {
+          if (err || !result.success) {
+            console.log('Error getting payload!');
+            return;
+          }
+          // TODO: compare timestamps
+          model.updated = result.updated;
+          if (options.success) options.success(model,result.payload,options);
+        });
+      }
+      else if (method === 'create') {
+       client.account({
+         email: model.get('email'),
+         pass: model.password,
+         newsletter: model.newsletter
+       }, function(err, result) {
+         if (err || !result.success) {
+           console.log('Error creating account!');
+           return;
+         }
+         model.keys = client.keys;
+         if (options.success) options.success(model,{},options);
+       }); 
+      }
+    },
 
     set: function(key, val, options) {
       var result = false,
