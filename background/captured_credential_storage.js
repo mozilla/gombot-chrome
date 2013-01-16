@@ -7,7 +7,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 		// TODO: revisit strict equality requirement here
 		if (!oldCredentials || newCredentials.origin !== oldCredentials.origin) {
 			storage[source.id] = newCredentials;
-			//console.log("Storing credentials", storage[source.id]);
+			console.log("Storing credentials", storage[source.id]);
 			return;
 		}
 		if (newCredentials.password) {
@@ -42,7 +42,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 
 	function getCrendentials(credentials, source, callback) {
 		callback(storage[source.id]);
-		//console.log("Getting credentials", storage[source.id]);
+		console.log("Getting credentials", storage[source.id]);
 	}
 
 	function deleteCredentials(source) {
