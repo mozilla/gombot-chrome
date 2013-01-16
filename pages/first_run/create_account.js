@@ -1,14 +1,15 @@
 $(document).ready(function() {
   var Gombot = chrome.extension.getBackgroundPage().Gombot;
+  //var GombotClient = chrome.extension.getBackgroundPage.GombotClient;
   var userCollection = Gombot.users;
   var server = 'https://gombot.org';
-  var client = new GombotClient(server + '/api');
+  //var client = new GombotClient(server + '/api');
   var busy = false;
 
   // seed entropy
-  client.context({}, function(err, data) {
-    client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
-  });
+  // client.context({}, function(err, data) {
+  //   client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
+  // });
 
   $('#pin-info-link').click(function(ev) {
     $('#account-form').toggleClass('show-info');

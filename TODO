@@ -1,4 +1,8 @@
 get server sync going
+    // seed entropy
+  // client.context({}, function(err, data) {
+  //   client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
+  // });
 www.bankofamerica.com and safe.bankofamerica.com for linking especially
 handle email already in use error on signup
 test intranet domains

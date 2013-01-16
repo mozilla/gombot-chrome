@@ -67,14 +67,14 @@ var User = function(Backbone, _, LoginCredentialCollection) {
     	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
     	return _.extend(result, { logins: this.get("logins").toJSON() });
     },
-    
+
     sync: function(method, model, options) {
       // Need to have sync keys attached to this object (outside of attributes) to sync
-      if (!model.keys) {
+      if (method !== "create" && !model.keys) {
         console.log('No keys on user object!');
         return;
       }
-      var client = GombotClient({
+      var client = new GombotClient('https://gombot.org/api', {
         keys: model.keys
       });
       if (method === 'update') {
@@ -90,7 +90,7 @@ var User = function(Backbone, _, LoginCredentialCollection) {
             }
             if (options.success) options.success(model,{},options);
           });
-        }); 
+        });
       }
       else if (method === 'read') {
         client.getPayload({}, function(err, result) {
@@ -104,18 +104,20 @@ var User = function(Backbone, _, LoginCredentialCollection) {
         });
       }
       else if (method === 'create') {
-       client.account({
-         email: model.get('email'),
-         pass: model.password,
-         newsletter: model.newsletter
-       }, function(err, result) {
-         if (err || !result.success) {
+        console.log("calling create");
+        client.account({
+          email: model.get('email'),
+          pass: model.password,
+          newsletter: model.newsletter
+        }, function(err, result) {
+          console.log("in callback", err, result, options);
+          if (err || !result.success) {
            console.log('Error creating account!');
            return;
-         }
-         model.keys = client.keys;
-         if (options.success) options.success(model,{},options);
-       }); 
+          }
+          model.keys = client.keys;
+          if (options.success) options.success(model,{},options);
+        });
       }
     },
 
