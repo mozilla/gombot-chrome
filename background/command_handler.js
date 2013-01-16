@@ -45,12 +45,11 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
   }
 
   function getSavedCredentials(message, sender, callback) {
-    var pageRealm = Realms.getRealmForUri(sender.tab.url);
     var currentUser = Gombot.getCurrentUser();
     var logins = [];
     if (currentUser) {
       logins = currentUser.get('logins').filter(function(loginCredential) {
-        return Realms.loginCredentialMatchesRealm(loginCredential, pageRealm);
+        return Realms.isUriMemberOfRealm(sender.tab.url, loginCredential.origins);
       });
     }
     callback(logins);

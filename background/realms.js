@@ -1,21 +1,9 @@
 var Realms = function(SiteConfigs, Uri, TldService) {
 
-	var realmMap = {};
+	var realms = [];
 
-	// TODO: needs to eventually account for user-defined realms.
-	// builds map of origins -> { origins: array of origins , title: realm title }
-	function buildRealmMap(siteConfigs) {
-		var realms = siteConfigs.realms;
-
-		realms.forEach(function(realm) {
-			var origins = realm.origins;
-			// presence of a domain field indicates it's a complex realm
-			if (origins) {
-				origins.forEach(function(origin) {
-					realmMap[origin] = realm;
-				});
-			}
-		});
+	function buildRealms(siteConfigs) {
+		realms = siteConfigs.realms;
 	}
 
 	// fqOrigin cannot contain wildcards, realmOrigin may
@@ -24,11 +12,11 @@ var Realms = function(SiteConfigs, Uri, TldService) {
   	return fqOrigin === realmOrigin;
   }
 
-  function getRealmWrapperForOriginFromRealmMap(fqOrigin) {
- 		var keys = Object.getOwnPropertyNames(realmMap);
-		for (var i=0;i<keys.length;i++) {
-			if (fullyQualifiedOriginMatchesRealmOrigin(fqOrigin, realmMap[keys[i]].origins)) {
-				return realmMap[keys[i]];
+  function getRealmWrapperForOrigin(fqOrigin) {
+ 		var length = realms.length;
+		for (var i=0;i<length;i++) {
+			if (isOriginMemberOfRealm(fqOrigin,realms[i].origins)) {
+				return realms[i];
 			}
 		}
 		return null;
@@ -39,7 +27,7 @@ var Realms = function(SiteConfigs, Uri, TldService) {
 	// nothing, it will create the default realm for the origin (the origin wrapped in an array).
 	// fqOrigin must be fully qualified (no wildcards)
 	function getRealmForOrigin(fqOrigin) {
-		var realmWrapper = getRealmWrapperForOriginFromRealmMap(fqOrigin);
+		var realmWrapper = getRealmWrapperForOrigin(fqOrigin);
 		if (realmWrapper) return realmWrapper.origins;
 		return [ fqOrigin ];
 	}
@@ -55,12 +43,6 @@ var Realms = function(SiteConfigs, Uri, TldService) {
   	return origin;
   }
 
-  function loginCredentialMatchesRealm(loginCredential, realm) {
-  	// All login credentials just have one fully qualifed origin for now
-  	var fqOrigin = loginCredential.get("origins")[0];
-  	return isOriginMemberOfRealm(fqOrigin, realm);
-  }
-
   function getRealmForUri(uriString) {
   	return getRealmForOrigin(getOriginForUri(uriString));
   }
@@ -70,14 +52,15 @@ var Realms = function(SiteConfigs, Uri, TldService) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
-  function getTitleFromOrigin(fqOrigin) {
-  	var realmWrapper = getRealmWrapperForOriginFromRealmMap(fqOrigin);
+  function getTitleFromUri(uri) {
+  	var origin = getOriginForUri(uri);
+  	var realmWrapper = getRealmWrapperForOrigin(origin);
   	if (realmWrapper && realmWrapper.title) return realmWrapper.title;
-  	if (TldService.isIpAddress(fqOrigin)) {
-  		return TldService.getFullHostnameWithPort(fqOrigin);
+  	if (TldService.isIpAddress(origin)) {
+  		return TldService.getFullHostnameWithPort(origin);
   	}
   	else {
-  		return capitaliseFirstLetter(TldService.getDomain(fqOrigin).split(".")[0]);
+  		return capitaliseFirstLetter(TldService.getDomain(origin).split(".")[0]);
 		}
   }
 
@@ -93,15 +76,18 @@ var Realms = function(SiteConfigs, Uri, TldService) {
   	return false;
   }
 
-	buildRealmMap(SiteConfigs);
+  function isUriMemberOfRealm(uri, origins) {
+  	return isOriginMemberOfRealm(getOriginForUri(uri), origins);
+  }
 
-	// TODO: determine which of these need to be publically exposed
+	buildRealms(SiteConfigs);
+
 	return {
-		buildRealmMap: buildRealmMap,
+		buildRealms: buildRealms,
+		getRealmForOrigin: getRealmForOrigin,
 		getOriginForUri: getOriginForUri,
 		getRealmForUri: getRealmForUri,
-		getRealmForOrigin: getRealmForOrigin,
-		isOriginMemberOfRealm: isOriginMemberOfRealm,
-		getTitleFromOrigin: getTitleFromOrigin
+		isUriMemberOfRealm: isUriMemberOfRealm,
+		getTitleFromUri: getTitleFromUri
 	};
 }
