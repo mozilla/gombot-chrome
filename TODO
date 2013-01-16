@@ -5,19 +5,19 @@ get server sync going
   // client.context({}, function(err, data) {
   //   client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
   // });
+figure out what is going on with all the citi domains (need my account reset)
 www.bankofamerica.com and safe.bankofamerica.com for linking especially
+  - make captured credentials storage respect realms
 handle email already in use error on signup
 test intranet domains
 test ip address sites with ports
 handle the capturing of other password managers form filling (maybe do setTimout afer form has been recognized and try to do some intelligent capture of the credentials)
+  - handled by setTimeout(grab shit if don't have any) in passwordForm?
 figure out sessions for client (browser session, explicit logout?)
-implement origins in capture, linking, filling, and configs
 need busy indicator on login page
 fix update_password in infobar_hooks.js
-think about how to capture things filled by other password managers (no change event...)
 figure out downloadExportDataFile function (does it work, is it exposed?)
 login success goes to successful install page
-start capturing login url and title
 seems to be race condition with citi realm (problems with capturing on accountonline.com and filling on https://creditcards.citi.com/)
 
 HTTP auth capture/fill
