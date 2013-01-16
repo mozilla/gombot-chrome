@@ -1,7 +1,7 @@
 var Linker = function(Realms, LoginCredential) {
 
 	function shouldShowLinkingNotification(user, loginInfo) {
-  	var url = loginInfo.url,
+  	var url = loginInfo.loginurl,
         username = loginInfo.username,
         password = loginInfo.password,
         result = {};
@@ -41,8 +41,8 @@ var Linker = function(Realms, LoginCredential) {
   		    username: loginInfo.username,
           password: loginInfo.password,
     			// Fields that may be missing
-    			title: loginInfo.title || Realms.getTitleFromUri(loginInfo.url),
-    	    url: loginInfo.url,
+    			title: loginInfo.title || Realms.getTitleFromUri(loginInfo.loginurl),
+    	    url: loginInfo.loginurl,
     			pinLocked: loginInfo.pinLocked || false,
     		  supplementalInformation: loginInfo.supplementalInformation || {}
   	    };
