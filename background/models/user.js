@@ -1,4 +1,4 @@
-var User = function(Backbone, _, LoginCredentialCollection) {
+var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalStorage) {
 
 	const USER_DATA_VERSIONS = [
 		"identity.mozilla.com/gombot/v1/userData"
@@ -37,6 +37,8 @@ var User = function(Backbone, _, LoginCredentialCollection) {
       disabledSites: {}
 		},
 
+		localStorage: LocalStorage,
+
 		// derived keys from user's master password
 		keys: null,
 
@@ -68,57 +70,21 @@ var User = function(Backbone, _, LoginCredentialCollection) {
     	return _.extend(result, { logins: this.get("logins").toJSON() });
     },
 
+    toEncryptedJSON: function() {
+    },
+
     sync: function(method, model, options) {
-      // Need to have sync keys attached to this object (outside of attributes) to sync
-      if (method !== "create" && !model.keys) {
-        console.log('No keys on user object!');
-        return;
-      }
-      var client = new GombotClient('https://gombot.org/api', {
-        keys: model.keys
-      });
-      if (method === 'update') {
-        // TODO: get and store timestamp
-        client.createEncryptedPayload({
-          payload: model
-        }, function(err, cipherText) {
-          client.storePayload({
-            cipherText: cipherText
-          }, function(err) {
-            if (!err) {
-              model.cipherText = cipherText;
-            }
-            if (options.success) options.success(model,{},options);
-          });
-        });
-      }
-      else if (method === 'read') {
-        client.getPayload({}, function(err, result) {
-          if (err || !result.success) {
-            console.log('Error getting payload!');
-            return;
-          }
-          // TODO: compare timestamps
-          model.updated = result.updated;
-          if (options.success) options.success(model,result.payload,options);
-        });
-      }
-      else if (method === 'create') {
-        console.log("calling create");
-        client.account({
-          email: model.get('email'),
-          pass: model.password,
-          newsletter: model.newsletter
-        }, function(err, result) {
-          console.log("in callback", err, result, options);
-          if (err || !result.success) {
-           console.log('Error creating account!');
-           return;
-          }
-          model.keys = client.keys;
-          if (options.success) options.success(model,{},options);
-        });
-      }
+    	var success = function(resp) {
+    		console.log("User.sync success", resp);
+    		Backbone.sync(method, model, options);
+    	};
+    	var error = function(args) {
+    		console.log("User.sync error", args);
+    		if (options.error) options.error(args);
+    	};
+    	var o = _.clone(options);
+    	o = _.extend({ success: success, error: error });
+    	GombotSync.sync(method, model, o);
     },
 
     set: function(key, val, options) {

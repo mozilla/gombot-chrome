@@ -32,7 +32,6 @@ $(document).ready(function() {
       var pin = $('[name="pin"]').get()[0].value;
       ProgressIndicator.show();
       busy = false;
-      ProgressIndicator.hide();
       var user = new Gombot.User({
         'email': email,
         'pin': pin
@@ -43,9 +42,14 @@ $(document).ready(function() {
 
       user.save(null,{
         success: function() {
+          ProgressIndicator.hide();
           userCollection.add(user);
           Gombot.setCurrentUser(user);
           window.location = '/pages/first_run/success.html';
+        },
+        error: function(args) {
+          // TODO: handle any errors
+          ProgressIndicator.hide();
         }
       });
     }

@@ -1,3 +1,5 @@
+need to scroll on error in signup
+need to fix copy about master password reset on signup success page
 get server sync going
     // seed entropy
   // client.context({}, function(err, data) {

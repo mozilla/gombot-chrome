@@ -27,9 +27,9 @@ Gombot.SiteConfigs = SiteConfigs || {};
 Gombot.Realms = Realms(Gombot.SiteConfigs, Uri, Gombot.TldService);
 Gombot.LocalStorage = LocalStorage();
 Gombot.Storage = Storage(Backbone, _, Gombot.LocalStorage); // defined by backbone.localStorage.js
+Gombot.Sync = GombotSync(GombotClient, Backbone, Gombot);
 Gombot.LoginCredential = LoginCredential(Backbone, _, Gombot.Realms);
 Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential, Gombot.Realms);
-Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection);
 Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms, Uri);
 Gombot.Linker = Linker(Gombot.Realms, Gombot.LoginCredential);
 Gombot.CommandHandler = CommandHandler(Gombot.Messaging,
@@ -50,6 +50,7 @@ Gombot.CommandHandler = CommandHandler(Gombot.Messaging,
 })(Gombot);
 
 new Gombot.Storage("users", function(store) {
+  Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection, Gombot.Sync, store);
   Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, store);
   initGombot();
 });
