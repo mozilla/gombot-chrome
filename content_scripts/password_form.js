@@ -3,6 +3,10 @@ var PasswordForm = function($, DomMonitor) {
   const FAKE_USERNAME_FIELD_HINTS = ['email', 'username'];
   const FAKE_PASSWORD_FIELD_HINTS = ['password'];
 
+  const USERNAME_TYPE = "username";
+  const PASSWORD_TYPE = "password";
+  const FAKE_PASSWORD_TYPE = "fakePassword";
+
   // Notifies the observer of the event fn. Currently we only support a single observer.
 	function notifyObserver(fn) {
 		var args;
@@ -67,8 +71,9 @@ var PasswordForm = function($, DomMonitor) {
 	// Fills the input element <el> with value <value>. Callback is invoked with filling is
 	// completed. It uses typeValueInElementHelper() to "type like a human" and sandwiches the
 	// fill with focus and blur events.
-	function fillField(el, value, callback) {
-		var $el = $(el);
+	function fillField(field, value, callback) {
+		var $el = field.$el,
+        self = this;
 		$el.focus();
 		var blur = function() {
 			$el.blur();
@@ -79,10 +84,19 @@ var PasswordForm = function($, DomMonitor) {
 			// After focusing on the given element, the page's javascript may
 			// change the focus (for example, swap out a fake field for a real one)
 			// and we should then type the value into the newly focused field.
-			var activeElement = document.activeElement;
-			if (isPossibleUsernameField(activeElement) || isPasswordField(activeElement)) {
+			if (field.type === USERNAME_TYPE) {
+        // returns new username field or existing one
+        field = handlePossibleUsernameFieldChange.call(self);
+        // possibly reset $el
+        $el = field.$el;
+      }
+      else if (field.type === PASSWORD_TYPE && isPasswordField(document.activeElement)) {
+        // CK: I expect this is rare and is untested
 				$el = $(activeElement);
 			}
+      // update our local view of what the field's value since input events won't
+      // capture changes made through JS
+      field.val = value;
 			// keep it simple for now
 			$el.val(value);
 			setTimeout(blur, 50);;
@@ -153,7 +167,7 @@ var PasswordForm = function($, DomMonitor) {
     var usernameEl = maybeGetConfiguredUsernameField.call(this) ||
                      findBestUsernameFieldCandidate.call(this, true /* mustBeVisible */) ||
         						 findBestUsernameFieldCandidate.call(this, false /* mustBeVisible */);
-    return createFieldObjForEl(usernameEl);
+    return createFieldObjForEl(usernameEl, USERNAME_TYPE);
   }
 
 	// If the user focuses on a username element and the active element changes, then
@@ -167,8 +181,9 @@ var PasswordForm = function($, DomMonitor) {
 			  isPossibleUsernameField(activeElement)) {
 			console.log("PasswordForm: switching usernameField old=",this.usernameField.el,"new=",activeElement);
 			this.usernameField.$el.off(this.focusEvents);
-			this.usernameField = createFieldObjForEl(activeElement);
+			this.usernameField = createFieldObjForEl(activeElement, USERNAME_TYPE);
 		}
+    return this.usernameField;
   }
 
   // Some sites show a fake username/password field with a "watermark" (e.g., it
@@ -195,7 +210,7 @@ var PasswordForm = function($, DomMonitor) {
   	var fakePasswordEl = $(this.config.fakePasswordFill).get(0);
   	//console.log("maybeFillFakePassword", fakePasswordEl);
   	if (fakePasswordEl) {
-  		fillField.call(this, fakePasswordEl, value, callback);
+  		fillField.call(this, createFieldObjForEl(fakePasswordEl, FAKE_PASSWORD_TYPE), value, callback);
   		return true;
   	}
   	return false;
@@ -203,9 +218,10 @@ var PasswordForm = function($, DomMonitor) {
 
   // Create an object that representing username and password fields.
   // el is the raw DOM element, $el is the jQuery wrapped DOM element, and val
-  // is for storing captured credentials.
-  function createFieldObjForEl(el) {
-  	return { el: el, $el: $(el), val: "" };
+  // is for storing captured credentials. type is descriptive string, one of:
+  // "password", "username", "fakePassword"
+  function createFieldObjForEl(el, type) {
+  	return { el: el, $el: $(el), val: "", type: type };
   }
 
   // PasswordForm constructor function. <args> should contain the following:
@@ -223,19 +239,18 @@ var PasswordForm = function($, DomMonitor) {
 		    containingEl = args.containingEl,
 		    siteConfig = args.siteConfig;
 		this.id = id;
-		this.passwordField = createFieldObjForEl(passwordEl);
+		this.passwordField = createFieldObjForEl(passwordEl, PASSWORD_TYPE);
 		this.$containingEl = $(containingEl);
 		this.config = siteConfig || {};
 
 		// "input" event will capture paste input and key by key input on modern browsers
 		// Note: this will not trigger when values are filled by javsacript or the browser
 		this.inputEvents = "input."+this.id;
-		this.submitEvents = "submit."+this.id;
 		this.focusEvents = "focus.username"+this.id;
 		this.removedEvents = "isRemoved.pwdEl"+this.id;
 
 		if (usernameEl) {
-			this.usernameField = createFieldObjForEl(usernameEl);
+			this.usernameField = createFieldObjForEl(usernameEl, USERNAME_TYPE);
 		} else {
     	// This must be called after passwordField and $containingEl are set
     	this.usernameField = findUsernameField.call(this);
@@ -260,18 +275,16 @@ var PasswordForm = function($, DomMonitor) {
     }
 	};
 
-	// Notify the observer whenever we detect interesting input events or form submits.
+	// Notify the observer whenever we detect interesting input events.
 	PasswordForm.prototype.observe = function(observer) {
 		this.observer = observer;
 		this.$containingEl.on(this.inputEvents, "input", capturedCredentialsCallback.bind(this));
-		this.$containingEl.on(this.submitEvents, capturedCredentialsCallback.bind(this));
 		return this;
 	};
 
 	// Turn off all internal observers
 	PasswordForm.prototype.unobserve = function() {
 		this.$containingEl.off(this.inputEvents);
-		this.$containingEl.off(this.submitEvents);
 		this.$containingEl.off(this.removedEvents);
 		this.usernameField.$el.off(this.focusEvents);
 		this.observer = null;
@@ -285,10 +298,10 @@ var PasswordForm = function($, DomMonitor) {
 	// some cortortions to "type like a human" and handle dynamic username field "switch-outs".
 	PasswordForm.prototype.fill = function(credentials) {
     maybeTickleFakeInputFields.call(this, FAKE_USERNAME_FIELD_HINTS);
-		fillField.call(this, this.usernameField.el, credentials.username, (function() {
+		fillField.call(this, this.usernameField, credentials.username, (function() {
 			maybeTickleFakeInputFields.call(this, FAKE_PASSWORD_FIELD_HINTS);
 			maybeFillFakePassword.call(this, credentials.password);
-			fillField.call(this, this.passwordField.el, credentials.password);
+			fillField.call(this, this.passwordField, credentials.password);
 		}).bind(this));
 		return this;
 	};

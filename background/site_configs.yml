@@ -43,3 +43,5 @@ att.com:
 realms:
   - origins: ["https://online.citibank.com", "https://www.accountonline.com", "https://creditcards.citi.com" ]
     title: "Citi"
+  - origins: ["https://www.bankofamerica.com", "https://safe.bankofamerica.com" ]
+    title: "Bank of America"

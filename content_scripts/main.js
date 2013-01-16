@@ -46,7 +46,7 @@ function credentialsCaptured(formInspector, credentials) {
 }
 
 function formsFound(formInspector) {
-    formInspector.highlightForms();
+    //formInspector.highlightForms();
     // fill any saved credentials
     maybeGetAndFillCredentials(formInspector);
 }
