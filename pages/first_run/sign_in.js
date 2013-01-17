@@ -17,26 +17,23 @@ $(document).ready(function() {
         $('#sign-in-form').removeClass('invalid');
         var email = $('[name="email"]').get()[0].value;
         var password = $('[name="password"]').get()[0].value;
-        client.signIn({
-            email: email,
-            pass: password
-        }, function (err) {
+        var user = userCollection.find(function(obj) {
+          return obj.get('email') === email;
+        });
+        if (!user) {
+          user = new Gombot.User({
+            email: email
+          });
+          console.log("Can't find a backbone object for this email!");
+        }
+        user.password = password;
+        user.signIn(function (err) {
           busy = false;
           if (err) {
             $('#sign-in-form').addClass('invalid');
           } else {
-            var user = userCollection.find(function(obj) {
-              return obj.get('email') === email;
-            });
-            if (user) {
-              user.keys = client.keys;
-              Gombot.setCurrentUser(user);
-              window.location = 'success.html';
-            }
-            else {
-              // TODO: getPayload
-              console.log("Can't find a backbone object for this email!");
-            }
+            // userCollection.add(user);
+            window.location = 'success.html';
           }
         });
     });

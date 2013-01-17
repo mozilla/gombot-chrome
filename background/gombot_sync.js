@@ -15,7 +15,8 @@ var GombotSync = function(GombotClient, Backbone, Gombot) {
       return;
     }
     var client = new GombotClient(GOMBOT_ENDPOINT, {
-      keys: model.keys
+      keys: model.keys,
+      user: model.get('email')
     });
     if (method === 'create') {
       console.log("calling create");
