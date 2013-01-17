@@ -42,7 +42,7 @@ var Linker = function(Realms, LoginCredential) {
           password: loginInfo.password,
     			// Fields that may be missing
     			title: loginInfo.title || Realms.getTitleFromUri(loginInfo.loginurl),
-    	    url: loginInfo.loginurl,
+    	    loginurl: loginInfo.loginurl,
     			pinLocked: loginInfo.pinLocked || false,
     		  supplementalInformation: loginInfo.supplementalInformation || {}
   	    };

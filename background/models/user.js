@@ -61,10 +61,13 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
       this.stopListening(logins, "sync");
     },
 
+    // If you want to creat an "encrypted" JSON representation,
+    // call model.toJSON({ encrypted: true, ciphertext: <ciphertext> })
+    // Other toJSON() creates a standard plaintext representation of a User object
     toJSON: function(args) {
     	args = args || {};
-    	if (args.encrypted && this.ciphertext) {
-    		return { ciphertext: this.ciphertext, updated: this.updated, id: this.id, email: this.get("email") };
+    	if (args.ciphertext) {
+    		return { ciphertext: args.ciphertext, updated: this.updated, id: this.id, email: this.get("email") };
     	}
     	else {
     		var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
@@ -73,21 +76,25 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     },
 
     parse: function(resp) {
-    	console.log("PARSE", resp);
+    	if (resp.ciphertext) this.ciphertext = resp.ciphertext;
+    	if (resp.updated) this.updated = resp.updated;
+    	delete resp.ciphertext;
+    	delete resp.updated;
     	return resp;
     },
 
     sync: function(method, model, options) {
     	var self = this;
     	var success = function(resp) {
-    		var s = options.success;
+    		var success = options.success;
     		options.success = function() {
-    			if (s) s(resp.data || {});
+    			if (success) success(resp.data || {});
     		}
     		if (resp.updated) self.updated = resp.updated;
+    		// ciphertext in resp indicates we need to write it out to local storage
     		if (resp.ciphertext) {
-    			self.ciphertext = resp.ciphertext;
-    			Backbone.localSync(method, model, _.extend(options, { encrypted: true }));
+    			if (method === "read") method = "update"; // hack to trick local storage to write out the ciphertext
+    			Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
     		} else if (options.success) {
     			options.success();
     		}

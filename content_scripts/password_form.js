@@ -92,7 +92,7 @@ var PasswordForm = function($, DomMonitor) {
       }
       else if (field.type === PASSWORD_TYPE && isPasswordField(document.activeElement)) {
         // CK: I expect this is rare and is untested
-				$el = $(activeElement);
+				$el = $(document.activeElement);
 			}
       // update our local view of what the field's value since input events won't
       // capture changes made through JS

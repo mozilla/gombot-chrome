@@ -1,3 +1,6 @@
+newsletter boolean isn't working properly
+do we need to firstRun thing anyway? Maybe only show the signup page after install?
+Gombot button doesn't do anything
 need to scroll on error in signup
 if passwords don't match, then you can't seem to proceed
 need a timestamp during create?

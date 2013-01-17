@@ -40,8 +40,8 @@ $(document).ready(function() {
       user.save(null,{
         success: function() {
           ProgressIndicator.hide();
-          userCollection.add(user);
           Gombot.setCurrentUser(user);
+          userCollection.add(user);
           window.location = '/pages/first_run/success.html';
         },
         error: function(args) {

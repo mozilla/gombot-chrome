@@ -16,7 +16,7 @@ $(document).ready(function() {
         busy = true;
         ProgressIndicator.show();
         $('#sign-in-form').removeClass('invalid');
-        var email = $('[name="email"]').get()[0].value;
+        var email = $('[name="email"]').get()[0].value.trim();
         var password = $('[name="password"]').get()[0].value;
         var user = userCollection.find(function(obj) {
           return obj.get('email') === email;

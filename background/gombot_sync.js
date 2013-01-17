@@ -1,10 +1,10 @@
 var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 	const GOMBOT_ENDPOINT = "https://gombot.org/api";
 
-
 	function maybeHandleError(handler, err, result) {
 		if (err || !result.success) {
 			if (!err) err = result;
+			console.log("GombotSync error", err);
 			if (handler) handler(err);
 			return true;
 		}
@@ -34,11 +34,24 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
   	getTimestamp(client, model, { error: options.error, success: function (serverUpdatedTime) {
   		var needsUpdate = !model.updated || serverUpdatedTime > model.updated;
   		if (!needsUpdate) {
-  			if (options.success) options.success({ data: {}, updated: serverUpdatedTime });
+  			// A little bit of a workaround here that if model.ciphertext exists, then it doesn't have any model data,
+  			// so it needs a decryption. We will decrypt it for them, clear model.ciphertext, and return the
+  			// model data in the callback.
+  			var success = function(data) {
+  				if (options.success) options.success({ data: data, updated: serverUpdatedTime });
+  			};
+  			if (model.ciphertext) {
+  				client.decryptPayload(model.ciphertext, function (err, plaintext) {
+  					if (err) return maybeHandleError(options.error, err);
+  					delete model.ciphertext;
+  					success(JSON.parse(plaintext));
+  				});
+  			}
+  			else return success({});
   		} else {
 		    client.getPayload({}, function(err, result) {
 		    	if (maybeHandleError(options.error, err, result)) return;
-		      if (options.success) options.success({ data: result.payload, ciphertext: result.ciphertext, updated: result.updated });
+		    	if (options.success) options.success({ data: result.payload, ciphertext: result.ciphertext, updated: result.updated });
 		    });
   		}
   	}});
@@ -46,9 +59,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 
   // TODO: client.storePayload needs to return timestamp, otherwise this function is buggy.
   function update(client, model, options) {
-    client.createEncryptedPayload({
-      payload: model
-    }, function(err, ciphertext) {
+    client.createEncryptedPayload(model, function(err, ciphertext) {
       client.storeEncryptedPayload({
         ciphertext: ciphertext
       }, function(err, result) {
@@ -69,16 +80,10 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 
   // options.success(client) must be defined
   function getGombotClient(model, options) {
-  	if(model.client) {
-  		options.success(model.client);
-  		return;
-  	}
+  	if (model.client) return options.success(model.client);
   	model.client = new GombotClient(GOMBOT_ENDPOINT, {});
     model.client.context(function(err, result) {
-    	if (err) {
-    		maybeHandleError(options.error, err);
-    		return;
-    	}
+    	if (err) return maybeHandleError(options.error, err);
     	options.success(model.client);
     });
   };
@@ -89,10 +94,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
       email: model.get('email'),
       pass: options.password
     }, function(err, result) {
-      if (err) {
-      	maybeHandleError(options.error, err);
-      	return;
-      }
+      if (err) return maybeHandleError(options.error, err);
       options.success(client);
     });
   }
@@ -101,21 +103,12 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
   // if client.keys don't exist, then options must contain "password" and model must have an "email" property.
   function maybeLogin(method, model, options) {
     getGombotClient(model, { error: options.error, success: function(client) {
-    	if (client.isAuthenticated()) {
-    		options.success(client);
-    		return;
-    	}
-    	// not authenticated, so signing
- 			if (!options.password || !model.get("email")) {
- 				// if no keys, check to see if we have email and password on model and if we don't then raise error
-    		maybeHandleError(options.error, "Client is unauthenticated; must provide email and password in options");
-      	return;
-    	}
+    	// if already authenticated then just return
+    	if (client.isAuthenticated()) return options.success(client);
+ 			// if no keys, check to see if we have email and password on model and if we don't then raise error
+ 			if (!options.password || !model.get("email")) return maybeHandleError(options.error, "Client is unauthenticated; must provide email and password in options");
     	// "create" doesn't require user be logged in, so plow ahead
-    	if (method === "create") {
-    		options.success(client);
-    		return;
-    	}
+    	if (method === "create") return options.success(client);
     	login(client, model, options);
     }});
   }
@@ -129,10 +122,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 	    // }
 	// All methods except for "create" require model.keys to exist and be valid
 	function sync(method, model, options) {
-		if (!(model instanceof Gombot.User)) {
-			maybeHandleError(options.error, "sync only supports syncing instances of Gombot.User");
-			return;
-		}
+		if (!(model instanceof Gombot.User)) return maybeHandleError(options.error, "sync only supports syncing instances of Gombot.User");
 		var o = _.clone(options);
 		maybeLogin(method, model, _.extend(o, { success: function(client) {
 	    var args = [client, model, options];
