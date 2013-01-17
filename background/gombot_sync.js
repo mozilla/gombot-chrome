@@ -4,15 +4,11 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 
 	function maybeHandleError(handler, err, result) {
 		if (err || !result.success) {
-			if (!err) {
-				err = result;
-			}
+			if (!err) err = result;
 			if (handler) handler(err);
 			return true;
 		}
-		else {
-			return false;
-		}
+		else return false;
 	}
 
 	function getTimestamp(client, model, options) {
@@ -75,7 +71,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 
   function getGombotClient(model, options) {
   	if(model.client) {
-  		options.success(model.client);
+  		if (options.success) options.success(model.client);
   		return;
   	}
   	model.client = new GombotClient(GOMBOT_ENDPOINT, {
@@ -89,6 +85,14 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
     	if (options.success) options.success(model.client);
     });
   };
+
+  function login(method, model, options) {
+    // check to see if we have email and password on model and if we don't then raise error
+    getGombotClient(model, { error: options.error, success: function(client) {
+      // do login and attach keys and then call sync again with method, model, options
+      // also make sure this gombot client gets the resulting keys
+    }});
+  }
 
 	// sync() only supports syncing Gombot.User models.
 	// Success method is called with object of the form:
@@ -105,6 +109,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 		}
     // Need to have sync keys attached to this object (outside of attributes) to sync
     if (method !== "create" && !model.keys) {
+      //login(method, model, options);
     	error(options.error, "No keys on model!");
       return;
     }
