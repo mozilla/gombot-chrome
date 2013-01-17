@@ -104,13 +104,13 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 	// All methods except for "create" require model.keys to exist and be valid
 	function sync(method, model, options) {
 		if (!(model instanceof Gombot.User)) {
-			error(options.error, "sync only supports syncing instances of Gombot.User");
+			maybeHandleError(options.error, "sync only supports syncing instances of Gombot.User");
 			return;
 		}
     // Need to have sync keys attached to this object (outside of attributes) to sync
     if (method !== "create" && !model.keys) {
       //login(method, model, options);
-    	error(options.error, "No keys on model!");
+    	maybeHandleError(options.error, "No keys on model!");
       return;
     }
     getGombotClient(model, { error: options.error, success: function(client) {
