@@ -14,6 +14,7 @@ $(document).ready(function() {
         e.preventDefault();
         if (busy) return;
         busy = true;
+        ProgressIndicator.show();
         $('#sign-in-form').removeClass('invalid');
         var email = $('[name="email"]').get()[0].value;
         var password = $('[name="password"]').get()[0].value;
@@ -21,12 +22,14 @@ $(document).ready(function() {
           return obj.get('email') === email;
         }) || new Gombot.User({ email: email });
         user.fetch({ success: function() {
+                       ProgressIndicator.hide();
                        Gombot.setCurrentUser(user);
                        userCollection.add(user);
                        window.location = 'success.html';
                      },
                      error: function(err) {
                        $('#sign-in-form').addClass('invalid');
+                       ProgressIndicator.hide();
                      },
                      password: password
                    });

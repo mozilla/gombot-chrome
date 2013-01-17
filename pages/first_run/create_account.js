@@ -55,23 +55,6 @@ $(document).ready(function() {
   });
 });
 
-var ProgressIndicator = (function() {
-  var indicatorImage = $('<img>')
-  .addClass('progress-indicator-image')
-  .attr('src', '../common/img/spinner.gif').get(0);
-  return {
-    show: function() {
-      if ($('.progress-indicator').has(indicatorImage).length == 0) {
-        $('.progress-indicator').append(indicatorImage);
-      }
-      $(indicatorImage).show();
-    },
-    hide: function() {
-      $(indicatorImage).hide();
-    }
-  };
-})();
-
 function checkPINs() {
   var pin = $('[name="pin"]').get()[0];
   var repeat = $('[name="pin_repeat"]').get()[0];
