@@ -3,12 +3,13 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     var currentUser = Gombot.getCurrentUser(),
         tabID = sender.tab.id;
 
+    console.log(Gombot.getCurrentUser());
     var linkingInfo = Linker.shouldShowLinkingNotification(currentUser, message);
     if (!linkingInfo) {
       return;
     }
     _.extend(message, linkingInfo);
-    if (currentUser && currentUser.keys) {
+    if (currentUser) {
       // Prompt the user to save the login
       displayInfobar({
         notify: true,
