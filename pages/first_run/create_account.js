@@ -28,7 +28,7 @@ $(document).ready(function() {
     if (ok) {
       var email = $('[name="email"]').get()[0].value.trim();
       var password = $('[name="password"]').get()[0].value;
-      var newsletter = $('[name="newsletter"]').get()[0].value === 'subscribe';
+      var newsletter = $('[name="newsletter"]').is(':checked');
       var pin = $('[name="pin"]').get()[0].value;
       ProgressIndicator.show();
       busy = false;
