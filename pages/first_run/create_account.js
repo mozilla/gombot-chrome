@@ -37,9 +37,6 @@ $(document).ready(function() {
         'pin': pin
       });
 
-      user.password = password;
-      user.newsletter = newsletter;
-
       user.save(null,{
         success: function() {
           ProgressIndicator.hide();
@@ -50,7 +47,9 @@ $(document).ready(function() {
         error: function(args) {
           // TODO: handle any errors
           ProgressIndicator.hide();
-        }
+        },
+        password: password,
+        newsletter: newsletter
       });
     }
   });

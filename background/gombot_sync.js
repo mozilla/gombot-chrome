@@ -22,12 +22,10 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
     var self = this;
     client.account({
       email: model.get('email'),
-      pass: model.password,
-      newsletter: model.newsletter
+      pass: options.password,
+      newsletter: options.newsletter
     }, function(err, result) {
-    	console.log(err, result);
     	if (maybeHandleError(options.error, err, result)) return;
-      model.keys = client.keys;
       update(client, model, options);
     });
   }
@@ -69,26 +67,46 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
   	maybeHandleError(options.error, "DELETE NOT IMPLEMENTED");
   }
 
+  // options.success(client) must be defined
   function getGombotClient(model, options) {
   	if(model.client) {
-  		if (options.success) options.success(model.client);
+  		options.success(model.client);
   		return;
   	}
-  	model.client = new GombotClient(GOMBOT_ENDPOINT, {
-      keys: model.keys
-    });
+  	model.client = new GombotClient(GOMBOT_ENDPOINT, {});
     model.client.context(function(err, result) {
     	if (err) {
     		maybeHandleError(options.error, err);
     		return;
     	}
-    	if (options.success) options.success(model.client);
+    	options.success(model.client);
     });
   };
 
-  function login(method, model, options) {
-    // check to see if we have email and password on model and if we don't then raise error
+  function login(client, model, options) {
+  	// TODO: write this
+  }
+
+  // options.success(client) must be defined
+  // if client.keys don't exist, then options must contain "password" and model must have an "email" property.
+  function maybeLogin(method, model, options) {
     getGombotClient(model, { error: options.error, success: function(client) {
+    	if (client.isAuthenticated()) {
+    		options.success(client);
+    		return;
+    	}
+    	// not authenticated, so signing
+ 			if (!options.password || !model.get("email")) {
+ 				// if no keys, check to see if we have email and password on model and if we don't then raise error
+    		maybeHandleError(options.error, "Client is unauthenticated; must provide email and password in options");
+      	return;
+    	}
+    	// "create" doesn't require user be logged in, so plow ahead
+    	if (method === "create") {
+    		options.success(client);
+    		return;
+    	}
+    	login(client, model, options);
       // do login and attach keys and then call sync again with method, model, options
       // also make sure this gombot client gets the resulting keys
     }});
@@ -107,13 +125,8 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 			maybeHandleError(options.error, "sync only supports syncing instances of Gombot.User");
 			return;
 		}
-    // Need to have sync keys attached to this object (outside of attributes) to sync
-    if (method !== "create" && !model.keys) {
-      //login(method, model, options);
-    	maybeHandleError(options.error, "No keys on model!");
-      return;
-    }
-    getGombotClient(model, { error: options.error, success: function(client) {
+		var o = _.clone(options);
+		maybeLogin(method, model, _.extend(o, { success: function(client) {
 	    var args = [client, model, options];
 		  switch (method) {
 		    case "read":    read.apply(this, args); break;
@@ -121,7 +134,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 		    case "update":  update.apply(this, args); break;
 		    case "delete":  destroy.apply(this, args); break;
 		  }
-		}});
+		}}));
 	}
 
 	if (Backbone) Backbone.gombotSync = sync;
