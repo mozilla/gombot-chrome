@@ -64,26 +64,42 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
       this.stopListening(logins, "sync");
     },
 
-    toJSON: function() {
-    	var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
-    	return _.extend(result, { logins: this.get("logins").toJSON() });
+    toJSON: function(args) {
+    	args = args || {};
+    	if (args.encrypted && this.ciphertext) {
+    		return { ciphertext: this.ciphertext, updated: this.updated, id: this.id, email: this.get("email") };
+    	}
+    	else {
+    		var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
+    		return _.extend(result, { logins: this.get("logins").toJSON() });
+    	}
     },
 
-    toEncryptedJSON: function() {
+    parse: function(resp) {
+    	console.log("PARSE", resp);
+    	return resp;
     },
 
     sync: function(method, model, options) {
+    	var self = this;
     	var success = function(resp) {
-    		console.log("User.sync success", resp);
-    		Backbone.sync(method, model, options);
+    		var s = options.success;
+    		options.success = function() {
+    			if (s) s(resp.data || {});
+    		}
+    		if (resp.updated) self.updated = resp.updated;
+    		if (resp.ciphertext) {
+    			self.ciphertext = resp.ciphertext;
+    			Backbone.localSync(method, model, _.extend(options, { encrypted: true }));
+    		} else if (options.success) {
+    			options.success();
+    		}
     	};
     	var error = function(args) {
-    		console.log("User.sync error", args);
     		if (options.error) options.error(args);
     	};
     	var o = _.clone(options);
-    	o = _.extend({ success: success, error: error });
-    	GombotSync.sync(method, model, o);
+    	GombotSync.sync(method, model, _.extend(o,{ success: success, error: error }));
     },
 
     set: function(key, val, options) {

@@ -1,10 +1,14 @@
 need to scroll on error in signup
+if passwords don't match, then you can't seem to proceed
+need a timestamp during create?
 need to fix copy about master password reset on signup success page
 get server sync going
     // seed entropy
   // client.context({}, function(err, data) {
   //   client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
   // });
+figure out a cool dynamic origin merging process
+  - for example, "we have creds for x.example.com, would you like to use them on y.example.com"
 figure out what is going on with all the citi domains (need my account reset)
 www.bankofamerica.com and safe.bankofamerica.com for linking especially
   - make captured credentials storage respect realms
