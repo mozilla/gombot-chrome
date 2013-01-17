@@ -38,9 +38,6 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
 
 		localStorage: LocalStorage,
 
-		// derived keys from user's master password
-		keys: null,
-
     initialize: function() {
       Backbone.Model.prototype.initialize.apply(this, arguments);
       this.addSyncListener(this.get("logins"));
@@ -78,26 +75,6 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     parse: function(resp) {
     	console.log("PARSE", resp);
     	return resp;
-    },
-    
-    signIn: function(cb) {
-      if (!this.password) return;
-      const GOMBOT_ENDPOINT = "https://gombot.org/api";
-      var that = this;
-      var client = new GombotClient(GOMBOT_ENDPOINT);
-      client.signIn({
-        email: this.get('email'),
-        pass: this.password
-      }, function(err) {
-        if (err) {
-          console.log('Couldn\'t sign user into server!');
-          cb(err);
-          return;
-        }
-        that.keys = client.keys;
-        Gombot.setCurrentUser(that);
-        that.fetch();
-      });
     },
 
     sync: function(method, model, options) {

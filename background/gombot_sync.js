@@ -83,8 +83,18 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
     });
   };
 
+  // options.success(client) must be defined
   function login(client, model, options) {
-  	// TODO: write this
+    client.signIn({
+      email: model.get('email'),
+      pass: options.password
+    }, function(err, result) {
+      if (err) {
+      	maybeHandleError(options.error, err);
+      	return;
+      }
+      options.success(client);
+    });
   }
 
   // options.success(client) must be defined
@@ -107,8 +117,6 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
     		return;
     	}
     	login(client, model, options);
-      // do login and attach keys and then call sync again with method, model, options
-      // also make sure this gombot client gets the resulting keys
     }});
   }
 
