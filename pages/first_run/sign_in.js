@@ -23,7 +23,7 @@ $(document).ready(function() {
         user.fetch({ success: function() {
                        Gombot.setCurrentUser(user);
                        userCollection.add(user);
-                       window.location = 'success.html';
+                       window.location = '/pages/first_run/success.html';
                      },
                      error: function(err) {
                        $('#sign-in-form').addClass('invalid');
