@@ -4,6 +4,7 @@ body {
 
 a {
     color:black;
+    text-decoration:underline;
 }
 
 hr {
@@ -43,6 +44,14 @@ x-pin > div.x-pin-fields > input {
 #container {
     padding:10px;
     min-width:275px;
+}
+
+#current-user-email {
+    font-weight:bold;
+}
+
+#divider {
+  display:none;
 }
 
 #export-data-link {

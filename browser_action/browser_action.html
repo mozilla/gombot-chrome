@@ -14,6 +14,9 @@
 
 <body>
     <div id="container">
+		<div class="show-after-signup">
+			<span id="current-user-email"></span> (<a href="#" class="signup-link">sign out</a>)
+		</div>
         <div class="show-after-signup">
             <a id="feedback-link" href="#">Report a problem</a>
         </div>
@@ -21,9 +24,9 @@
             <a id="export-data-link" href="#">Export my data</a>
         </div>
         <div id="signup-nag">
-            <a id="signup-link" href="#">Sign up</a> for Gombot to get started!
+            <a class="signup-link" href="#">Sign up</a> for Gombot to get started!
         </div>
-        <hr>
+        <hr id="divider">
         <div id="pin-entry">
             <div id="pin-prompt">
                 Enter PIN to unlock site

@@ -21,6 +21,7 @@ function copyToClipboard(_str) {
 $(document).ready(function() {
     var currentUser = Gombot.getCurrentUser();
     if (currentUser) {
+      $('#current-user-email').html(currentUser.get('email'));
       // The user has already signed up for Gombot, so ask for feedback.
       $('.show-after-signup').show();
       $('#feedback-link').click(function(e) {
@@ -36,13 +37,13 @@ $(document).ready(function() {
       initBrowserAction();
     }
     else {
-      $('#signup-nag').show();
       // Display reminder to sign in to/create a Gombot account.
-      $('#signup-link').click(function(e) {
-          backgroundPage.startFirstRunFlow();
-          e.preventDefault();
-      });
+      $('#signup-nag').show();
     }
+    $('.signup-link').click(function(e) {
+        backgroundPage.startFirstRunFlow();
+        e.preventDefault();
+    });
 });
 
 function initBrowserAction() {
@@ -54,6 +55,8 @@ function initBrowserAction() {
       var loginURI = backgroundPage.Uri(login.get('loginurl'));
       return loginURI.host() == newURL.host();
     });
+    // Show the divider to show the separation in the layout.
+    $('#divider').show();
     if (logins.length == 0) {
       $('#logins').hide();
       $('#no-logins-saved').show();
