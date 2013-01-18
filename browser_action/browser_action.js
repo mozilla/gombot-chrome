@@ -54,6 +54,8 @@ function initBrowserAction() {
       var loginURI = backgroundPage.Uri(login.get('loginurl'));
       return loginURI.host() == newURL.host();
     });
+    // Show the divider to show the separation in the layout.
+    $('#divider').show();
     if (logins.length == 0) {
       $('#logins').hide();
       $('#no-logins-saved').show();
