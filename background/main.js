@@ -52,16 +52,25 @@ Gombot.CommandHandler = CommandHandler(Gombot.Messaging,
 new Gombot.Storage("users", function(store) {
   Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection, Gombot.Sync, store);
   Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, store);
-  initGombot();
+  checkFirstRun();
 });
 
-function initGombot() {
+function checkFirstRun() {
+  Gombot.LocalStorage.getItem("firstRun", function(firstRun) {
+    initGombot(firstRun);
+  });
+}
+
+function initGombot(firstRun) {
     Gombot.users = new Gombot.UserCollection();
     Gombot.users.fetch({
       success: function() {
-        var showSignInPage = Gombot.users.size() > 0;
-        startFirstRunFlow(showSignInPage);
-      }});
+        //var showSignInPage = Gombot.users.size() > 0;
+        if (!firstRun) {
+          startFirstRunFlow(false /* showSignInPage */); // shows signup page on first run
+          Gombot.LocalStorage.setItem("firstRun", true);
+        }
+    }});
 }
 
 //
