@@ -1,5 +1,12 @@
 var Linker = function(Realms, LoginCredential) {
 
+  function findLoginCredentialForUsernameAndUrl(user, username, url) {
+    return user.get('logins').find(function(loginCredential) {
+      return Realms.isUriMemberOfRealm(url, loginCredential.origins) &&
+             loginCredential.get('username') === username;
+    });
+  }
+
 	function shouldShowLinkingNotification(user, loginInfo) {
   	var url = loginInfo.loginurl,
         username = loginInfo.username,
@@ -12,12 +19,9 @@ var Linker = function(Realms, LoginCredential) {
     }
 
     // Look for passwords in use on the current site
-    var loginForSavedUsername = user.get('logins').find(function(loginCredential) {
-      return Realms.isUriMemberOfRealm(url, loginCredential.origins) &&
-             loginCredential.get('username') === username;
-    });
-    if (loginForSavedUsername) {
-      if (loginForSavedUsername.get("password") === password) {
+    var loginForSameUsername = findLoginCredentialForUsernameAndUrl(user, username, url);
+    if (loginForSameUsername) {
+      if (loginForSameUsername.get("password") === password) {
         // We're just logging into a site with an existing login. Bail.
         return false;
       }
@@ -35,6 +39,15 @@ var Linker = function(Realms, LoginCredential) {
     return result;
 	}
 
+  function updateExistingLoginCredential(loginCredential, attrs) {
+    // For existing credential, just update the password.
+    loginCredential.set({ password: attrs.password });
+  }
+
+  function createNewLoginCredential(attrs) {
+    return new LoginCredential(attrs);
+  }
+
 	// TODO: options should have success and error
 	function link(user, loginInfo, options) {
   	var attrs = {
@@ -45,10 +58,18 @@ var Linker = function(Realms, LoginCredential) {
     	    loginurl: loginInfo.loginurl,
     			pinLocked: loginInfo.pinLocked || false,
     		  supplementalInformation: loginInfo.supplementalInformation || {}
-  	    };
-  	var newLogin = new Gombot.LoginCredential(attrs);
-		user.get('logins').add(newLogin);
-    user.save();
+  	    },
+        loginCredential;
+    // see if user is up to date before linking
+    user.fetch({ success: function() {
+      loginCredential = findLoginCredentialForUsernameAndUrl(user, loginInfo.username, loginInfo.loginurl);
+      if (loginCredential) updateExistingLoginCredential(loginCredential, attrs);
+      else {
+        loginCredential = createNewLoginCredential(attrs);
+    		user.get('logins').add(loginCredential);
+      }
+      user.save();
+    }});
 	}
 
 	// TODO: options should have success and error

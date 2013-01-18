@@ -4,13 +4,7 @@ Gombot button doesn't do anything
 need to scroll on error in signup
 can't sign in after getting password wrong
 if passwords don't match, then you can't seem to proceed
-need a timestamp during create?
 need to fix copy about master password reset on signup success page
-get server sync going
-    // seed entropy
-  // client.context({}, function(err, data) {
-  //   client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
-  // });
 figure out a cool dynamic origin merging process
   - for example, "we have creds for x.example.com, would you like to use them on y.example.com"
 figure out what is going on with all the citi domains (need my account reset)
@@ -22,8 +16,6 @@ test ip address sites with ports
 handle the capturing of other password managers form filling (maybe do setTimout afer form has been recognized and try to do some intelligent capture of the credentials)
   - handled by setTimeout(grab shit if don't have any) in passwordForm?
 figure out sessions for client (browser session, explicit logout?)
-need busy indicator on login page
-fix update_password in infobar_hooks.js
 figure out downloadExportDataFile function (does it work, is it exposed?)
 login success goes to successful install page
 seems to be race condition with citi realm (problems with capturing on accountonline.com and filling on https://creditcards.citi.com/)
@@ -36,3 +28,10 @@ bayareacurling has annoying change password page
 
 consider supporting grabbing username from select elements (online.citibank.com when remember me is enabled). This site also has a dynamic username box when you say log in as another user
 
+Backbone.sync refactor
+ - make user model only handle unencrypted data
+ - introduce GombotSyncMediator to coordinate GombotSync and LocalSync
+ - create a proxy User object in GombotSyncMediator to handle toJSON() and parse() of encrypted user blobs
+ - remove localStorage flag on UserCollection
+ - have User.fetch() return encrypted nothing if not authenticated
+ - implement User.isAuthenticated() { return this.client && this.client.isAuthenticated() }

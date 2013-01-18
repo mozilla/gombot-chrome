@@ -61,6 +61,10 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
       this.stopListening(logins, "sync");
     },
 
+    isAuthenticated: function() {
+    	return this.client && this.client.isAuthenticated();
+    },
+
     // If you want to creat an "encrypted" JSON representation,
     // call model.toJSON({ encrypted: true, ciphertext: <ciphertext> })
     // Other toJSON() creates a standard plaintext representation of a User object

@@ -6,13 +6,9 @@
 *
 */
 
-function formatStoredLogin(login) {
-
-}
-
 var infobarHooks = {
     'password_observed': function (notificationObj,infobarResponse) {
-        console.log(notificationObj);
+        //console.log(notificationObj);
         var loginInfo = notificationObj.notification;
         var currentUser = Gombot.getCurrentUser();
         switch (infobarResponse.user_action) {
@@ -41,7 +37,7 @@ var infobarHooks = {
     },
     'pin_entry': function(notificationObj,infobarResponse) {
         if (infobarResponse.pin_valid) {
-            console.log(notificationObj)
+            //console.log(notificationObj)
             if (notificationObj.notification.callback) {
                 notificationObj.notification.callback()
             }
@@ -52,8 +48,9 @@ var infobarHooks = {
             }
         }
     },
-    // TODO: fix this
     'update_password': function(notificationObj,infobarResponse) {
-        User.Logins.add(notificationObj.notification);
+        var loginInfo = notificationObj.notification;
+        var currentUser = Gombot.getCurrentUser();
+        Gombot.Linker.link(currentUser, loginInfo);
     }
 }

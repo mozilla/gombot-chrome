@@ -45,14 +45,15 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
   }
 
   function getSavedCredentials(message, sender, callback) {
-    var currentUser = Gombot.getCurrentUser();
-    var logins = [];
-    if (currentUser) {
+    var currentUser = Gombot.getCurrentUser(),
+        logins = [];
+    if (!currentUser) return false;
+    currentUser.fetch({ success: function() {
       logins = currentUser.get('logins').filter(function(loginCredential) {
         return Realms.isUriMemberOfRealm(sender.tab.url, loginCredential.origins);
       });
-    }
     callback(logins);
+    }});
     // Chrome requires that we return true if we plan to call a callback
     // after an onMessage function returns.
     return true;
