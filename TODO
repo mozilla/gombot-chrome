@@ -2,7 +2,6 @@ newsletter boolean isn't working properly
 do we need to firstRun thing anyway? Maybe only show the signup page after install?
 Gombot button doesn't do anything
 need to scroll on error in signup
-can't sign in after getting password wrong
 if passwords don't match, then you can't seem to proceed
 need to fix copy about master password reset on signup success page
 figure out a cool dynamic origin merging process

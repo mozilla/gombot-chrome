@@ -21,17 +21,19 @@ $(document).ready(function() {
         var user = userCollection.find(function(obj) {
           return obj.get('email') === email;
         }) || new Gombot.User({ email: email });
-        user.fetch({ success: function() {
-                       ProgressIndicator.hide();
-                       Gombot.setCurrentUser(user);
-                       userCollection.add(user);
-                       window.location = '/pages/first_run/success.html';
-                     },
-                     error: function(err) {
-                       $('#sign-in-form').addClass('invalid');
-                       ProgressIndicator.hide();
-                     },
-                     password: password
-                   });
+        user.fetch({ 
+          success: function() {
+            ProgressIndicator.hide();
+            Gombot.setCurrentUser(user);
+            userCollection.add(user);
+            window.location = '/pages/first_run/success.html';
+          },
+          error: function(err) {
+            $('#sign-in-form').addClass('invalid');
+            ProgressIndicator.hide();
+            busy = false;
+          },
+          password: password
+        });
     });
 });
