@@ -7,15 +7,16 @@ var Linker = function(Realms, LoginCredential) {
     });
   }
 
-	function shouldShowLinkingNotification(user, loginInfo) {
+	function shouldShowLinkingNotification(user, loginInfo, options) {
   	var url = loginInfo.loginurl,
         username = loginInfo.username,
         password = loginInfo.password,
-        result = {};
+        result = {},
+        success = options.success;
 
     // Check to see if the user disabled password saving on this site
     if (user.get('disabledSites')[Realms.getOriginForUri(url)] === 'all') {
-      return false;;
+      success(false);
     }
 
     // Look for passwords in use on the current site
@@ -23,7 +24,7 @@ var Linker = function(Realms, LoginCredential) {
     if (loginForSameUsername) {
       if (loginForSameUsername.get("password") === password) {
         // We're just logging into a site with an existing login. Bail.
-        return false;
+        success(false);
       }
       else {
         // Prompt user to update password
@@ -36,7 +37,7 @@ var Linker = function(Realms, LoginCredential) {
     else {
     	result.type = 'password_observed';
     }
-    return result;
+    success(result);
 	}
 
   function updateExistingLoginCredential(loginCredential, attrs) {
@@ -60,16 +61,13 @@ var Linker = function(Realms, LoginCredential) {
     		  supplementalInformation: loginInfo.supplementalInformation || {}
   	    },
         loginCredential;
-    // see if user is up to date before linking
-    user.fetch({ success: function() {
-      loginCredential = findLoginCredentialForUsernameAndUrl(user, loginInfo.username, loginInfo.loginurl);
-      if (loginCredential) updateExistingLoginCredential(loginCredential, attrs);
-      else {
-        loginCredential = createNewLoginCredential(attrs);
-    		user.get('logins').add(loginCredential);
-      }
-      user.save();
-    }});
+    loginCredential = findLoginCredentialForUsernameAndUrl(user, loginInfo.username, loginInfo.loginurl);
+    if (loginCredential) updateExistingLoginCredential(loginCredential, attrs);
+    else {
+      loginCredential = createNewLoginCredential(attrs);
+  		user.get('logins').add(loginCredential);
+    }
+    user.save();
 	}
 
 	// TODO: options should have success and error
@@ -78,8 +76,19 @@ var Linker = function(Realms, LoginCredential) {
     user.save();
 	}
 
+  // update the user model first then call the given func
+  // user model must be the first element of args
+  function userFetchThenCall(func, args) {
+    var user = args[0];
+    user.fetch({ success: function() {
+      func.apply(null, args);
+    }});
+  }
+
 	return {
-		shouldShowLinkingNotification: shouldShowLinkingNotification,
+		shouldShowLinkingNotification: function () {
+      return userFetchThenCall(shouldShowLinkingNotification, Array.prototype.slice.call(arguments));
+    },
 		link: link,
 		disableSite: disableSite
 	};

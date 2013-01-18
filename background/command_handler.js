@@ -3,27 +3,28 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     var currentUser = Gombot.getCurrentUser(),
         tabID = sender.tab.id;
 
-    var linkingInfo = Linker.shouldShowLinkingNotification(currentUser, message);
-    if (!linkingInfo) {
-      return;
-    }
-    _.extend(message, linkingInfo);
-    if (currentUser) {
-      // Prompt the user to save the login
-      displayInfobar({
-        notify: true,
-        tabID: tabID,
-        notification: message
-      });
-    } else {
-      displayInfobar({
-        notify: true,
-        tabID: tabID,
-        notification: {
-          type: 'signup_nag'
-        }
-      });
-    }
+    Linker.shouldShowLinkingNotification(currentUser, message, { success: function(linkingInfo) {
+      if (!linkingInfo) {
+        return;
+      }
+      _.extend(message, linkingInfo);
+      if (currentUser) {
+        // Prompt the user to save the login
+        displayInfobar({
+          notify: true,
+          tabID: tabID,
+          notification: message
+        });
+      } else {
+        displayInfobar({
+          notify: true,
+          tabID: tabID,
+          notification: {
+            type: 'signup_nag'
+          }
+        });
+      }
+    }});
   }
 
   function validatePin(message, sender, callback) {
@@ -44,6 +45,8 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     CapturedCredentialStorage.deleteCredentials(sender.tab);
   }
 
+  // TODO: Have this execute callbacks: one what we have now and one after the fetch
+  // The callback can only be executed once, so we should set up a channel or use another mechanism
   function getSavedCredentials(message, sender, callback) {
     var currentUser = Gombot.getCurrentUser(),
         logins = [];
