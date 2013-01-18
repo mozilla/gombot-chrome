@@ -20,7 +20,6 @@ function copyToClipboard(_str) {
 
 $(document).ready(function() {
     var currentUser = Gombot.getCurrentUser();
-    console.log('currentUser: ',currentUser);
     if (currentUser) {
       // The user has already signed up for Gombot, so ask for feedback.
       $('.show-after-signup').show();
@@ -47,10 +46,13 @@ $(document).ready(function() {
 });
 
 function initBrowserAction() {
+  var currentUser = Gombot.getCurrentUser();
   backgroundPage.getActiveTab(function(tab) {
     var newURL = backgroundPage.Uri(tab.url);
-    var logins = Gombot.get('logins').filter(function(login) {
-      login.get('hostname') == newURL.host();
+    // TODO: Make this realm-aware
+    var logins = currentUser.get('logins').filter(function(login) {
+      var loginURI = backgroundPage.Uri(login.get('loginurl'));
+      return loginURI.host() == newURL.host();
     });
     if (logins.length == 0) {
       $('#logins').hide();
