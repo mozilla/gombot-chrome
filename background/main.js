@@ -70,6 +70,8 @@ function initGombot(firstRun) {
           startFirstRunFlow(false /* showSignInPage */); // shows signup page on first run
           Gombot.LocalStorage.setItem("firstRun", true);
         }
+        var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });
+        if (loggedInUser) Gombot.setCurrentUser(loggedInUser);
     }});
 }
 

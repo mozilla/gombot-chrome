@@ -1,8 +1,10 @@
 - write auth state to localStorage and read it back
 - package extension
 - put in firstRun flag to not show signup page if no accounts after the first install
+- Add signed in as: <> when logged in or "Sign in" action that brings up signin page
 
-
+clicking Gombot button after menu is show should close menu
+return immediately any available creds before user.fetch() when we detect login forms
 newsletter boolean isn't working properly
 do we need to firstRun thing anyway? Maybe only show the signup page after install?
 Gombot button doesn't do anything

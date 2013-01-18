@@ -62,19 +62,22 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     },
 
     isAuthenticated: function() {
-    	return this.client && this.client.isAuthenticated();
+    	return this.client && (this.client.isAuthenticated && this.client.isAuthenticated()) || (this.client.keys && this.client.user);
     },
 
     // If you want to creat an "encrypted" JSON representation,
     // call model.toJSON({ encrypted: true, ciphertext: <ciphertext> })
     // Other toJSON() creates a standard plaintext representation of a User object
     toJSON: function(args) {
+    	var result;
     	args = args || {};
     	if (args.ciphertext) {
-    		return { ciphertext: args.ciphertext, updated: this.updated, id: this.id, email: this.get("email") };
+    		result = { ciphertext: args.ciphertext, updated: this.updated, id: this.id, email: this.get("email") };
+    		if (this.isAuthenticated()) _.extend(result, { client: this.client.toJSON() });
+    		return result;
     	}
     	else {
-    		var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
+    		result = Backbone.Model.prototype.toJSON.apply(this, arguments);
     		return _.extend(result, { logins: this.get("logins").toJSON() });
     	}
     },
@@ -82,8 +85,10 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     parse: function(resp) {
     	if (resp.ciphertext) this.ciphertext = resp.ciphertext;
     	if (resp.updated) this.updated = resp.updated;
+    	if (resp.client) this.client = resp.client;
     	delete resp.ciphertext;
     	delete resp.updated;
+    	delete resp.client;
     	return resp;
     },
 
@@ -98,6 +103,7 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     		// ciphertext in resp indicates we need to write it out to local storage
     		if (resp.ciphertext) {
     			if (method === "read") {
+    				var data =
     				self.save(resp.data, _.extend(options, { localOnly: true }));
     			} else {
   	  			Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
