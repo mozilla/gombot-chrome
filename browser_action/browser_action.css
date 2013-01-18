@@ -46,6 +46,10 @@ x-pin > div.x-pin-fields > input {
     min-width:275px;
 }
 
+#current-user-email {
+    font-weight:bold;
+}
+
 #divider {
   display:none;
 }
