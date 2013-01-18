@@ -153,5 +153,6 @@ function testInfobarNotification() {
 
 function validatePIN(_pin) {
   // If there's no PIN set, accept. Otherwise, validate.
-  return (!Boolean(User.PIN.get())) || User.PIN.validate(_pin);
+  var currentUser = Gombot.getCurrentUser();
+  return (currentUser.get('pin') === _pin);
 }
