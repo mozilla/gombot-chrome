@@ -1,4 +1,5 @@
 need to scroll on error in signup
+can't sign in after getting password wrong
 if passwords don't match, then you can't seem to proceed
 need a timestamp during create?
 need to fix copy about master password reset on signup success page
