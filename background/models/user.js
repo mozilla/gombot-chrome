@@ -93,8 +93,11 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     		if (resp.updated) self.updated = resp.updated;
     		// ciphertext in resp indicates we need to write it out to local storage
     		if (resp.ciphertext) {
-    			if (method === "read") method = "update"; // hack to trick local storage to write out the ciphertext
-    			Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
+    			if (method === "read") {
+    				self.save(resp.data, _.extend(options, { localOnly: true }));
+    			} else {
+  	  			Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
+  	  		}
     		} else if (options.success) {
     			options.success();
     		}
@@ -103,7 +106,11 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     		if (options.error) options.error(args);
     	};
     	var o = _.clone(options);
-    	GombotSync.sync(method, model, _.extend(o,{ success: success, error: error }));
+    	if (options.localOnly) {
+    		Backbone.localSync(method, model, options);
+    	} else {
+    		GombotSync.sync(method, model, _.extend(o,{ success: success, error: error }));
+    	}
     },
 
     set: function(key, val, options) {
