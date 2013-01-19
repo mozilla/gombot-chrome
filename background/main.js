@@ -47,6 +47,12 @@ Gombot.CommandHandler = CommandHandler(Gombot.Messaging,
   Gombot.setCurrentUser = function(user) {
     currentUser = user;
   }
+
+  Gombot.clearCurrentUser = function(callback) {
+    if (!currentUser) { callback(); return; }
+    // TODO: revisit this after sync refactor. This has some gross abstractions going on.
+    currentUser.destroy({ localOnly: true, success: function() { currentUser = null; callback(); }});
+  }
 })(Gombot);
 
 new Gombot.Storage("users", function(store) {
@@ -65,7 +71,6 @@ function initGombot(firstRun) {
     Gombot.users = new Gombot.UserCollection();
     Gombot.users.fetch({
       success: function() {
-        //var showSignInPage = Gombot.users.size() > 0;
         if (!firstRun) {
           startFirstRunFlow(false /* showSignInPage */); // shows signup page on first run
           Gombot.LocalStorage.setItem("firstRun", true);

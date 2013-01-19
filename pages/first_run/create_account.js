@@ -1,37 +1,31 @@
 $(document).ready(function() {
   var Gombot = chrome.extension.getBackgroundPage().Gombot;
-  //var GombotClient = chrome.extension.getBackgroundPage.GombotClient;
   var userCollection = Gombot.users;
-  var server = 'https://gombot.org';
-  //var client = new GombotClient(server + '/api');
-  var busy = false;
 
-  // seed entropy
-  // client.context({}, function(err, data) {
-  //   client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
-  // });
+  var busy = false;
 
   $('#pin-info-link').click(function(ev) {
     $('#account-form').toggleClass('show-info');
   });
 
   $('#account-form').submit(function(e) {
+    var validEmail, validPassword, validPin, ok, scrollToEl;
     e.preventDefault();
     if (busy) return;
     busy = true;
 
     // Validate form
-    var ok = checkPINs();
+    validPin = checkPINs();
     // TODO: canonicalize email
-    ok = checkEmail() && ok;
-    ok = checkPasswords() && ok;
+    validEmail = checkEmail();
+    validPassword = checkPasswords();
+    ok = validPin && validEmail && validPassword;
     if (ok) {
       var email = $('[name="email"]').get()[0].value.trim();
       var password = $('[name="password"]').get()[0].value;
       var newsletter = $('[name="newsletter"]').is(':checked');
       var pin = $('[name="pin"]').get()[0].value;
       ProgressIndicator.show();
-      busy = false;
       var user = new Gombot.User({
         'email': email,
         'pin': pin
@@ -43,15 +37,34 @@ $(document).ready(function() {
           Gombot.setCurrentUser(user);
           userCollection.add(user);
           window.location = '/pages/first_run/success.html';
+          busy = false;
         },
         error: function(args) {
+          console.log("ERROR", args);
+          if (args.response && args.response.errorMessage.match(/That email has already been used/)) {
+            $('.email').addClass('used');
+            $('html, body').animate({
+              scrollTop: $("#email").offset().top
+            }, 250);
+          }
           // TODO: handle any errors
           ProgressIndicator.hide();
+          busy = false;
         },
         password: password,
         newsletter: newsletter
       });
     }
+    else { // validation problem
+      busy = false;
+      if (!validEmail) scrollToEl = "#email";
+      else if (!validPassword) scrollToEl = "#password";
+      else if (!validPin) scrollToEl = "#pin";
+      $('html, body').animate({
+         scrollTop: $(scrollToEl).offset().top
+     }, 250);
+    }
+
   });
 });
 
@@ -109,6 +122,7 @@ function verifyEmail(address) {
 }
 
 function checkEmail() {
+  $('.email').removeClass('used');
   var email = $('[name="email"]').get()[0].value;
   if (!email || !verifyEmail(email)) {
     $('.email').addClass('invalid');

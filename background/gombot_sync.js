@@ -1,11 +1,20 @@
 var GombotSync = function(GombotClient, Backbone, _, Gombot) {
-	const GOMBOT_ENDPOINT = "https://gombot.org/api";
+	const GOMBOT_ENDPOINT = "http://dev.tobmog.org/api";
 
 	function maybeHandleError(handler, err, result) {
+		var response;
 		if (err || !result.success) {
-			if (!err) err = result;
-			console.log("GombotSync error", err);
-			if (handler) handler(err);
+			result = result || {};
+			if (err) {
+				result.error = err.error;
+				result.status = err.status;
+				try {
+					response = JSON.parse(err.error.responseText);
+				} catch(e) {};
+				result.response = response || "";
+			}
+			console.log("GombotSync error", result);
+			if (handler) handler(result);
 			return true;
 		}
 		else return false;
@@ -75,11 +84,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
   }
 
   function destroy(client, model, options) {
-  	maybeHandleError(options.error, "DELETE NOT IMPLEMENTED");
-  }
-
-  function initGombotClient(user, username, keys) {
-  	getGombotClient(user, )
+       maybeHandleError(options.error, "DELETE NOT IMPLEMENTED");
   }
 
   // options.success(client) must be defined
@@ -92,6 +97,7 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
   			clientOptions = model.client;
   			delete model.client;
   		}
+  	}
   	model.client = new GombotClient(GOMBOT_ENDPOINT, clientOptions);
     model.client.context(function(err, result) {
     	if (err) return maybeHandleError(options.error, err);

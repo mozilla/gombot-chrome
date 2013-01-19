@@ -1,29 +1,40 @@
-- write auth state to localStorage and read it back
+ALPHA BLOCKERS
 - package extension
-- put in firstRun flag to not show signup page if no accounts after the first install
-- Add signed in as: <> when logged in or "Sign in" action that brings up signin page
+- terms and policy broken on signup page
+- fix copy after you login (it says "successfully installed")
+- need to fix copy about master password reset on signup success page to make it reflect reality
+- date is wrong on copy in successful install page
+- test domains, all special cases, maybe an IP domain, maybe an intranet domain, something with ports
+- test getsatisfaction
+- should do something if the case of unhandled server errors on signup and signin pages
+- figure out API URL for different releases
 
-clicking Gombot button after menu is show should close menu
+Backbone.sync refactor
+ - make user model only handle unencrypted data
+ - introduce GombotSyncMediator to coordinate GombotSync and LocalSync
+ - create a proxy User object in GombotSyncMediator to handle toJSON() and parse() of encrypted user blobs
+ - remove localStorage flag on UserCollection
+ - have User.fetch() return encrypted nothing if not authenticated
+ - implement User.isAuthenticated() { return this.client && this.client.isAuthenticated() }
+
 return immediately any available creds before user.fetch() when we detect login forms
-newsletter boolean isn't working properly
-do we need to firstRun thing anyway? Maybe only show the signup page after install?
-Gombot button doesn't do anything
+
 need to scroll on error in signup
-if passwords don't match, then you can't seem to proceed
-need to fix copy about master password reset on signup success page
+
+
 figure out a cool dynamic origin merging process
   - for example, "we have creds for x.example.com, would you like to use them on y.example.com"
+
 figure out what is going on with all the citi domains (need my account reset)
+
 www.bankofamerica.com and safe.bankofamerica.com for linking especially
   - make captured credentials storage respect realms
-handle email already in use error on signup
-test intranet domains
-test ip address sites with ports
+
 handle the capturing of other password managers form filling (maybe do setTimout afer form has been recognized and try to do some intelligent capture of the credentials)
   - handled by setTimeout(grab shit if don't have any) in passwordForm?
-figure out sessions for client (browser session, explicit logout?)
+
 figure out downloadExportDataFile function (does it work, is it exposed?)
-login success goes to successful install page
+
 seems to be race condition with citi realm (problems with capturing on accountonline.com and filling on https://creditcards.citi.com/)
 
 HTTP auth capture/fill
@@ -34,10 +45,3 @@ bayareacurling has annoying change password page
 
 consider supporting grabbing username from select elements (online.citibank.com when remember me is enabled). This site also has a dynamic username box when you say log in as another user
 
-Backbone.sync refactor
- - make user model only handle unencrypted data
- - introduce GombotSyncMediator to coordinate GombotSync and LocalSync
- - create a proxy User object in GombotSyncMediator to handle toJSON() and parse() of encrypted user blobs
- - remove localStorage flag on UserCollection
- - have User.fetch() return encrypted nothing if not authenticated
- - implement User.isAuthenticated() { return this.client && this.client.isAuthenticated() }

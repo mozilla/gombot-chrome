@@ -44,6 +44,10 @@ $(document).ready(function() {
         backgroundPage.startFirstRunFlow();
         e.preventDefault();
     });
+    $('.signout-link').click(function(e) {
+        Gombot.clearCurrentUser(function() { window.location.reload(); });
+        e.preventDefault();
+    });
 });
 
 function initBrowserAction() {

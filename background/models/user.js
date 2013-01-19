@@ -62,7 +62,7 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     },
 
     isAuthenticated: function() {
-    	return this.client && (this.client.isAuthenticated && this.client.isAuthenticated()) || (this.client.keys && this.client.user);
+    	return this.client && ((this.client.isAuthenticated && this.client.isAuthenticated()) || (this.client.keys && this.client.user));
     },
 
     // If you want to creat an "encrypted" JSON representation,
@@ -95,16 +95,15 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
     sync: function(method, model, options) {
     	var self = this;
     	var success = function(resp) {
-    		var success = options.success;
+    		var s = options.success;
     		options.success = function() {
-    			if (success) success(resp.data || {});
+    			if (s) s(resp.data || {});
     		}
     		if (resp.updated) self.updated = resp.updated;
     		// ciphertext in resp indicates we need to write it out to local storage
     		if (resp.ciphertext) {
     			if (method === "read") {
-    				var data =
-    				self.save(resp.data, _.extend(options, { localOnly: true }));
+    				self.save(resp.data, _.extend(options, { localOnly: true, ciphertext: resp.ciphertext }));
     			} else {
   	  			Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
   	  		}

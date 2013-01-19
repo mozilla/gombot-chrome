@@ -108,7 +108,7 @@ x-pin {
   height: 2.8em;
 }
 
-/* This is a hack in order to prevent PIN input boxes from 
+/* This is a hack in order to prevent PIN input boxes from
 shrinking. See:
 https://github.com/mozilla/gombot/issues/1
 */
@@ -216,12 +216,19 @@ x-pin > div.x-pin-fields > input {
 
 .gombot form .email.invalid input[name="email"],
 .gombot form .pin.invalid input,
-.gombot form .password.invalid input {
+.gombot form .password.invalid input,
+.gombot form .email.used input {
   background-color: #fee;
 }
 
 .gombot form .email.invalid label[for="email"]:after {
   content: ' Please use a valid email address.';
+  color: red;
+  display: block;
+}
+
+.gombot form .email.used label[for="email"]:after {
+  content: ' This email address has already been used to create a Gombot account.';
   color: red;
   display: block;
 }
