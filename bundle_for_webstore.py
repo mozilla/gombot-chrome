@@ -32,6 +32,10 @@ def bundle():
     if os.path.isdir('temp/pages/debug_settings'):
         shutil.rmtree('temp/pages/debug_settings')
         
+    # Delete node_modules in server; they're unnecessary for client
+    if os.path.isdir('temp/server/node_modules'):
+        shutil.rmtree('temp/server/node_modules')
+        
     # Delete infobar manifest
     os.unlink('temp/infobar/manifest.json')
     

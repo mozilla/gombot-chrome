@@ -1,7 +1,7 @@
 {
     "name": "Gombot Alpha",
     "manifest_version": 2,
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "Tired of remembering your usernames and passwords?  Let Gombot do the work for you!",
     "permissions": [
         "tabs",
