@@ -1,15 +1,8 @@
-ALPHA BLOCKERS
-- terms and policy broken on signup page
-- decide on extension behavior when the user is not logged in/signed up
-- fix copy after you login (it says "successfully installed")
-- need to fix copy about master password reset on signup success page to make it reflect reality
-- test domains, all special cases, maybe an IP domain, maybe an intranet domain, something with ports
-- test getsatisfaction
-- should do something if the case of unhandled server errors on signup and signin pages
-- super basic analytics?
-
 - figure out API URL for different releases
 - revisit tobmog packaging
+- make sure linking creds are deleted if no logged in user or user dismisses but wait until after notification appears and user reacts
+- refactor user model to be as independent of sync method and client as possible
+  - design isAuthenticated to be on prototype that returns false and a replacement is added by the client after user is authed and deleted when logged out
 
 Backbone.sync refactor
  - make user model only handle unencrypted data
@@ -20,8 +13,6 @@ Backbone.sync refactor
  - implement User.isAuthenticated() { return this.client && this.client.isAuthenticated() }
 
 return immediately any available creds before user.fetch() when we detect login forms
-
-need to scroll on error in signup
 
 
 figure out a cool dynamic origin merging process
