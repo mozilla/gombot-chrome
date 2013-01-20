@@ -47,7 +47,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 	}
 
 	function deleteCredentials(source) {
-		//console.log("Deleting credentials for tab", source.id)
+		console.log("Deleting credentials for tab", source.id)
 		delete storage[source.id]
 	}
 

@@ -1,13 +1,15 @@
 ALPHA BLOCKERS
-- package extension
 - terms and policy broken on signup page
+- decide on extension behavior when the user is not logged in/signed up
 - fix copy after you login (it says "successfully installed")
 - need to fix copy about master password reset on signup success page to make it reflect reality
-- date is wrong on copy in successful install page
 - test domains, all special cases, maybe an IP domain, maybe an intranet domain, something with ports
 - test getsatisfaction
 - should do something if the case of unhandled server errors on signup and signin pages
+- super basic analytics?
+
 - figure out API URL for different releases
+- revisit tobmog packaging
 
 Backbone.sync refactor
  - make user model only handle unencrypted data

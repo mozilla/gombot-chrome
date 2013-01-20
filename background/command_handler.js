@@ -4,9 +4,9 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
         tabID = sender.tab.id;
 
     Linker.shouldShowLinkingNotification(currentUser, message, { success: function(linkingInfo) {
-      if (!linkingInfo) {
-        return;
-      }
+      // first delete the captured credentials
+      CapturedCredentialStorage.deleteCredentials(sender.tab);
+      if (!linkingInfo) return;
       _.extend(message, linkingInfo);
       if (currentUser) {
         // Prompt the user to save the login

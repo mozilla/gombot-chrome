@@ -14,9 +14,15 @@ var Linker = function(Realms, LoginCredential) {
         result = {},
         success = options.success;
 
+    if (!user) {
+      success(false);
+      return;
+    }
+
     // Check to see if the user disabled password saving on this site
     if (user.get('disabledSites')[Realms.getOriginForUri(url)] === 'all') {
       success(false);
+      return;
     }
 
     // Look for passwords in use on the current site
@@ -25,6 +31,7 @@ var Linker = function(Realms, LoginCredential) {
       if (loginForSameUsername.get("password") === password) {
         // We're just logging into a site with an existing login. Bail.
         success(false);
+        return;
       }
       else {
         // Prompt user to update password
@@ -80,7 +87,8 @@ var Linker = function(Realms, LoginCredential) {
   // user model must be the first element of args
   function userFetchThenCall(func, args) {
     var user = args[0];
-    user.fetch({ success: function() {
+    if (!user) func.apply(null, args);
+    else user.fetch({ success: function() {
       func.apply(null, args);
     }});
   }
