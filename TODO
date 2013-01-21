@@ -12,10 +12,19 @@ Backbone.sync refactor
  - have User.fetch() return encrypted nothing if not authenticated
  - implement User.isAuthenticated() { return this.client && this.client.isAuthenticated() }
 
-return immediately any available creds before user.fetch() when we detect login forms
+- immediately return any available creds before user.fetch() when we detect login forms
+- building dashboard using jquery mobile
+- figure out "rare and untested path" in password_form.js
+- sites
+  - fidelity.com
+  - select-a-spot.com
+  - bayareacurling change password page
+  - tdameritade for lone password field on transfer page
+  - att.com to fill ******* on fake password page
+  - reddit.com for signup and login on same page
+- move all magic strings into config, and maybe organize into sites, realms, and consts?
 
-
-figure out a cool dynamic origin merging process
+- figure out a cool dynamic origin merging process
   - for example, "we have creds for x.example.com, would you like to use them on y.example.com"
 
 figure out what is going on with all the citi domains (need my account reset)
@@ -32,9 +41,6 @@ seems to be race condition with citi realm (problems with capturing on accounton
 
 HTTP auth capture/fill
 capturing and filling lone password fields
-tdameritrade may need some type like a human for lone password field on transfer page
-AJAX login: https://www.select-a-spot.com
-bayareacurling has annoying change password page
 
 consider supporting grabbing username from select elements (online.citibank.com when remember me is enabled). This site also has a dynamic username box when you say log in as another user
 
