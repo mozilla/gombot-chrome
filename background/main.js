@@ -32,10 +32,7 @@ Gombot.LoginCredential = LoginCredential(Backbone, _, Gombot.Realms);
 Gombot.LoginCredentialCollection = LoginCredentialCollection(Backbone, _, Gombot.LoginCredential, Gombot.Realms);
 Gombot.CapturedCredentialStorage = CapturedCredentialStorage(Gombot.Realms, Uri);
 Gombot.Linker = Linker(Gombot.Realms, Gombot.LoginCredential);
-Gombot.CommandHandler = CommandHandler(Gombot.Messaging,
-    Gombot.CapturedCredentialStorage,
-    Gombot.Realms,
-    Gombot.Linker);
+Gombot.CommandHandler = CommandHandler(Gombot, Gombot.Messaging);
 
 
 (function(Gombot) {

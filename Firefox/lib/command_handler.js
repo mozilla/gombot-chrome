@@ -1,0 +1,1 @@
+../../background/command_handler.js

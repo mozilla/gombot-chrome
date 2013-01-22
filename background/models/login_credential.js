@@ -1,7 +1,7 @@
 var LoginCredential = function(Backbone, _, Realms) {
 
-	// LoginCredential constructor
-	// data is:
+  // LoginCredential constructor
+  // data is:
   // {
   // "title": Mozilla,
   // "loginurl": "https://www.mozilla.com/login",
@@ -11,16 +11,16 @@ var LoginCredential = function(Backbone, _, Realms) {
   // "supplementalInformation": {
   //     "ffNumber": "234324"
   // }
-	var LoginCredential = Backbone.Model.extend({
-		defaults: {
-			//origins: null, // not currently used but in the future this is for user edited origins
-			title: "",
-			loginurl: "",
-			password: "",
-			pinLocked: false,
-			username: "",
-			supplementalInformation: {}
-		},
+  var LoginCredential = Backbone.Model.extend({
+    defaults: {
+      //origins: null, // not currently used but in the future this is for user edited origins
+      title: "",
+      loginurl: "",
+      password: "",
+      pinLocked: false,
+      username: "",
+      supplementalInformation: {}
+    },
 
     initialize: function() {
       if (!this.id) {
@@ -39,7 +39,7 @@ var LoginCredential = function(Backbone, _, Realms) {
       this.origins = Realms.getRealmForUri(this.get("loginurl"));
     }
 
-	});
+  });
 
-	return LoginCredential;
+  return LoginCredential;
 };

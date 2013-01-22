@@ -49,6 +49,9 @@ windows.on('open', function(window) {
   addToolbarButton();
 });
 
+var Gombot = {};
+Gombot.Messaging = require("./firefox_messaging")();
+Gombot.CommandHandler = require("./command_handler")(Gombot, Gombot.Messaging);
 
 var pageMod = require("page-mod");
 
@@ -65,9 +68,7 @@ pageMod.PageMod({
   contentScriptFile: contentScripts,
   attachTo: ["top", "frame", "existing"],
   onAttach: function(worker) {
-    worker.on("message", function(obj) {
-      console.log("postMessage received: "+JSON.stringify(obj));
-    });
+    Gombot.Messaging.registerPageModWorker(worker);
   }
 });
 

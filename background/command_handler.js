@@ -1,11 +1,12 @@
-var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Linker) {
+var CommandHandler = function(Gombot, Messaging) {
+
   function addLogin(message, sender) {
     var currentUser = Gombot.getCurrentUser(),
         tabID = sender.tab.id;
 
-    Linker.shouldShowLinkingNotification(currentUser, message, { success: function(linkingInfo) {
+    Gombot.Linker.shouldShowLinkingNotification(currentUser, message, { success: function(linkingInfo) {
       // first delete the captured credentials
-      CapturedCredentialStorage.deleteCredentials(sender.tab);
+      Gombot.CapturedCredentialStorage.deleteCredentials(sender.tab);
       if (!linkingInfo) return;
       _.extend(message, linkingInfo);
       if (currentUser) {
@@ -34,15 +35,15 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
   }
 
   function setCapturedCredentials(message, sender, callback) {
-    CapturedCredentialStorage.setCredentials(message, sender.tab);
+    Gombot.CapturedCredentialStorage.setCredentials(message, sender.tab);
   }
 
   function getCapturedCredentials(message, sender, callback) {
-    CapturedCredentialStorage.getCredentials(message, sender.tab, callback);
+    Gombot.CapturedCredentialStorage.getCredentials(message, sender.tab, callback);
   }
 
   function deleteCapturedCredentials(message, sender, callback) {
-    CapturedCredentialStorage.deleteCredentials(sender.tab);
+    Gombot.CapturedCredentialStorage.deleteCredentials(sender.tab);
   }
 
   // TODO: Have this execute callbacks: one what we have now and one after the fetch
@@ -53,7 +54,7 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     if (!currentUser) return false;
     currentUser.fetch({ success: function() {
       logins = currentUser.get('logins').filter(function(loginCredential) {
-        return Realms.isUriMemberOfRealm(sender.tab.url, loginCredential.origins);
+        return Gobmot.Realms.isUriMemberOfRealm(sender.tab.url, loginCredential.origins);
       });
     callback(logins);
     }});
@@ -96,6 +97,9 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
   //
   // Content-to-chrome message handlers
   //
+  // Format: { resquest: { message: <message data> },
+  //           sender: { tab: { id: <tab id>, url: <url currently in tab> } },
+  //           sendResponse: callback function with single parameter to respond to content scripts }
   Messaging.addContentMessageListener(function(request, sender, sendResponse) {
     if (request.type && commandHandlers[request.type]) {
       //console.log("Msg received", request, sender);
@@ -103,3 +107,8 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     }
   });
 };
+
+if (typeof module != 'undefined' && module.exports) {
+  module.exports = CommandHandler;
+}
+

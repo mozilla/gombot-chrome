@@ -12,9 +12,9 @@ Backbone.sync refactor
  - have User.fetch() return encrypted nothing if not authenticated
  - implement User.isAuthenticated() { return this.client && this.client.isAuthenticated() }
 
-- remove user and password from paths when we determine the loginUrl
 - add version to localstorage json, if not already there
 - immediately return any available creds before user.fetch() when we detect login forms
+  - idea for implementing: request from content scripts, and then request again with remote: true set to true
 - building dashboard using jquery mobile
 - figure out "rare and untested path" in password_form.js
 - sites

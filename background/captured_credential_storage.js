@@ -23,6 +23,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 		var u = new Uri(url);
 		u.anchor("");
 		u.query("");
+		u.userInfo("");
 		return u.toString();
 	}
 
