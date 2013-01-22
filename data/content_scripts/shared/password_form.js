@@ -1,0 +1,1 @@
+../../../content_scripts/password_form.js

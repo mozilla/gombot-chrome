@@ -11,6 +11,8 @@
 //   }
 // });
 
+console.log('here in firefox-main.js');
+
 var self = require("self");
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
