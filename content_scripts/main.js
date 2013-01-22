@@ -4,13 +4,13 @@ Gombot.Messaging = ContentMessaging();
 Gombot.MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 Gombot.DomMonitor = DomMonitor(jQuery, Gombot.MutationObserver);
 Gombot.PasswordForm = PasswordForm(jQuery, Gombot.DomMonitor);
-Gombot.Linker = {};
 Gombot.PasswordFormInspector = PasswordFormInspector(jQuery, Gombot.PasswordForm, Gombot.DomMonitor);
 
 function maybeGetAndFillCredentials(formInspector)
 {
     Gombot.Messaging.messageToChrome({ type: "get_saved_credentials" }, function(credentials) {
-        if (credentials.length === 0) return;
+        // TODO: remove this _.isArray check it was for debugging
+        if (!_.isArray(credentials) || credentials.length === 0) return;
         if(_.any(credentials, function(credential) { return credential.pinLocked; })) {
             console.log('Locked!');
             Gombot.Messaging.messageToChrome({
@@ -46,7 +46,7 @@ function credentialsCaptured(formInspector, credentials) {
 }
 
 function formsFound(formInspector) {
-    //formInspector.highlightForms();
+    formInspector.highlightForms();
     // fill any saved credentials
     maybeGetAndFillCredentials(formInspector);
 }

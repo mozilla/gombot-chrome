@@ -5,7 +5,7 @@ var ChromeMessaging = function() {
   }
 
   function messageToContent(target, message) {
-	chrome.tabs.sendMessage(target.tab.id, message);
+	  chrome.tabs.sendMessage(target.tab.id, message);
   }
 
   return {
