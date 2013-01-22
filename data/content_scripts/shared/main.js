@@ -1,0 +1,1 @@
+../../../content_scripts/main.js
