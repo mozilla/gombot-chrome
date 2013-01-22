@@ -26,7 +26,7 @@ var DomMonitor = function($, MutationObserver) {
 
 	function notifySubscribers() {
 		var notifyList = [];
-		var types = Object.getOwnPropertyNames(subscribers);
+		var types = Object.keys(subscribers);
 		types.forEach(function(type) {
 			subscribers[type].forEach(function(subscriber) {
 				if (subscriber.notify) {
