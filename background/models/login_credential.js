@@ -43,3 +43,4 @@ var LoginCredential = function(Backbone, _, Realms) {
 
   return LoginCredential;
 };
+

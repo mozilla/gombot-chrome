@@ -111,4 +111,3 @@ var CommandHandler = function(Gombot, Messaging) {
 if (typeof module != 'undefined' && module.exports) {
   module.exports = CommandHandler;
 }
-
