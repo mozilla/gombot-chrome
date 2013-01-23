@@ -1,4 +1,4 @@
-var GombotSync = function(GombotClient, Backbone, _, Gombot) {
+var GombotSync = function(Gombot, Backbone, _) {
 	const GOMBOT_ENDPOINT = "http://dev.tobmog.org/api";
 
 	function maybeHandleError(handler, err, result) {
@@ -91,14 +91,14 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
   function getGombotClient(model, options) {
   	var clientOptions = {};
   	if (model.client) {
-  		if (model.client instanceof GombotClient) return options.success(model.client);
+  		if (model.client instanceof Gombot.GombotClient) return options.success(model.client);
   		if (model.client.user && model.client.keys) {
   			// loading cached login info from localStorage
   			clientOptions = model.client;
   			delete model.client;
   		}
   	}
-  	model.client = new GombotClient(GOMBOT_ENDPOINT, clientOptions);
+  	model.client = new Gombot.GombotClient(GOMBOT_ENDPOINT, clientOptions);
     model.client.context(function(err, result) {
     	if (err) return maybeHandleError(options.error, err);
     	options.success(model.client);
@@ -157,4 +157,8 @@ var GombotSync = function(GombotClient, Backbone, _, Gombot) {
 	return {
 		sync: sync
 	};
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = GombotSync;
 }

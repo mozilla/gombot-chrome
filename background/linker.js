@@ -1,8 +1,8 @@
-var Linker = function(Realms, LoginCredential) {
+var Linker = function(Gombot) {
 
   function findLoginCredentialForUsernameAndUrl(user, username, url) {
     return user.get('logins').find(function(loginCredential) {
-      return Realms.isUriMemberOfRealm(url, loginCredential.origins) &&
+      return Gombot.Realms.isUriMemberOfRealm(url, loginCredential.origins) &&
              loginCredential.get('username') === username;
     });
   }
@@ -20,7 +20,7 @@ var Linker = function(Realms, LoginCredential) {
     }
 
     // Check to see if the user disabled password saving on this site
-    if (user.get('disabledSites')[Realms.getOriginForUri(url)] === 'all') {
+    if (user.get('disabledSites')[Gombot.Realms.getOriginForUri(url)] === 'all') {
       success(false);
       return;
     }
@@ -62,7 +62,7 @@ var Linker = function(Realms, LoginCredential) {
           username: loginInfo.username,
           password: loginInfo.password,
           // Fields that may be missing
-          title: loginInfo.title || Realms.getTitleFromUri(loginInfo.loginurl),
+          title: loginInfo.title || Gombot.Realms.getTitleFromUri(loginInfo.loginurl),
           loginurl: loginInfo.loginurl,
           pinLocked: loginInfo.pinLocked || false,
           supplementalInformation: loginInfo.supplementalInformation || {}
@@ -101,3 +101,7 @@ var Linker = function(Realms, LoginCredential) {
     disableSite: disableSite
   };
 };
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = Linker;
+}

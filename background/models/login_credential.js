@@ -1,4 +1,6 @@
-var LoginCredential = function(Backbone, _, Realms) {
+var LoginCredential = function(Gombot, Backbone, _) {
+
+  var Realms = Gombot.Realms;
 
   // LoginCredential constructor
   // data is:
@@ -44,3 +46,6 @@ var LoginCredential = function(Backbone, _, Realms) {
   return LoginCredential;
 };
 
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = LoginCredential;
+}

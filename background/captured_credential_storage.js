@@ -1,4 +1,4 @@
-var CapturedCredentialStorage = function(Realms, Uri) {
+var CapturedCredentialStorage = function(Gombot, Uri) {
 
 	var storage = {};
 
@@ -37,7 +37,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 	//     id: identifier for the credential's source
 	//     url: url of the credential's source
 	function setCredentials(credentials, source) {
-		credentials.origin = Realms.getOriginForUri(source.url);
+		credentials.origin = Gombot.Realms.getOriginForUri(source.url);
 		credentials.loginurl = cleanupLoginUrl(source.url);
 		mergeCredentials(credentials, source);
 	}
@@ -58,3 +58,7 @@ var CapturedCredentialStorage = function(Realms, Uri) {
 		deleteCredentials: deleteCredentials
 	};
 };
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = CapturedCredentialStorage;
+}

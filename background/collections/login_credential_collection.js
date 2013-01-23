@@ -1,4 +1,4 @@
-var LoginCredentialCollection = function(Backbone, _, LoginCredential, Realms) {
+var LoginCredentialCollection = function(Backbone, _, LoginCredential) {
 
 	var LoginCredentialCollection = Backbone.Collection.extend({
 		model: LoginCredential,
@@ -19,3 +19,7 @@ var LoginCredentialCollection = function(Backbone, _, LoginCredential, Realms) {
 
 	return LoginCredentialCollection;
 };
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = LoginCredentialCollection;
+}

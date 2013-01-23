@@ -11,8 +11,6 @@
 //   }
 // });
 
-console.log('here in firefox-main.js');
-
 var self = require("self");
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
@@ -51,9 +49,28 @@ windows.on('open', function(window) {
   addToolbarButton();
 });
 
-var Gombot = {};
-Gombot.Messaging = require("./firefox_messaging")();
-Gombot.CommandHandler = require("./command_handler")(Gombot, Gombot.Messaging);
+
+var gombotModules = {
+  Backbone: require("../lib/backbone"),
+  _ : require("../lib/underscore"),
+  Messaging: require("./firefox_messaging"),
+  LocalStorage: function() {}, // TODO
+  Tld: { getDomain: function() { return ""; } },
+  Uri: require("../lib/jsuri"),
+  TldService: require("../tld_service"),
+  SiteConfigs: {}, // TODO
+  Realms: require("../realms"),
+  Storage: function() {}, // TODO
+  GombotClient: require("../client/client"),
+  GombotSync: require("../gombot_sync"),
+  LoginCredential: require("../models/login_credential"),
+  LoginCredentialCollection: require("../collections/login_credential_collection"),
+  CapturedCredentialStorage: require("../captured_credential_storage"),
+  Linker: require("../linker"),
+  CommandHandler: require("../command_handler")
+};
+
+var Gombot = require("../gombot")(gombotModules);
 
 var pageMod = require("page-mod");
 

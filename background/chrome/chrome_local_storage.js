@@ -8,7 +8,7 @@
 
 // This handles the low-level localStorage
 // TODO: handle errors
-var LocalStorage = function() {
+var ChromeLocalStorage = function() {
   return {
     getItem: function(key, callback) {
       chrome.storage.local.get(key, function(storageObj) {

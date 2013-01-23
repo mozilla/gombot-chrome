@@ -12,14 +12,15 @@ var ContentMessaging = function() {
   }
 
   self.on("message", function(addonMessage) {
-    var callback = callbacks[addonMessage.callbackId];
+    var callbackId = addonMessage.callbackId;
+    var callback = callbacks[callbackId];
     if (!callback) {
       console.log("ContentMessaging: error can't find callback for callbackId="+callbackId);
       return;
     }
     console.log("ContentMessaging: found callback for callbackId="+callbackId);
     callback(addonMessage.message);
-    delete callbacks[addonMessage.callbackId];
+    delete callbacks[callbackId];
   });
 
   function addChromeMessageListener(callback) {

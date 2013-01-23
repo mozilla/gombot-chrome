@@ -1,4 +1,4 @@
-var Realms = function(SiteConfigs, Uri, TldService) {
+var Realms = function(Gombot, SiteConfigs, Uri) {
 
 	var realms = [];
 
@@ -56,11 +56,11 @@ var Realms = function(SiteConfigs, Uri, TldService) {
   	var origin = getOriginForUri(uri);
   	var realmWrapper = getRealmWrapperForOrigin(origin);
   	if (realmWrapper && realmWrapper.title) return realmWrapper.title;
-  	if (TldService.isIpAddress(origin)) {
-  		return TldService.getFullHostnameWithPort(origin);
+  	if (Gombot.TldService.isIpAddress(origin)) {
+  		return Gombot.TldService.getFullHostnameWithPort(origin);
   	}
   	else {
-  		return capitaliseFirstLetter(TldService.getDomain(origin).split(".")[0]);
+  		return capitaliseFirstLetter(Gombot.TldService.getDomain(origin).split(".")[0]);
 		}
   }
 
@@ -90,4 +90,8 @@ var Realms = function(SiteConfigs, Uri, TldService) {
 		isUriMemberOfRealm: isUriMemberOfRealm,
 		getTitleFromUri: getTitleFromUri
 	};
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = Realms;
 }

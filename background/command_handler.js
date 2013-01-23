@@ -54,7 +54,7 @@ var CommandHandler = function(Gombot, Messaging) {
     if (!currentUser) return false;
     currentUser.fetch({ success: function() {
       logins = currentUser.get('logins').filter(function(loginCredential) {
-        return Gobmot.Realms.isUriMemberOfRealm(sender.tab.url, loginCredential.origins);
+        return Gombot.Realms.isUriMemberOfRealm(sender.tab.url, loginCredential.origins);
       });
     callback(logins);
     }});

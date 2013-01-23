@@ -1,0 +1,1 @@
+../../server/client/sjcl-with-cbc.js
