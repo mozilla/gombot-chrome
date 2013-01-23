@@ -14,14 +14,22 @@
 var self = require("self");
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
+var tppanel = require("./tppanel").Panel;
 
 exports.main = function(options, callbacks) {
   addToolbarButton();
   // other stuff
 };
 
-var testPanel = require('panel').Panel({
-  url: self.data.url('testpanel.html')
+// var testPanel = require('panel').Panel({
+//   url: self.data.url('testpanel.html')
+// });
+
+var testPanel = tppanel({
+    width:  300,
+    height: 300,
+    contentURL: self.data.url('testpanel.html'),
+    //onHide:  function(evt){mypanel.show()}
 });
 
 function addToolbarButton() {
@@ -48,7 +56,6 @@ var windows = require("windows").browserWindows;
 windows.on('open', function(window) {
   addToolbarButton();
 });
-
 
 var gombotModules = {
   Backbone: require("../lib/backbone"),
