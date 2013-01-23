@@ -4,7 +4,11 @@ var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(
 
 var Tld = {
   getDomain: function(domain) {
-    return eTLDService.getBaseDomainFromHost(domain);
+    try {
+      return eTLDService.getBaseDomainFromHost(domain);
+    } catch(e) {
+      return domain;
+    }
   }
 }
 
