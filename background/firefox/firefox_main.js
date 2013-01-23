@@ -62,10 +62,10 @@ var gombotModules = {
   _ : require("../lib/underscore"),
   Messaging: require("./firefox_messaging"),
   LocalStorage: function() {}, // TODO
-  Tld: { getDomain: function() { return ""; } },
+  Tld: require("./tld.js"),
   Uri: require("../lib/jsuri"),
   TldService: require("../tld_service"),
-  SiteConfigs: {}, // TODO
+  SiteConfigs: require("../site_configs"),
   Realms: require("../realms"),
   Storage: function() {}, // TODO
   GombotClient: require("../client/client"),

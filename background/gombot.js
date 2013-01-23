@@ -56,7 +56,6 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.Linker = getModule("Linker")(Gombot);
   Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging);
 
-
   var currentUser = null;
   Gombot.getCurrentUser = function() {
     return currentUser;
