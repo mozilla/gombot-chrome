@@ -1,5 +1,5 @@
 /*
-*   storage.js
+*   chrome_local_storage.js
 *
 *
 *   Handles persisting user data via localStorage.
