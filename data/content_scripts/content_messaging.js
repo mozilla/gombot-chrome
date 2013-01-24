@@ -18,7 +18,6 @@ var ContentMessaging = function() {
       console.log("ContentMessaging: error can't find callback for callbackId="+callbackId);
       return;
     }
-    console.log("ContentMessaging: found callback for callbackId="+callbackId);
     callback(addonMessage.message);
     delete callbacks[callbackId];
   });
@@ -29,7 +28,6 @@ var ContentMessaging = function() {
 
   function messageToChrome(message, callback) {
     callback = callback || function() {};
-    console.log("messageToChrome", JSON.stringify(message), callback);
     var callbackId = getCallbackId();
     var messageWrapper = { message: message, callbackId: callbackId };
     callbacks[callbackId] = callback;

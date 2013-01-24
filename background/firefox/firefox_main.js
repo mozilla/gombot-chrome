@@ -61,20 +61,22 @@ var gombotModules = {
   Backbone: require("../lib/backbone"),
   _ : require("../lib/underscore"),
   Messaging: require("./firefox_messaging"),
-  LocalStorage: function() {}, // TODO
+  LocalStorage: require("./firefox_local_storage"),
   Tld: require("./tld.js"),
   Uri: require("../lib/jsuri"),
   TldService: require("../tld_service"),
   SiteConfigs: require("../site_configs"),
   Realms: require("../realms"),
-  Storage: function() {}, // TODO
+  Storage: require("../storage"),
   GombotClient: require("../client/client"),
   GombotSync: require("../gombot_sync"),
   LoginCredential: require("../models/login_credential"),
   LoginCredentialCollection: require("../collections/login_credential_collection"),
   CapturedCredentialStorage: require("../captured_credential_storage"),
   Linker: require("../linker"),
-  CommandHandler: require("../command_handler")
+  CommandHandler: require("../command_handler"),
+  User: require("../models/user"),
+  UserCollection: require("../collections/user_collection")
 };
 
 var Gombot = require("../gombot")(gombotModules);

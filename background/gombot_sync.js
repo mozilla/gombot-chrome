@@ -31,8 +31,9 @@ var GombotSync = function(Gombot, Backbone, _) {
     var self = this;
     client.account({
       email: model.get('email'),
+      model: model,
       pass: options.password,
-      newsletter: options.newsletter
+      newsletter: options.newsletter,
     }, function(err, result) {
       if (maybeHandleError(options.error, err, result)) return;
       update(client, model, options);

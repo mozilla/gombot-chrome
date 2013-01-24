@@ -1,7 +1,7 @@
-var UserCollection = function(Backbone, _, User, LocalStorage) {
+var UserCollection = function(Backbone, _, Gombot, LocalStorage) {
 
   var UserCollection = Backbone.Collection.extend({
-    model: User,
+    model: Gombot.User,
     localStorage: LocalStorage
   });
 

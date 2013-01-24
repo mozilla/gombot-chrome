@@ -1,9 +1,11 @@
-var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalStorage) {
+var User = function(Backbone, _, Gombot, LocalStorage) {
 
   const USER_DATA_VERSIONS = [
     "identity.mozilla.com/gombot/v1/userData"
   ];
 
+  var GombotSync = Gombot.Sync,
+      LoginCredentialCollection = Gombot.LoginCredentialCollection;
 
   // attributes should be something like:
   // {
@@ -146,4 +148,7 @@ var User = function(Backbone, _, LoginCredentialCollection, GombotSync, LocalSto
   return User;
 }
 
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = User;
+}
 

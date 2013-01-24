@@ -24,7 +24,7 @@ var _Gombot = function(importedModules, Gombot) {
     }
   }
 
-  var Backbone = getModule("Backbone");
+  var Backbone = getModule("Backbone")();
   var _ = getModule("_");
 
   // mixin guid creation into underscore
@@ -71,11 +71,11 @@ var _Gombot = function(importedModules, Gombot) {
     currentUser.destroy({ localOnly: true, success: function() { currentUser = null; callback(); }});
   };
 
-  // new Gombot.Storage("users", function(store) {
-  //   Gombot.User = User(Backbone, _, Gombot.LoginCredentialCollection, Gombot.Sync, store);
-  //   Gombot.UserCollection = UserCollection(Backbone, _, Gombot.User, store);
-  //   checkFirstRun();
-  // });
+  new Gombot.Storage("users", function(store) {
+    Gombot.User = getModule("User")(Backbone, _, Gombot, store);
+    Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
+    checkFirstRun();
+  });
 
   function checkFirstRun() {
     Gombot.LocalStorage.getItem("firstRun", function(firstRun) {
@@ -88,13 +88,34 @@ var _Gombot = function(importedModules, Gombot) {
       Gombot.users.fetch({
         success: function() {
           if (!firstRun) {
-            if (window.startFirstRunFlow) {
+            if (typeof startFirstRunFlow === 'function') {
               startFirstRunFlow(false /* showSignInPage */); // shows signup page on first run
               Gombot.LocalStorage.setItem("firstRun", true);
             } // TODO: fix this
           }
           var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });
           if (loggedInUser) Gombot.setCurrentUser(loggedInUser);
+          if (Gombot.users.size() === 0) {
+            console.log("No logged in user. Number of users:"+Gombot.users.size());
+            var user = new Gombot.User({
+              'email': 'ckarlof+'+Math.floor(10000*Math.random(10000))+'@mozilla.com',
+              'pin': '1111'
+            });
+
+            user.save(null,{
+              success: function() {
+                Gombot.setCurrentUser(user);
+              },
+              error: function(args) {
+                console.log("ERROR", JSON.stringify(args));
+                if (args.response && args.response.errorMessage.match(/That email has already been used/)) {
+
+                }
+              },
+              password: "foobar",
+              newsletter: false
+            });
+          }
       }});
   }
   return Gombot;

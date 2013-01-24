@@ -1,3 +1,4 @@
+- handle exceptions in FX tld.js when that service returns an exception, e.g, for intranet domains
 - figure out API URL for different releases
 - revisit tobmog packaging
 - make sure linking creds are deleted if no logged in user or user dismisses but wait until after notification appears and user reacts
