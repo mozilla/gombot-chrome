@@ -1,4 +1,5 @@
 var Linker = function(Gombot) {
+  var LoginCredential = Gombot.LoginCredential;
 
   function findLoginCredentialForUsernameAndUrl(user, username, url) {
     return user.get('logins').find(function(loginCredential) {

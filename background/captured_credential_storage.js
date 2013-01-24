@@ -43,8 +43,8 @@ var CapturedCredentialStorage = function(Gombot, Uri) {
   }
 
   function getCrendentials(credentials, source, callback) {
-    callback(storage[source.id]);
     console.log("Getting credentials", storage[source.id]);
+    callback(storage[source.id]);
   }
 
   function deleteCredentials(source) {

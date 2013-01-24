@@ -98,8 +98,9 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
       var self = this;
       var success = function(resp) {
         var s = options.success;
-        options.success = function() {
-          if (s) s(resp.data || {});
+        options.success = function(model, resp, options) {
+          // resp.data is returned by GombotSync calls with plaintext user data
+          if (s) s(model, resp.data || {}, options);
         }
         if (resp.updated) self.updated = resp.updated;
         // ciphertext in resp indicates we need to write it out to local storage
@@ -110,7 +111,7 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
             Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
           }
         } else if (options.success) {
-          options.success();
+          options.success(model, resp, options);
         }
       };
       var error = function(args) {
