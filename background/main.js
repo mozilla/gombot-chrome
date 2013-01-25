@@ -14,7 +14,7 @@
 var self = require("self");
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
-var tppanel = require("./tppanel").Panel;
+var tppanel = require("./lib/tppanel").Panel;
 
 exports.main = function(options, callbacks) {
   addToolbarButton();
@@ -58,39 +58,39 @@ windows.on('open', function(window) {
 });
 
 var gombotModules = {
-  Backbone: require("../lib/backbone"),
-  _ : require("../lib/underscore"),
-  Messaging: require("../messaging"),
-  LocalStorage: require("../local_storage"),
-  Tld: require("./tld.js"),
-  Uri: require("../lib/jsuri"),
-  TldService: require("../tld_service"),
-  SiteConfigs: require("../site_configs"),
-  Realms: require("../realms"),
-  Storage: require("../storage"),
-  GombotClient: require("../client/client"),
-  GombotSync: require("../gombot_sync"),
-  LoginCredential: require("../models/login_credential"),
-  LoginCredentialCollection: require("../collections/login_credential_collection"),
-  CapturedCredentialStorage: require("../captured_credential_storage"),
-  Linker: require("../linker"),
-  CommandHandler: require("../command_handler"),
-  User: require("../models/user"),
-  UserCollection: require("../collections/user_collection"),
-  AccountManager: require("../account_manager")
+  Backbone: require("./lib/backbone"),
+  _ : require("./lib/underscore"),
+  Messaging: require("./messaging"),
+  LocalStorage: require("./local_storage"),
+  Tld: require("./lib/tld.js"),
+  Uri: require("./lib/jsuri"),
+  TldService: require("./tld_service"),
+  SiteConfigs: require("./site_configs"),
+  Realms: require("./realms"),
+  Storage: require("./storage"),
+  GombotClient: require("./client/client"),
+  GombotSync: require("./gombot_sync"),
+  LoginCredential: require("./models/login_credential"),
+  LoginCredentialCollection: require("./collections/login_credential_collection"),
+  CapturedCredentialStorage: require("./captured_credential_storage"),
+  Linker: require("./linker"),
+  CommandHandler: require("./command_handler"),
+  User: require("./models/user"),
+  UserCollection: require("./collections/user_collection"),
+  AccountManager: require("./account_manager")
 };
 
-var Gombot = require("../gombot")(gombotModules);
+var Gombot = require("./gombot")(gombotModules);
 
 var pageMod = require("page-mod");
 
 var contentScripts = [self.data.url("lib/jquery.js"),
                       self.data.url("lib/underscore.js"),
                       self.data.url("content_scripts/content_messaging.js"),
-                      self.data.url("content_scripts/shared/dom_monitor.js"),
-                      self.data.url("content_scripts/shared/password_form.js"),
-                      self.data.url("content_scripts/shared/password_form_inspector.js"),
-                      self.data.url("content_scripts/shared/main.js")];
+                      self.data.url("content_scripts/dom_monitor.js"),
+                      self.data.url("content_scripts/password_form.js"),
+                      self.data.url("content_scripts/password_form_inspector.js"),
+                      self.data.url("content_scripts/main.js")];
 
 pageMod.PageMod({
   include: "*",

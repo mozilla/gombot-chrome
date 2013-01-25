@@ -22,13 +22,13 @@
         {
           "matches": ["<all_urls>"],
           "all_frames": true,
-          "js": ["lib/jquery.js",
-                 "lib/underscore.js",
-                 "content_scripts/content_messaging.js",
-                 "content_scripts/dom_monitor.js",
-                 "content_scripts/password_form_inspector.js",
-                 "content_scripts/password_form.js",
-                 "content_scripts/main.js"]
+          "js": ["data/lib/jquery.js",
+                 "data/lib/underscore.js",
+                 "data/content_scripts/content_messaging.js",
+                 "data/content_scripts/dom_monitor.js",
+                 "data/content_scripts/password_form_inspector.js",
+                 "data/content_scripts/password_form.js",
+                 "data/content_scripts/main.js"]
         }
       ],
   "browser_action": {
