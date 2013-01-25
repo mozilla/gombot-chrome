@@ -1,4 +1,4 @@
-var CommandHandler = function(Gombot, Messaging) {
+var CommandHandler = function(Gombot, Messaging, _) {
 
   function addLogin(message, sender) {
     var currentUser = Gombot.getCurrentUser(),

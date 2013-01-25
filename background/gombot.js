@@ -54,7 +54,7 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.LoginCredentialCollection = getModule("LoginCredentialCollection")(Backbone, _, Gombot.LoginCredential); // LoginCredential need to be initialized
   Gombot.CapturedCredentialStorage = getModule("CapturedCredentialStorage")(Gombot, getModule("Uri"));
   Gombot.Linker = getModule("Linker")(Gombot);
-  Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging);
+  Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
 
   var currentUser = null;
   Gombot.getCurrentUser = function() {
@@ -91,11 +91,13 @@ var _Gombot = function(importedModules, Gombot) {
             if (typeof startFirstRunFlow === 'function') {
               startFirstRunFlow(false /* showSignInPage */); // shows signup page on first run
               Gombot.LocalStorage.setItem("firstRun", true);
-            } // TODO: fix this
+            }
           }
           var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });
           if (loggedInUser) Gombot.setCurrentUser(loggedInUser);
           if (Gombot.users.size() === 0) {
+            // TODO: remove this is a hack for Firefox testing and we create a dummy user
+            // until we have a signup and signin page
             console.log("No logged in user. Number of users:"+Gombot.users.size());
             var user = new Gombot.User({
               'email': 'ckarlof+'+Math.floor(10000*Math.random(10000))+'@mozilla.com',
@@ -107,14 +109,16 @@ var _Gombot = function(importedModules, Gombot) {
                 Gombot.setCurrentUser(user);
               },
               error: function(args) {
-                console.log("ERROR", JSON.stringify(args));
-                if (args.response && args.response.errorMessage.match(/That email has already been used/)) {
+                console.log("ERROR"+JSON.stringify(args));
+                if (args.response && args.response.errorMessage && args.response.errorMessage.match(/That email has already been used/)) {
 
                 }
               },
               password: "foobar",
               newsletter: false
             });
+          } else {
+            console.log("we found a user :"+JSON.stringify(loggedInUser));
           }
       }});
   }

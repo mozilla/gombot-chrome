@@ -14,11 +14,10 @@ var Xhrequest = function(url, req) {
       };
 
   reqObj.onComplete = function(response) {
-    //console.log(JSON.stringify(response.json))
     if (response.status === 200) {
       success(response.text);
     } else {
-      error({ error: { responseText: response.text }, status: response.status }, {}, response.status);
+      error({ responseText: response.text }, {}, response.status);
     }
   };
 

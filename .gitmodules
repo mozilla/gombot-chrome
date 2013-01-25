@@ -4,3 +4,6 @@
 [submodule "infobar"]
 	path = infobar
 	url = git://github.com/lloyd/simulated_infobars
+[submodule "packages/gombot-crypto-jetpack"]
+	path = packages/gombot-crypto-jetpack
+	url = git@github.com:warner/gombot-crypto-jetpack.git

@@ -1,0 +1,1 @@
+../packages/gombot-crypto-jetpack/data/gombot-worker2.js

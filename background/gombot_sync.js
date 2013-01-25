@@ -11,7 +11,7 @@ var GombotSync = function(Gombot, Backbone, _) {
         try {
           response = JSON.parse(err.error.responseText);
         } catch(e) {};
-        result.response = response || "";
+        result.response = response || {};
       }
       console.log("GombotSync error", result);
       if (handler) handler(result);

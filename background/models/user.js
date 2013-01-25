@@ -99,6 +99,7 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
       var success = function(resp) {
         var s = options.success;
         options.success = function(model, resp, options) {
+          console.log("User.sync finished method="+method+" resp="+JSON.stringify(resp)+" model="+JSON.stringify(model));
           // resp.data is returned by GombotSync calls with plaintext user data
           if (s) s(model, resp.data || {}, options);
         }
@@ -108,6 +109,7 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
           if (method === "read") {
             self.save(resp.data, _.extend(options, { localOnly: true, ciphertext: resp.ciphertext }));
           } else {
+            console.log("localSync method="+method);
             Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
           }
         } else if (options.success) {

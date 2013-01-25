@@ -1,4 +1,7 @@
+- handle errors in gombot-crypto-jetpacka
+- san jose ticketing site maybe not working
 - reorg directories; given the Jetpack doesn't allow more than one level of .., the consider top level firefox and chrome directories
+- think about "local only" mode on Mac OS X that writes passwords to Keychain
 - figure out API URL for different releases
 - revisit tobmog packaging
 - make sure linking creds are deleted if no logged in user or user dismisses but wait until after notification appears and user reacts
