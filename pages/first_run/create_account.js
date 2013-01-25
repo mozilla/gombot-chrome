@@ -1,6 +1,5 @@
 $(document).ready(function() {
-  var Gombot = chrome.extension.getBackgroundPage().Gombot;
-  var userCollection = Gombot.users;
+  var messenger = ContentMessaging();
 
   var busy = false;
 
@@ -26,22 +25,19 @@ $(document).ready(function() {
       var newsletter = $('[name="newsletter"]').is(':checked');
       var pin = $('[name="pin"]').get()[0].value;
       ProgressIndicator.show();
-      var user = new Gombot.User({
-        'email': email,
-        'pin': pin
-      });
 
-      user.save(null,{
-        success: function() {
-          ProgressIndicator.hide();
-          Gombot.setCurrentUser(user);
-          userCollection.add(user);
-          window.location = '/pages/first_run/success.html';
-          busy = false;
-        },
-        error: function(args) {
-          console.log("ERROR", args);
-          if (args.response && args.response.errorMessage.match(/That email has already been used/)) {
+      messenger.messageToChrome({
+        type: 'create_user',
+        message: {
+          password: password,
+          email: email,
+          pin: pin,
+          newsletter: newsletter
+        }
+      }, function(err) {
+        if (err) {
+          console.log("ERROR", err);
+          if (err.response && err.response.errorMessage.match(/That email has already been used/)) {
             $('.email').addClass('used');
             $('html, body').animate({
               scrollTop: $("#email").offset().top
@@ -50,9 +46,11 @@ $(document).ready(function() {
           // TODO: handle any errors
           ProgressIndicator.hide();
           busy = false;
-        },
-        password: password,
-        newsletter: newsletter
+        } else {
+          ProgressIndicator.hide();
+          window.location = '/pages/first_run/success.html';
+          busy = false;
+        }
       });
     }
     else { // validation problem
