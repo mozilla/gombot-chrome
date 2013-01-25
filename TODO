@@ -3,6 +3,9 @@
 - reorg directories; given the Jetpack doesn't allow more than one level of .., the consider top level firefox and chrome directories
 - think about "local only" mode on Mac OS X that writes passwords to Keychain
 - figure out API URL for different releases
+- this page causes lots of User.sync reads http://stackoverflow.com/questions/6570363/chrome-extension-content-scripts-and-iframe when you scroll
+- refactor password form inspector so that password form is responsible for figuring out its own form
+  - it particular, it should look for an enclosing element that has a username field that preceeds the password field
 - revisit tobmog packaging
 - make sure linking creds are deleted if no logged in user or user dismisses but wait until after notification appears and user reacts
 - refactor user model to be as independent of sync method and client as possible

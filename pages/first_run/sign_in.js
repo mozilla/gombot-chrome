@@ -1,14 +1,7 @@
 $(document).ready(function() {
-    var Gombot = chrome.extension.getBackgroundPage().Gombot;
-    var userCollection = Gombot.users;
-    //var server = 'https://gombot.org';
-    //var client = new GombotClient(server + '/api');
-    var busy = false;
+    var messenger = ContentMessaging();
 
-    // seed entropy
-    //client.context({}, function(err, data) {
-    //    client.timeOffset = (new Date()/1000 >>> 0) - data.server_time;
-    //});
+    var busy = false;
 
     $('#sign-in-form').submit(function(e) {
         e.preventDefault();
@@ -18,22 +11,22 @@ $(document).ready(function() {
         $('#sign-in-form').removeClass('invalid');
         var email = $('[name="email"]').get()[0].value.trim();
         var password = $('[name="password"]').get()[0].value;
-        var user = userCollection.find(function(obj) {
-          return obj.get('email') === email;
-        }) || new Gombot.User({ email: email });
-        user.fetch({ 
-          success: function() {
-            ProgressIndicator.hide();
-            Gombot.setCurrentUser(user);
-            userCollection.add(user);
-            window.location = '/pages/first_run/success.html';
-          },
-          error: function(err) {
+
+        messenger.messageToChrome({
+          type: 'sign_in',
+          message: {
+            email: email,
+            password: password
+          }
+        }, function(err) {
+          if (err) {
             $('#sign-in-form').addClass('invalid');
             ProgressIndicator.hide();
             busy = false;
-          },
-          password: password
+          } else {
+            ProgressIndicator.hide();
+            window.location = '/pages/first_run/success.html';
+          }
         });
     });
 });

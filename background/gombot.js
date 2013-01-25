@@ -40,10 +40,8 @@ var _Gombot = function(importedModules, Gombot) {
     })()
   });
 
-  // These must be defined by importedModules
-  Gombot.Messaging = importedModules.Messaging();
-  Gombot.LocalStorage = importedModules.LocalStorage();
-
+  Gombot.Messaging = getModule("Messaging")();
+  Gombot.LocalStorage = getModule("LocalStorage")();
   Gombot.TldService = getModule("TldService")(getModule("Tld"), getModule("Uri"));
   Gombot.SiteConfigs = getModule("SiteConfigs");
   Gombot.Realms = getModule("Realms")(Gombot, Gombot.SiteConfigs, getModule("Uri"));

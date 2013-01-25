@@ -83,6 +83,18 @@ var CommandHandler = function(Gombot, Messaging, _) {
     callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(sender.tab.url)] || {});
   }
 
+  // create a new user account
+  function createUser (message, sender, callback) {
+    Gombot.AccountManager.createAccount(message, callback);
+    return true;
+  }
+
+  // sign into a user account
+  function signIn (message, sender, callback) {
+    Gombot.AccountManager.signIn(message, callback);
+    return true;
+  }
+
   var commandHandlers = {
     'add_login': addLogin,
     'validate_pin': validatePin,
@@ -91,7 +103,9 @@ var CommandHandler = function(Gombot, Messaging, _) {
     'get_captured_credentials': getCapturedCredentials,
     'delete_captured_credentials': deleteCapturedCredentials,
     'get_saved_credentials': getSavedCredentials,
-    'get_site_config': getSiteConfig
+    'get_site_config': getSiteConfig,
+    'create_user': createUser,
+    'sign_in': signIn
   };
 
   //

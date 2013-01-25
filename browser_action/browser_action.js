@@ -31,7 +31,8 @@ $(document).ready(function() {
         e.preventDefault();
       });
       $('#export-data-link').click(function(e) {
-          backgroundPage.downloadExportDataFile();
+          // This functionality was removed for now.
+          //backgroundPage.downloadExportDataFile();
           e.preventDefault();
       });
       initBrowserAction();

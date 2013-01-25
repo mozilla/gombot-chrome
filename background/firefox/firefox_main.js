@@ -60,8 +60,8 @@ windows.on('open', function(window) {
 var gombotModules = {
   Backbone: require("../lib/backbone"),
   _ : require("../lib/underscore"),
-  Messaging: require("./firefox_messaging"),
-  LocalStorage: require("./firefox_local_storage"),
+  Messaging: require("../messaging"),
+  LocalStorage: require("../local_storage"),
   Tld: require("./tld.js"),
   Uri: require("../lib/jsuri"),
   TldService: require("../tld_service"),

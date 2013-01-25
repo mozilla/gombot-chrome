@@ -1,30 +1,4 @@
-/*
-*   chrome_local_storage.js
-*
-*
-*   Handles persisting user data via localStorage.
-*
-*/
-
-// This handles the low-level localStorage
-// TODO: handle errors
-var ChromeLocalStorage = function() {
-  return {
-    getItem: function(key, callback) {
-      chrome.storage.local.get(key, function(storageObj) {
-        callback(storageObj[key]);
-      });
-    },
-    setItem: function(key, data, callback) {
-      var updatedObj = {};
-      updatedObj[key] = data;
-      chrome.storage.local.set(updatedObj, callback);
-    },
-    removeItem: function(key, callback) {
-      chrome.storage.local.remove(key, callback);
-    }
-  }
-};
+// NOTE: This file is not being included for now
 
 // Returns a string of a comma separated value file containing the hostname, username,
 // and password for each login the user has saved.

@@ -137,7 +137,6 @@ var GombotSync = function(Gombot, Backbone, _) {
       //  data: unencrypted model data,
       //  ciphertext: current encrypted payload of user data,
       //  updated: server timestamp of this data
-      // }
   // All methods except for "create" require model.keys to exist and be valid
   function sync(method, model, options) {
     if (!(model instanceof Gombot.User)) return maybeHandleError(options.error, "sync only supports syncing instances of Gombot.User");
