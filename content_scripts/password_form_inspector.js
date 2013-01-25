@@ -1,4 +1,9 @@
 var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
+    // TODO: put these in config so we can use them in both PasswordFromInspector and PasswordForm
+    const VALID_USERNAME_INPUT_TYPES = ['text','email','url','tel','number'];
+
+    const INPUT_USERNAME_SELECTORS = $.map(VALID_USERNAME_INPUT_TYPES, function(type) { return "input[type="+type+"]"; }).join(",");
+
     var running = false;
 
     var observers = [];
@@ -26,16 +31,11 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
     }
 
     function getFormForElement($el) {
-        var $closestForm = $el.closest('form');
-        if ($closestForm.length === 0) {
-            // Could not find an HTML form, so now just look for any element that
-            // contains both the password field and some other input field with type=text.
-            // Note: this will also find inputs with no type specified, which defaults to text.
-            console.log("Could not find form element for el=", $el.get(0));
-            $closestForm = $el.parents().has('input:text');
-            if ($closestForm.length === 0) {
-                $closestForm = $('body');
-            }
+        // Find the closest parent that also contains an input field that looks
+        // like a username
+        var $closestForm = $el.parents().has(INPUT_USERNAME_SELECTORS).first();
+        if (!$closestForm || $closestForm.length === 0) {
+            $closestForm = $('body');
         }
         return $closestForm;
     }
@@ -49,8 +49,12 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
                 $containingForm = getFormForElement($passwordEl),
                 numPasswordInputs = $containingForm.find('input[type=password]').length;
             // If the containing form contains multiple password field, then ignore
-            // for now. This is probably a change password field.
-            if (numPasswordInputs > 1) return;
+            // for now. This is probably a change password field or a signup field
+            if (numPasswordInputs > 1) {
+                console.log("found more than 1 password input, bailing");
+                return;
+            }
+
             passwordForms.push(new PasswordForm({ id: generateId(),
                                                   passwordEl: passwordEl,
                                                   containingEl: $containingForm.get(0),
