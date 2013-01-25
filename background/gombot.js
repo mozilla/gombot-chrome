@@ -93,31 +93,6 @@ var _Gombot = function(importedModules, Gombot) {
           }
           var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });
           if (loggedInUser) Gombot.setCurrentUser(loggedInUser);
-          if (Gombot.users.size() === 0) {
-            // TODO: remove this is a hack for Firefox testing and we create a dummy user
-            // until we have a signup and signin page
-            console.log("No logged in user. Number of users:"+Gombot.users.size());
-            var user = new Gombot.User({
-              'email': 'ckarlof+'+Math.floor(10000*Math.random(10000))+'@mozilla.com',
-              'pin': '1111'
-            });
-
-            user.save(null,{
-              success: function() {
-                Gombot.setCurrentUser(user);
-              },
-              error: function(args) {
-                console.log("ERROR"+JSON.stringify(args));
-                if (args.response && args.response.errorMessage && args.response.errorMessage.match(/That email has already been used/)) {
-
-                }
-              },
-              password: "foobar",
-              newsletter: false
-            });
-          } else {
-            console.log("we found a user :"+JSON.stringify(loggedInUser));
-          }
       }});
   }
   return Gombot;
