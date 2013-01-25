@@ -125,6 +125,8 @@ var _Gombot = function(importedModules, Gombot) {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = _Gombot; // export namespace constructor, for Firefox
+} else { // otherwise, just create the global Gombot namespace
+  var Gombot = _Gombot({});
 }
 
 // TODO: this below needs to be refactored
