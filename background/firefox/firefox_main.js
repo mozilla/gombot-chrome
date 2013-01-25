@@ -76,7 +76,8 @@ var gombotModules = {
   Linker: require("../linker"),
   CommandHandler: require("../command_handler"),
   User: require("../models/user"),
-  UserCollection: require("../collections/user_collection")
+  UserCollection: require("../collections/user_collection"),
+  AccountManager: require("../account_manager")
 };
 
 var Gombot = require("../gombot")(gombotModules);

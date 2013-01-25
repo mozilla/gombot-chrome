@@ -52,6 +52,7 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.LoginCredentialCollection = getModule("LoginCredentialCollection")(Backbone, _, Gombot.LoginCredential); // LoginCredential need to be initialized
   Gombot.CapturedCredentialStorage = getModule("CapturedCredentialStorage")(Gombot, getModule("Uri"));
   Gombot.Linker = getModule("Linker")(Gombot);
+  Gombot.AccountManager = getModule("AccountManager")(Gombot, _);
   Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
 
   var currentUser = null;

@@ -88,6 +88,16 @@ var GombotSync = function(Gombot, Backbone, _) {
        maybeHandleError(options.error, "DELETE NOT IMPLEMENTED");
   }
 
+  // Special kdf derivation function we'll pass to GombotClient to handle FX slowness bug
+  var kdfDerive = null;
+  if (typeof require !== "undefined") {
+    kdfDerive = function (args, cb) {
+      require("gombot-crypto-jetpack").kdf(args.email, args.password).then(function(keys) {
+        cb(null, keys);d
+      });
+    }
+  }
+
   // options.success(client) must be defined
   function getGombotClient(model, options) {
     var clientOptions = {};
@@ -99,6 +109,7 @@ var GombotSync = function(Gombot, Backbone, _) {
         delete model.client;
       }
     }
+    if (kdfDerive) clientOptions.kdfDerive = kdfDerive;
     model.client = new Gombot.GombotClient(GOMBOT_ENDPOINT, clientOptions);
     model.client.context(function(err, result) {
       if (err) return maybeHandleError(options.error, err);

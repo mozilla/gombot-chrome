@@ -46,3 +46,7 @@ var AccountManager = function(Gombot, _) {
     signIn: signIn
   };
 };
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = AccountManager;
+}
