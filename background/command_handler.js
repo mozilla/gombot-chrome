@@ -1,4 +1,4 @@
-var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Linker) {
+var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Linker, AccountManager) {
   function addLogin(message, sender) {
     var currentUser = Gombot.getCurrentUser(),
         tabID = sender.tab.id;
@@ -82,6 +82,18 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(sender.tab.url)] || {});
   }
 
+  // create a new user account
+  function createUser (message, sender, callback) {
+    AccountManager.createAccount(message, callback);
+    return true;
+  }
+
+  // sign into a user account
+  function signIn (message, sender, callback) {
+    AccountManager.signIn(message, callback);
+    return true;
+  }
+
   var commandHandlers = {
     'add_login': addLogin,
     'validate_pin': validatePin,
@@ -90,7 +102,9 @@ var CommandHandler = function(Messaging, CapturedCredentialStorage, Realms, Link
     'get_captured_credentials': getCapturedCredentials,
     'delete_captured_credentials': deleteCapturedCredentials,
     'get_saved_credentials': getSavedCredentials,
-    'get_site_config': getSiteConfig
+    'get_site_config': getSiteConfig,
+    'create_user': createUser,
+    'sign_in': signIn
   };
 
   //
