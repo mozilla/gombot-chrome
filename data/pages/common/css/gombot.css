@@ -1,0 +1,288 @@
+.gombot #outer-wrapper {
+  border-top: 2px solid #fff;
+  background: rgb(246, 246, 246) url(../img/sandstone/bg-labs.png) 0 0 repeat-x;
+}
+
+.gombot #main-feature {
+  padding-top: 50px;
+  padding-bottom: 18px;
+}
+
+.gombot button {
+  height: 34px;
+  line-height: 24px;
+}
+
+.gombot .sign-up-input {
+  margin-right: 10px;
+  width: 18em;
+}
+
+.gombot a,
+.gombot a:link,
+.gombot a:visited {
+  color: #2983c8;
+}
+.gombot a:hover,
+.gombot a:active {
+  color: #20679e;
+}
+
+.gombot h2 img {
+  vertical-align: middle;
+}
+
+.splash h1 {
+    font-size: 63px;
+    letter-spacing: -4px;
+    line-height: 100%;
+}
+
+.splash h2 {
+    font-size: 40px;
+    letter-spacing: -1px;
+    line-height: 150%;
+}
+
+.create-account h2 {
+  font-size: 3em;
+  margin: 30px 0;
+}
+
+#pin-info {
+  display: none;
+}
+.show-info #pin-info {
+  display: auto;
+}
+
+.show-info .pin {
+  background-color: #cbd4da;
+}
+
+#sign-up {
+  position: relative;
+  margin: 0 auto;
+  width: 700px;
+  text-align: middle;
+  padding-bottom: 54px;
+}
+
+#logo {
+  position: relative;
+  float: left;
+  z-index: 2;
+}
+
+#splash-box {
+  position: relative;
+  background-color: rgb(190, 221, 227);
+  background-image: url("/img/shadow.png");
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  display: inline;
+  margin-left: -100px;
+  margin-top: 66px;
+  float: left;
+  z-index: 1;
+  padding: 25px 25px 67px 80px;
+}
+
+.gombot #main-content {
+  color: #222;
+  font-family: 'Open Sans Light', sans-serif;
+}
+
+.gombot label {
+  font-size: 90%;
+}
+
+.gombot .create-account label,
+.gombot .sign-in label {
+  display: block;
+  padding-bottom: 8px;
+}
+
+x-pin {
+  font-size: 2.3em;
+  height: 2.8em;
+}
+
+/* This is a hack in order to prevent PIN input boxes from
+shrinking. See:
+https://github.com/mozilla/gombot/issues/1
+*/
+x-pin > div.x-pin-fields > input {
+    height:90px !important;
+}
+
+.gombot .pin input {
+  width: 1.3em;
+}
+
+.gombot .description {
+  font-family: 'Open Sans Light', sans-serif;
+}
+
+.gombot .description img {
+  padding: 0 5px;
+}
+
+#splash-box .download {
+  padding-left: 50px;
+  padding-right: 25px;
+}
+
+#splash-box .download-button {
+  position: relative;
+  height: 52px;
+  text-align: left;
+  padding-left: 48px;
+  font-size: 130%;
+}
+
+#splash-box a.download-button {
+  line-height: 28px;
+}
+
+.download-button img {
+  position: absolute;
+  top: -5px;
+  left: -24px;
+}
+
+#splash-box .alts {
+  display: block;
+  padding-top: 15px;
+}
+
+.firstrun .splash img.logo {
+    float: left;
+}
+
+.firstrun #main-feature {
+    margin: 2em 1em 0 -1em;
+}
+.firstrun #main-feature img {
+    margin-top: -.2em;
+}
+
+.splash.right {
+    float: right;
+}
+
+.gombot form input[name="email"],
+.gombot form input[name="password"],
+.gombot form input[name="password_repeat"] {
+  width: 250px;
+}
+
+.gombot .sign-in .invalid input[name="password"] {
+  background-color: #fee;
+}
+.gombot .sign-in .invalid label.pass:after {
+  content: ' Invalid password.';
+  color: red;
+}
+
+.create-account form {
+  float: left;
+  width: 350px;
+}
+
+.gombot form p {
+  padding: 0 20px;
+}
+
+.create-account form .pin {
+  padding: 10px 0 1px;
+  margin-bottom: 10px;
+}
+
+.create-account form.show-info .pin {
+  position: relative;
+  background-color: #d7dce1;
+}
+
+.create-account form.show-info #pin-info {
+  display: block;
+  position: absolute;
+  background-color: #d7dce1;
+  padding: 20px;
+  left: 325px;
+  top: 0px;
+  width: 530px;
+}
+
+.gombot form .email.invalid input[name="email"],
+.gombot form .pin.invalid input,
+.gombot form .password.invalid input,
+.gombot form .email.used input {
+  background-color: #fee;
+}
+
+.gombot form .email.invalid label[for="email"]:after {
+  content: ' Please use a valid email address.';
+  color: red;
+  display: block;
+}
+
+.gombot form .email.used label[for="email"]:after {
+  content: ' This email address has already been used to create a Gombot account.';
+  color: red;
+  display: block;
+}
+
+.gombot form .password.mismatch .main label:after {
+  content: ' Passwords do not match.';
+  color: red;
+  display: block;
+}
+.gombot form .password.short .main label:after {
+  content: ' Password must be at least 6 characters.';
+  color: red;
+  display: block;
+}
+
+.gombot form .pin.mismatch .main label:after {
+  content: ' PINs do not match.';
+  color: red;
+  display: block;
+}
+
+.gombot form .pin.short .main label:after {
+  content: ' PIN must have 4 digits.';
+  color: red;
+  display: block;
+}
+
+.gombot .small label {
+  font-size: 100%;
+}
+
+.description h3 {
+  color: #5884C5;
+}
+
+
+.full-width-container {
+  float: left;
+  width: 940px;
+  margin: 0 10px;
+}
+.two-column .sidebar {
+  float: left;
+  width: 220px;
+  margin: 0 10px;
+}
+.two-column .main-content {
+  float: left;
+  width: 620px;
+  margin: 0 10px;
+  margin-left: 90px;
+}
+.two-column .split {
+  float: left;
+  width: 460px;
+  margin: 0 10px;
+}

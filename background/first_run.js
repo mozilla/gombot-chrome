@@ -10,7 +10,7 @@ function startFirstRunFlow(signInPage) {
   // Show the splash screen in a new tab. Should point the user to click
   // on the browserAction.
   var pageName = signInPage ? 'sign_in' : 'create_account';
-	showPage('../pages/first_run/' + pageName + '.html');
+	showPage('../data/pages/first_run/' + pageName + '.html');
 }
 
 function showPage(url) {
