@@ -15,24 +15,12 @@ var self = require("self");
 
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
-var tppanel = require("./lib/tppanel").Panel;
-
 
 exports.main = function(options, callbacks) {
   addToolbarButton();
-  // other stuff
 };
 
-// var testPanel = require('panel').Panel({
-//   url: self.data.url('testpanel.html')
-// });
-
-var testPanel = tppanel({
-    width:  300,
-    height: 300,
-    contentURL: self.data.url('testpanel.html'),
-    //onHide:  function(evt){mypanel.show()}
-});
+/** Setup add Gombot button to all windows **/
 
 function addToolbarButton() {
   var document = mediator.getMostRecentWindow("navigator:browser").document;
@@ -59,6 +47,8 @@ windows.on('open', function(window) {
   addToolbarButton();
 });
 
+/** Load all Gombot modules **/
+
 var gombotModules = {
   Backbone: require("./lib/backbone"),
   _ : require("./lib/underscore"),
@@ -84,6 +74,22 @@ var gombotModules = {
 
 var Gombot = require("./gombot")(gombotModules);
 
+/** Tpp panel stuff **/
+
+// var testPanel = require('panel').Panel({
+//   url: self.data.url('testpanel.html')
+// });
+var tppanel = require("./lib/tppanel").Panel;
+
+var testPanel = tppanel({
+    width:  300,
+    height: 300,
+    contentURL: self.data.url('testpanel.html'),
+    //onHide:  function(evt){mypanel.show()}
+});
+
+/** pageMod code for password form detection and filling **/
+
 var pageMod = require("page-mod");
 
 var contentScripts = [self.data.url("lib/jquery.js"),
@@ -102,6 +108,8 @@ pageMod.PageMod({
     Gombot.Messaging.registerPageModWorker(worker);
   }
 });
+
+/** Internal pages (e.g., create account and sign in) **/
 
 const CREATE_ACCOUNT_PAGE = 'pages/first_run/create_account.html';
 pageMod.PageMod({
