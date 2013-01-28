@@ -39,6 +39,7 @@ var Messaging = function() {
         //      message: <actual message data>
         // }
         worker.on('message', function (message) {
+          //console.log("Message from pageMod: "+JSON.stringify(message));
           var request = message.message,
               sender = { tab: { id: "", url: worker.url } },
               sendResponse = function(response) {

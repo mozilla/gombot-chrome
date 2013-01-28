@@ -54,11 +54,14 @@ var ContentMessaging = function() {
       document.defaultView.addEventListener('message', function(event) {
         if (event.origin !== RESOURCE_ORIGIN) return;
         var data = JSON.parse(event.data),
-            callbackId = data.callbackId;
-        delete data.callbackId;
-        messageToChrome(data.message, function(response) {
-          document.defaultView.postMessage(JSON.stringify({ message: response, callbackId: callbackId }), RESOURCE_ORIGIN);
-        });
+            callbackId;
+        if (data.fromPage) { // only respond to messages from the page, not to the responses sent below
+          //console.log("ContentMessaging: message from page: "+event.data);
+          callbackId = data.callbackId;
+          messageToChrome(data.message, function(response) {
+            document.defaultView.postMessage(JSON.stringify({ message: response || {}, callbackId: callbackId }), RESOURCE_ORIGIN);
+          });
+        }
       });
     })();
   }
