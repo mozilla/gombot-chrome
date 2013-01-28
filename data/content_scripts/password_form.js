@@ -77,7 +77,7 @@ var PasswordForm = function($, DomMonitor) {
     $el.focus();
     var blur = function() {
       $el.blur();
-      setTimeout(callback, 50);
+      setTimeout(callback || function() {}, 10);
     }
     value = value || "";
     setTimeout(function() {
@@ -97,11 +97,11 @@ var PasswordForm = function($, DomMonitor) {
       // update our local view of what the field's value since input events won't
       // capture changes made through JS
       field.val = value;
-      // keep it simple for now
+      // We keep it actual form filling simple for now, i.e.
+      // don't bother typing a character at a time
       $el.val(value);
-      setTimeout(blur, 50);;
-      //typeValueInElementHelper($el, value, 0, blur);
-    }, 50);
+      setTimeout(blur, 10);
+    }, 10);
   }
 
   // Determines if an input field is a password field.
@@ -296,12 +296,12 @@ var PasswordForm = function($, DomMonitor) {
   // Before filling each field, we tickle any possible "fake" username/password fields
   // so that filled values will be visible to the user. fillField() also goes through
   // some cortortions to "type like a human" and handle dynamic username field "switch-outs".
-  PasswordForm.prototype.fill = function(credentials) {
+  PasswordForm.prototype.fill = function(credentials, callback) {
     maybeTickleFakeInputFields.call(this, FAKE_USERNAME_FIELD_HINTS);
     fillField.call(this, this.usernameField, credentials.username, (function() {
       maybeTickleFakeInputFields.call(this, FAKE_PASSWORD_FIELD_HINTS);
       maybeFillFakePassword.call(this, credentials.password);
-      fillField.call(this, this.passwordField, credentials.password);
+      fillField.call(this, this.passwordField, credentials.password, callback);
     }).bind(this));
     return this;
   };
