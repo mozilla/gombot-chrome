@@ -7,7 +7,7 @@
 //   image: dataDir.url('gombot_logo-19x19.png'),
 //   panel: testPanel,
 //   onCommand: function () {
-//     tbb.destroy(); // kills the toolbar button
+//   tbb.destroy(); // kills the toolbar button
 //   }
 // });
 
@@ -24,33 +24,6 @@ exports.main = function(options, callbacks) {
 // var testPanel = require('panel').Panel({
 //   url: self.data.url('testpanel.html')
 // });
-
-var testPanel = tppanel({
-    width:  300,
-    height: 300,
-    contentURL: self.data.url('testpanel.html'),
-    //onHide:  function(evt){mypanel.show()}
-});
-
-function addToolbarButton() {
-  var document = mediator.getMostRecentWindow("navigator:browser").document;
-  var navBar = document.getElementById("nav-bar");
-  if (!navBar) {
-      return;
-  }
-  var btn = document.createElement("toolbarbutton");
-
-  btn.setAttribute('type', 'button');
-  btn.setAttribute('class', 'toolbarbutton-1');
-  btn.setAttribute('image', self.data.url('gombot_logo-19x19.png')); // path is relative to data folder
-  btn.setAttribute('orient', 'horizontal');
-  btn.setAttribute('label', 'My App');
-  btn.addEventListener('click', function() {
-      // console.log('clicked');
-      testPanel.show(btn);
-  }, false)
-  navBar.appendChild(btn);
-}
 
 var windows = require("windows").browserWindows;
 windows.on('open', function(window) {
@@ -85,19 +58,57 @@ var Gombot = require("./gombot")(gombotModules);
 var pageMod = require("page-mod");
 
 var contentScripts = [self.data.url("lib/jquery.js"),
-                      self.data.url("lib/underscore.js"),
-                      self.data.url("content_scripts/content_messaging.js"),
-                      self.data.url("content_scripts/dom_monitor.js"),
-                      self.data.url("content_scripts/password_form.js"),
-                      self.data.url("content_scripts/password_form_inspector.js"),
-                      self.data.url("content_scripts/main.js")];
+            self.data.url("lib/underscore.js"),
+            self.data.url("content_scripts/content_messaging.js"),
+            self.data.url("content_scripts/dom_monitor.js"),
+            self.data.url("content_scripts/password_form.js"),
+            self.data.url("content_scripts/password_form_inspector.js"),
+            self.data.url("content_scripts/main.js")];
 
 pageMod.PageMod({
   include: "*",
   contentScriptFile: contentScripts,
   attachTo: ["top", "frame", "existing"],
   onAttach: function(worker) {
-    Gombot.Messaging.registerPageModWorker(worker);
+  Gombot.Messaging.registerPageModWorker(worker);
   }
 });
 
+var testPanel = tppanel({
+  width:  300,
+  height: 300,
+  contentURL: self.data.url('browser_action/browser_action.html'),
+  contentScriptFile: contentScripts,
+  onAttach: function(worker) {
+    Gombot.Messaging.registerPanelWorker(worker);
+  }
+});
+
+function panelMessageListener(request, sender, sendResponse) {
+  switch(request.message.type) {
+    case 'get_user_object':
+      sendResponse(Gombot.getCurrentUser());
+    break;
+  }
+}
+
+Gombot.Messaging.addContentMessageListener(panelMessageListener);
+
+function addToolbarButton() {
+  var document = mediator.getMostRecentWindow("navigator:browser").document;
+  var navBar = document.getElementById("nav-bar");
+  if (!navBar) {
+    return;
+  }
+  var btn = document.createElement("toolbarbutton");
+
+  btn.setAttribute('type', 'button');
+  btn.setAttribute('class', 'toolbarbutton-1');
+  btn.setAttribute('image', self.data.url('gombot_logo-19x19.png')); // path is relative to data folder
+  btn.setAttribute('orient', 'horizontal');
+  btn.setAttribute('label', 'My App');
+  btn.addEventListener('click', function() {
+    testPanel.show(btn);
+  }, false)
+  navBar.appendChild(btn);
+}
