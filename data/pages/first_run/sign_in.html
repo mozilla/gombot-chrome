@@ -14,14 +14,8 @@
         <script src="../common/js/libs/html5shiv.js"></script>
         <![endif]-->
 
-
         <link rel="stylesheet" type="text/css" href="../common/css/sandstone-resp.css" media="screen" />
         <link rel="stylesheet" type="text/css" href="../common/css/gombot.css" media="screen" />
-        <link rel="stylesheet" type="text/css" href="../common/x-tags/pin/pin.css" media="screen" />
-
-
-        <script src="../common/js/libs/x-tag.js"></script>
-        <script src="../common/x-tags/pin/pin.js"></script>
 
     </head>
     <!-- The four different themes of sandstone are, stone, sand, sky, space. Replace the class on the
@@ -51,59 +45,30 @@
                 </header>
 
                 <div id="main-content">
-                  <div class="row create-account">
-                  <h2><img src="../common/img/gombot-logo-92x92.png" /> Create a Gombot account</h2>
-                  <form method="post" id="account-form">
-
+                  <div class="row sign-in">
+                  <h2><img src="../common/img/gombot-logo-92x92.png" /> Sign into Gombot</h2>
+                  <form action="http://dev.tobmog.org/sign_in" method="post" id="sign-in-form">
                     <p>
-                      Already have an account? <a href="sign_in.html">Sign in</a>
+                      Need an account? <a href="create_account.html">Sign up</a>
                     </p>
 
-                    <p id="email" class="email">
+                    <p>
                       <label for="email">email address</label>
                       <input type="text" name="email" />
                     </p>
 
-                    <div id="password" class="password">
-                      <p class="main">
-                        <label for="password">choose master password</label>
-                        <input type="password" name="password" />
-                      </p>
-
-                      <p>
-                        <label for="password_repeat">repeat password</label>
-                        <input type="password" name="password_repeat" />
-                      </p>
-                    </div>
-
-                    <div id="pin" class="pin">
-                    <p class="main">
-                      <label for="pin">Choose a PIN. <a href="javascript: void 0;" id="pin-info-link"> What is the PIN for?</a></label>
-
-                      <x-pin name="pin" size="4"></x-pin>
-
-                      <span id="pin-info">Protect your critical passwords with a PIN code – just like your bank card. Choose whichsites to lock with a PIN and use the same PIN no matter how many sites you save.</span>
+                    <p>
+                      <label for="password" class="pass">master password</label>
+                      <input type="password" name="password" autocomplete="off" />
                     </p>
 
                     <p>
-                      <label for="pin_repeat">Repeat PIN</label>
-                      <x-pin name="pin_repeat" size="4"></x-pin>
-                    </p>
-                    </div>
-
-                    <p class="small">
-                      <label for="newsletter"><input type="checkbox" name="newsletter" value="subscribe" /> Yes of course, send me the Gombot newsletter!</label>
-                    </p>
-
-                    <p class="small">
-                      By proceeding, you agree to Gombot's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.
-                    </p>
-
-                    <p><span class="progress-indicator"></span></p>
+						<span class="progress-indicator"></span>
+					</p>
 
                     <p>
-                      <button class="button-blue">Sign up &raquo;</button><br />
-                      <small>Already have an account? <a href="sign_in.html">Sign in</a></small>
+                      <button class="button-blue">Sign in &raquo;</button><br />
+                      <small>Need an account? <a href="create_account.html">Sign up</a></small>
                     </p>
                   </form>
                   </div>
@@ -145,7 +110,7 @@
         <script src="../../server/client/crypto.js"></script>
         <script src="../../server/client/client.js"></script>
         <script src="../../content_scripts/content_messaging.js"></script>
-        <script src="create_account.js"></script>
+        <script src="sign_in.js"></script>
     </body>
 </html>
 

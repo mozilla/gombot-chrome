@@ -1,8 +1,8 @@
-var ContentMessaging = function() {
+var PageMessaging = function() {
 
   var addChromeMessageListener,
       messageToChrome;
-  console.log("running content messaging");
+
   if (typeof chrome !== "undefined") { // for Chrome
     addChromeMessageListener = function(callback) {
       chrome.extension.onMessage.addListener(callback);
@@ -21,12 +21,14 @@ var ContentMessaging = function() {
 
       var chomeMessageListener = null;
 
+      var pageOrigin = window.location.protocol+"//"+window.location.hostname+"/";
+
       function getCallbackId() {
         idCounter += 1;
-        return idCounter;
+        return "page-"+idCounter;
       }
 
-      self.on("message", function(addonMessage) {
+      function messageHandler(addonMessage) {
         var callbackId = addonMessage.callbackId;
         var callback = callbacks[callbackId];
         if (!callback) {
@@ -35,7 +37,14 @@ var ContentMessaging = function() {
         }
         callback(addonMessage.message);
         delete callbacks[callbackId];
-      });
+      }
+
+      window.addEventListener("message", function(event) {
+        console.log(event);
+        var data = JSON.parse(event.data);
+        if (data.fromPage) return;
+        messageHandler(data);
+      }, false);
 
       addChromeMessageListener = function(callback) {
       //    chrome.extension.onMessage.addListener(callback);
@@ -44,26 +53,11 @@ var ContentMessaging = function() {
       messageToChrome = function(message, callback) {
         callback = callback || function() {};
         var callbackId = getCallbackId();
-        var messageWrapper = { message: message, callbackId: callbackId };
+        var messageWrapper = { message: message, callbackId: callbackId, fromPage: true };
         callbacks[callbackId] = callback;
-        self.postMessage(messageWrapper);
+        //console.log("PageMessaging.messageToChrome: "+JSON.stringify(messageWrapper));
+        document.defaultView.postMessage(JSON.stringify(messageWrapper), pageOrigin);
       }
-
-      // listen to page
-      // TODO: refactor this magic string
-      const RESOURCE_ORIGIN = 'resource://jid1-ueqrmxmswk4fra-at-jetpack';
-      document.defaultView.addEventListener('message', function(event) {
-        if (event.origin !== RESOURCE_ORIGIN) return;
-        var data = JSON.parse(event.data),
-            callbackId;
-        if (data.fromPage) { // only respond to messages from the page, not to the responses sent below
-          console.log("ContentMessaging: message from page: "+event.data);
-          callbackId = data.callbackId;
-          messageToChrome(data.message, function(response) {
-            document.defaultView.postMessage(JSON.stringify({ message: response, callbackId: callbackId }), RESOURCE_ORIGIN);
-          });
-        }
-      });
     })();
   }
   return {

@@ -1,7 +1,7 @@
 var Messaging = function() {
   var addContentMessageListener,
       messageToContent,
-      revealed = {};
+      revealedModule = {};
 
   if (typeof chrome !== "undefined") { // Chrome specific messaging to content scripts
     // callback is expected to be of the form: function
@@ -33,14 +33,17 @@ var Messaging = function() {
 
       }
 
-      revealed.registerPageModWorker = function(worker) {
+      revealedModule.registerPageModWorker = function(worker) {
         // Firefox messages from content scripts should be like:
         // { callbackId: <callbackId>, // This is a callback identifer for the content script to invoke when this returns
         //      message: <actual message data>
         // }
         worker.on('message', function (message) {
+          //console.log("Message from pageMod: "+JSON.stringify(message));
           var request = message.message,
-              sender = { tab: { id: "", url: worker.url } },
+              // TODO: Jetpack doesn't seem to offer us a stable id for tabs, so we use the
+              // index in its window for now. Maybe find something better in the future.
+              sender = { tab: { id: worker.tab.index, url: worker.tab.url, tab: worker.tab } },
               sendResponse = function(response) {
                 worker.postMessage({ callbackId: message.callbackId, message: response });
               };
@@ -53,10 +56,10 @@ var Messaging = function() {
     throw "Can't initialize Messaging. Can't find 'chrome' or 'require'.";
   }
 
-  revealed.addContentMessageListener = addContentMessageListener;
-  revealed.messageToContent = messageToContent;
+  revealedModule.addContentMessageListener = addContentMessageListener;
+  revealedModule.messageToContent = messageToContent;
 
-  return revealed;
+  return revealedModule;
 };
 
 if (typeof module !== "undefined" && module.exports) {

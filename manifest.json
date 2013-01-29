@@ -17,7 +17,7 @@
     "background": {
         "page": "background/background.html"
     },
-    "options_page": "pages/debug_settings/debug_settings.html",
+    "options_page": "data/pages/debug_settings/debug_settings.html",
     "content_scripts": [
         {
           "matches": ["<all_urls>"],
