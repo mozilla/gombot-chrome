@@ -25,7 +25,7 @@ $(document).ready(function() {
             busy = false;
           } else {
             ProgressIndicator.hide();
-            window.location = '/pages/first_run/success.html';
+            //window.location = '/data/pages/first_run/success.html';
           }
         });
     });

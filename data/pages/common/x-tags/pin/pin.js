@@ -10,16 +10,16 @@
       elem.setAttribute('maxlength', '1');
       elem.setAttribute('data-index', i);
       function updateValue() {
-          var val = [].splice.call(pin.value, 0);
+          var val = pin.value.split("");
           val[this.dataset.index] = this.value;
-          pin.xtag.input.value = val.join('');          
+          pin.xtag.input.value = val.join('');
       }
       elem.onchange = function (e){
         updateValue.call(this);
       };
       elem.onkeypress = function (e){
-          // Only allow the user to type digits
-          if (e.charCode < '0'.charCodeAt(0) || e.charCode > '9'.charCodeAt(0)) {
+          // Only allow the user to type digits, but allow non-printable characters (tab, delete, etc)
+          if (e.charCode > '9'.charCodeAt(0)) {
               e.preventDefault();
               return;
           }
