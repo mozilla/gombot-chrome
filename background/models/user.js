@@ -74,7 +74,7 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
       var result;
       args = args || {};
       if (args.ciphertext) {
-        result = { ciphertext: args.ciphertext, updated: this.updated, id: this.id, email: this.get("email") };
+        result = { ciphertext: args.ciphertext, updated: this.updated, id: this.id, email: this.get("email"), version: this.get("version") };
         if (this.isAuthenticated()) _.extend(result, { client: this.client.toJSON() });
         return result;
       }
