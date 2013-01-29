@@ -89,6 +89,11 @@ var CommandHandler = function(Gombot, Messaging, _) {
     Gombot.AccountManager.createAccount(message, callback);
     return true;
   }
+  
+  // just wrap Gombot.getCurrentUser()
+  function getCurrentUser(message, sender, callback) {
+    callback(Gombot.getCurrentUser());
+  }
 
   // sign into a user account
   function signIn(message, sender, callback) {
@@ -114,6 +119,7 @@ var CommandHandler = function(Gombot, Messaging, _) {
     'get_saved_credentials': getSavedCredentials,
     'get_site_config': getSiteConfig,
     'create_user': createUser,
+    'get_current_user': getCurrentUser,
     'sign_in': signIn,
     'navigate_to': navigateTo
   };

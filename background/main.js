@@ -12,6 +12,7 @@
 // });
 
 var self = require("self");
+var tppanel = require("./lib/tppanel").Panel;
 
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
@@ -75,19 +76,6 @@ var gombotModules = {
 
 var Gombot = require("./gombot")(gombotModules);
 
-/** Tpp panel stuff **/
-
-// var testPanel = require('panel').Panel({
-//   url: self.data.url('testpanel.html')
-// });
-var tppanel = require("./lib/tppanel").Panel;
-
-var testPanel = tppanel({
-    width:  300,
-    height: 300,
-    contentURL: self.data.url('testpanel.html'),
-    //onHide:  function(evt){mypanel.show()}
-});
 
 /** pageMod code for password form detection and filling **/
 
@@ -101,34 +89,40 @@ var contentScripts = [self.data.url("lib/jquery.js"),
             self.data.url("content_scripts/password_form_inspector.js"),
             self.data.url("content_scripts/main.js")];
 
+/** Tpp panel stuff **/
+
 pageMod.PageMod({
   include: "*",
   contentScriptFile: contentScripts,
   attachTo: ["top", "frame", "existing"],
   onAttach: function(worker) {
-  Gombot.Messaging.registerPageModWorker(worker);
+    Gombot.Messaging.registerPageModWorker(worker);
   }
 });
 
-var testPanel = tppanel({
-  width:  300,
-  height: 300,
-  contentURL: self.data.url('browser_action/browser_action.html'),
-  contentScriptFile: contentScripts,
-  onAttach: function(worker) {
-    Gombot.Messaging.registerPanelWorker(worker);
+var testPanel = (function() {
+  var _panel = null;
+  function createPanel() {
+    _panel = tppanel({
+      width:  300,
+      height: 300,
+      contentURL: self.data.url('browser_action/browser_action.html'),
+      contentScriptFile: [ self.data.url("resource_content_scripts/content_messaging.js"),
+                           self.data.url("resource_content_scripts/main.js") ],
+      onAttach: function(worker) {
+        Gombot.Messaging.registerPageModWorker(worker);
+      }
+    });
   }
-});
-
-function panelMessageListener(request, sender, sendResponse) {
-  switch(request.message.type) {
-    case 'get_user_object':
-      sendResponse(Gombot.getCurrentUser());
-    break;
+  return {
+    show: function(target) {
+      if (!_panel) {
+        createPanel();
+      }
+      _panel.show(target);
+    }
   }
-}
-
-Gombot.Messaging.addContentMessageListener(panelMessageListener);
+})();
 
 function addToolbarButton() {
   var document = mediator.getMostRecentWindow("navigator:browser").document;

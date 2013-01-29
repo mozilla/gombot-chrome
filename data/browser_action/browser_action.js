@@ -8,8 +8,7 @@
 *
 */
 
-var backgroundPage = chrome.extension.getBackgroundPage();
-var Gombot = backgroundPage.Gombot;
+var messenger;
 
 function copyToClipboard(_str) {
     chrome.extension.sendMessage({
@@ -18,38 +17,59 @@ function copyToClipboard(_str) {
     });
 }
 
+// This function will be called when Gombot content scripts "boot up"
+// inside of a panel (ie. window.location is a resource:// URL).
 $(document).ready(function() {
-    var currentUser = Gombot.getCurrentUser();
-    if (currentUser) {
-      $('#current-user-email').html(currentUser.get('email'));
-      // The user has already signed up for Gombot, so ask for feedback.
-      $('.show-after-signup').show();
-      $('#feedback-link').click(function(e) {
-      	chrome.tabs.create({
-              url: 'https://getsatisfaction.com/gombotalpha'
-      	});
-        e.preventDefault();
-      });
-      $('#export-data-link').click(function(e) {
-          // This functionality was removed for now.
-          //backgroundPage.downloadExportDataFile();
-          e.preventDefault();
-      });
-      initBrowserAction();
+  $('body').html(window.location);
+  return;
+  messenger = Gombot.Messaging();
+  dump('get_current_user\n');
+  document.body.innerHTML = window.location.toString();
+  Gombot.messenger.messageToChrome({
+      type: 'get_current_user',
+      message: {}
+    },
+    function(data) {
+      currentUser = data;
+      initUI();
     }
-    else {
-      // Display reminder to sign in to/create a Gombot account.
-      $('#signup-nag').show();
-    }
-    $('.signup-link').click(function(e) {
-        backgroundPage.startFirstRunFlow();
-        e.preventDefault();
-    });
-    $('.signout-link').click(function(e) {
-        Gombot.clearCurrentUser(function() { window.location.reload(); });
-        e.preventDefault();
-    });
+  );
+    console.log('Gombot Messaging: ',Gombot.Messaging);
 });
+
+function initUI() {
+  dump('initUI\n');
+  dump(JSON.stringify(currentUser),'\n');
+  if (currentUser) {
+    $('#current-user-email').html(currentUser.get('email'));
+    // The user has already signed up for Gombot, so ask for feedback.
+    $('.show-after-signup').show();
+    $('#feedback-link').click(function(e) {
+    	chrome.tabs.create({
+            url: 'https://getsatisfaction.com/gombotalpha'
+    	});
+      e.preventDefault();
+    });
+    $('#export-data-link').click(function(e) {
+        // This functionality was removed for now.
+        //backgroundPage.downloadExportDataFile();
+        e.preventDefault();
+    });
+    initBrowserAction();
+  }
+  else {
+    // Display reminder to sign in to/create a Gombot account.
+    $('#signup-nag').show();
+  }
+  $('.signup-link').click(function(e) {
+      backgroundPage.startFirstRunFlow();
+      e.preventDefault();
+  });
+  $('.signout-link').click(function(e) {
+      Gombot.clearCurrentUser(function() { window.location.reload(); });
+      e.preventDefault();
+  });
+}
 
 function initBrowserAction() {
   var currentUser = Gombot.getCurrentUser();
