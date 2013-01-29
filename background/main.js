@@ -69,7 +69,8 @@ var gombotModules = {
   CommandHandler: require("./command_handler"),
   User: require("./models/user"),
   UserCollection: require("./collections/user_collection"),
-  AccountManager: require("./account_manager")
+  AccountManager: require("./account_manager"),
+  Pages: require("./pages")
 };
 
 var Gombot = require("./gombot")(gombotModules);
@@ -108,17 +109,3 @@ pageMod.PageMod({
     Gombot.Messaging.registerPageModWorker(worker);
   }
 });
-
-/** Internal pages (e.g., create account and sign in) **/
-
-const CREATE_ACCOUNT_PAGE = 'pages/first_run/create_account.html';
-pageMod.PageMod({
-  include: [ self.data.url(CREATE_ACCOUNT_PAGE) ],
-  contentScriptFile: [ self.data.url("resource_content_scripts/content_messaging.js"),
-                       self.data.url("resource_content_scripts/main.js") ],
-  onAttach: function(worker) {
-    Gombot.Messaging.registerPageModWorker(worker);
-  }
-});
-
-require('tabs').open(self.data.url(CREATE_ACCOUNT_PAGE));

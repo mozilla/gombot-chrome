@@ -54,6 +54,7 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.Linker = getModule("Linker")(Gombot);
   Gombot.AccountManager = getModule("AccountManager")(Gombot, _);
   Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
+  Gombot.Pages = getModule("Pages")(Gombot);
 
   var currentUser = null;
   Gombot.getCurrentUser = function() {
@@ -87,10 +88,8 @@ var _Gombot = function(importedModules, Gombot) {
       Gombot.users.fetch({
         success: function() {
           if (!firstRun) {
-            if (typeof startFirstRunFlow === 'function') {
-              startFirstRunFlow(false /* showSignInPage */); // shows signup page on first run
-              Gombot.LocalStorage.setItem("firstRun", true);
-            }
+            Gombot.Pages.navigateTo('create_account');
+            Gombot.LocalStorage.setItem("firstRun", true);
           }
           var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });
           if (loggedInUser) Gombot.setCurrentUser(loggedInUser);
@@ -139,7 +138,7 @@ function displayInfobar(notificationObj) {
       }
       infobarHooks[response.type].call(infobarHooks,notificationObj,response);
     };
-// <<<<<<< HEAD
+
 //     // Make sure we have a HTML infobar for this type of notification
 //     if (!infobarPaths[notificationObj.notification.type]) return;
 //     InfobarManager.run({
@@ -167,36 +166,26 @@ function displayInfobar(notificationObj) {
 }
 
 // Test function that spawns an example infobar on the current active tab.
-function testInfobarNotification() {
-  getActiveTab(function(tab) {
-    console.log("tab url: ", tab.url,'  ', tab);
-    displayInfobar({
-      notify: true,
-      tabID: tab.id,
-      notification: {
-        type: 'pin_entry',
-        formEl: {},
-        formSubmitURL: "",
-        hash: "bc74f4f071a5a33f00ab88a6d6385b5e6638b86c",
-        hostname: "t.nm.io",
-        httpRealm: null,
-        password: "green",
-        passwordField: {},
-        type: "password_observed",
-        username: "gombottest",
-        usernameField: {}
-      }
-    });
-  });
-}
-
-//
-// PIN validation
-//
-
-function validatePIN(_pin) {
-  // If there's no PIN set, accept. Otherwise, validate.
-  var currentUser = Gombot.getCurrentUser();
-  return (currentUser.get('pin') === _pin);
-}
+// function testInfobarNotification() {
+//   getActiveTab(function(tab) {
+//     console.log("tab url: ", tab.url,'  ', tab);
+//     displayInfobar({
+//       notify: true,
+//       tabID: tab.id,
+//       notification: {
+//         type: 'pin_entry',
+//         formEl: {},
+//         formSubmitURL: "",
+//         hash: "bc74f4f071a5a33f00ab88a6d6385b5e6638b86c",
+//         hostname: "t.nm.io",
+//         httpRealm: null,
+//         password: "green",
+//         passwordField: {},
+//         type: "password_observed",
+//         username: "gombottest",
+//         usernameField: {}
+//       }
+//     });
+//   });
+// }
 
