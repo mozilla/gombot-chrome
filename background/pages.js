@@ -36,7 +36,7 @@ var Pages = function(Gombot) {
     var url = constructUrl(resource);
     if (typeof chrome !== 'undefined') {
       if (!source) chrome.tabs.create({ url: url });
-      else chrome.tabs.update(source.id, { url: url });
+      else chrome.tabs.update(source.tab.id, { url: url });
     }
     else { // Firefox
       var self = require("self");
