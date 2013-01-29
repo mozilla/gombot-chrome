@@ -15,24 +15,12 @@ var self = require("self");
 
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
-var tppanel = require("./lib/tppanel").Panel;
-
 
 exports.main = function(options, callbacks) {
   addToolbarButton();
-  // other stuff
 };
 
-// var testPanel = require('panel').Panel({
-//   url: self.data.url('testpanel.html')
-// });
-
-var testPanel = tppanel({
-    width:  300,
-    height: 300,
-    contentURL: self.data.url('testpanel.html'),
-    //onHide:  function(evt){mypanel.show()}
-});
+/** Setup add Gombot button to all windows **/
 
 function addToolbarButton() {
   var document = mediator.getMostRecentWindow("navigator:browser").document;
@@ -59,6 +47,8 @@ windows.on('open', function(window) {
   addToolbarButton();
 });
 
+/** Load all Gombot modules **/
+
 var gombotModules = {
   Backbone: require("./lib/backbone"),
   _ : require("./lib/underscore"),
@@ -79,10 +69,27 @@ var gombotModules = {
   CommandHandler: require("./command_handler"),
   User: require("./models/user"),
   UserCollection: require("./collections/user_collection"),
-  AccountManager: require("./account_manager")
+  AccountManager: require("./account_manager"),
+  Pages: require("./pages")
 };
 
 var Gombot = require("./gombot")(gombotModules);
+
+/** Tpp panel stuff **/
+
+// var testPanel = require('panel').Panel({
+//   url: self.data.url('testpanel.html')
+// });
+var tppanel = require("./lib/tppanel").Panel;
+
+var testPanel = tppanel({
+    width:  300,
+    height: 300,
+    contentURL: self.data.url('testpanel.html'),
+    //onHide:  function(evt){mypanel.show()}
+});
+
+/** pageMod code for password form detection and filling **/
 
 var pageMod = require("page-mod");
 
@@ -102,15 +109,3 @@ pageMod.PageMod({
     Gombot.Messaging.registerPageModWorker(worker);
   }
 });
-
-const CREATE_ACCOUNT_PAGE = 'pages/first_run/create_account.html';
-pageMod.PageMod({
-  include: [ self.data.url(CREATE_ACCOUNT_PAGE) ],
-  contentScriptFile: [ self.data.url("resource_content_scripts/content_messaging.js"),
-                       self.data.url("resource_content_scripts/main.js") ],
-  onAttach: function(worker) {
-    Gombot.Messaging.registerPageModWorker(worker);
-  }
-});
-
-require('tabs').open(self.data.url(CREATE_ACCOUNT_PAGE));

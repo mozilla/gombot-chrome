@@ -1,7 +1,6 @@
 var messenger;
 $(document).ready(function() {
   messenger = PageMessaging();
-  messenger.messageToChrome({});
   var busy = false;
 
   $('#pin-info-link').click(function(ev) {
@@ -49,8 +48,13 @@ $(document).ready(function() {
           busy = false;
         } else {
           ProgressIndicator.hide();
-          window.location = '/data/pages/first_run/success.html';
           busy = false;
+          messenger.messageToChrome({
+            type: 'navigate_to',
+            message: {
+              resource: 'success'
+            }
+          });
         }
       });
     }

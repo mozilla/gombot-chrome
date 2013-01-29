@@ -18,8 +18,8 @@
         updateValue.call(this);
       };
       elem.onkeypress = function (e){
-          // Only allow the user to type digits
-          if (e.charCode < '0'.charCodeAt(0) || e.charCode > '9'.charCodeAt(0)) {
+          // Only allow the user to type digits, but allow non-printable characters (tab, delete, etc)
+          if (e.charCode > '9'.charCodeAt(0)) {
               e.preventDefault();
               return;
           }

@@ -38,11 +38,11 @@ var LocalStorage = function() {
       },
       setItem: function(key, data, callback) {
         ss.storage[key] = data;
-        timers.setTimeout(callback,0);
+        if (callback) timers.setTimeout(callback,0);
       },
       removeItem: function(key, callback) {
         delete ss.storage[key];
-        timers.setTimeout(callback, 0);
+        if (callback) timers.setTimeout(callback,0);
       }
     };
   };

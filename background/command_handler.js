@@ -29,9 +29,10 @@ var CommandHandler = function(Gombot, Messaging, _) {
   }
 
   function validatePin(message, sender, callback) {
-    callback({
-        'is_valid': validatePIN(message.pin) // TODO: need to port this over
-    });
+    // TODO: move this code somewhere else
+    // If there's no PIN set, accept. Otherwise, validate.
+    var currentUser = Gombot.getCurrentUser();
+    callback({ 'is_valid': (currentUser.get('pin') === message.pin) });
   }
 
   function setCapturedCredentials(message, sender, callback) {
@@ -84,15 +85,23 @@ var CommandHandler = function(Gombot, Messaging, _) {
   }
 
   // create a new user account
-  function createUser (message, sender, callback) {
+  function createUser(message, sender, callback) {
     Gombot.AccountManager.createAccount(message, callback);
     return true;
   }
 
   // sign into a user account
-  function signIn (message, sender, callback) {
+  function signIn(message, sender, callback) {
     Gombot.AccountManager.signIn(message, callback);
     return true;
+  }
+
+  // navigate tab to a particular extension resource page
+  // message: { resource: <resource page>, newTab: bool }
+  // Resource page should the basename of the resource page excluding
+  // the file type suffix, e.g., create_account
+  function navigateTo(message, sender, callback) {
+    Gombot.Pages.navigateTo(message.resource, message.newTab ? undefined : sender);
   }
 
   var commandHandlers = {
@@ -105,7 +114,8 @@ var CommandHandler = function(Gombot, Messaging, _) {
     'get_saved_credentials': getSavedCredentials,
     'get_site_config': getSiteConfig,
     'create_user': createUser,
-    'sign_in': signIn
+    'sign_in': signIn,
+    'navigate_to': navigateTo
   };
 
   //
