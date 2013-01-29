@@ -129,9 +129,16 @@ var PasswordFormInspector = function($, PasswordForm, DomMonitor) {
     }
 
     function fill(credentials) {
-        passwordForms.forEach(function(form) {
-            form.fill(credentials);
-        });
+        var length = passwordForms.length;
+        // Need to work through the forms sequentials because PasswordForm.fill
+        // inspects the active element as it goes, so we don't want to interfere
+        // with that.
+        function fillForm(i) {
+            if (i<length) {
+                passwordForms[i].fill(credentials, function() { fillForm(i+1); });
+            }
+        }
+        fillForm(0);
     }
 
     function start() {
