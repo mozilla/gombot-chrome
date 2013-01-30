@@ -3,21 +3,19 @@ var CommandHandler = function(Gombot, Messaging, _) {
   function addLogin(message, sender) {
     var currentUser = Gombot.getCurrentUser(),
         tabID = sender.tab.id;
-
     Gombot.Linker.shouldShowLinkingNotification(currentUser, message, { success: function(linkingInfo) {
-      // first delete the captured credentials
-      Gombot.CapturedCredentialStorage.deleteCredentials(sender.tab);
       if (!linkingInfo) return;
+      linkingInfo.tabID = tabID;
       _.extend(message, linkingInfo);
       if (currentUser) {
         // Prompt the user to save the login
-        displayInfobar({
+        Gombot.Infobars.displayInfobar({
           notify: true,
           tabID: tabID,
           notification: message
         });
       } else {
-        displayInfobar({
+        Gombot.Infobars.displayInfobar({
           notify: true,
           tabID: tabID,
           notification: {
@@ -65,7 +63,7 @@ var CommandHandler = function(Gombot, Messaging, _) {
   }
 
   function showPINPromptInfobar(message, sender, callback) {
-      displayInfobar({
+      Gombot.Infobars.displayInfobar({
         notify: true,
         tabID: sender.tab,
         notification: {
