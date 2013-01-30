@@ -39,7 +39,7 @@ var Messaging = function() {
         //      message: <actual message data>
         // }
         worker.on('message', function (message) {
-          //console.log("Message from pageMod: "+JSON.stringify(message));
+          console.log("Message from pageMod: "+JSON.stringify(message));
           var request = message.message,
               // TODO: Jetpack doesn't seem to offer us a stable id for tabs, so we use the
               // index in its window for now. Maybe find something better in the future.

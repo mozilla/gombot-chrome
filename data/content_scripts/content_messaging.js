@@ -47,12 +47,14 @@ var ContentMessaging = function() {
         var messageWrapper = { message: message, callbackId: callbackId };
         callbacks[callbackId] = callback;
         self.postMessage(messageWrapper);
+        console.log('self.postMessaged to chrome: ', JSON.stringify(message));
       }
 
       // listen to page
       // TODO: refactor this magic string
       const RESOURCE_ORIGIN = 'resource://jid1-ueqrmxmswk4fra-at-jetpack';
       document.defaultView.addEventListener('message', function(event) {
+        console.log('got event from: ', event.origin, ' was: ', event.data);
         if (event.origin !== RESOURCE_ORIGIN) return;
         var data = JSON.parse(event.data),
             callbackId;

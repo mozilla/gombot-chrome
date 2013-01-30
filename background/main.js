@@ -110,6 +110,7 @@ var testPanel = (function() {
       contentScriptFile: [ self.data.url("resource_content_scripts/content_messaging.js"),
                            self.data.url("resource_content_scripts/main.js") ],
       onAttach: function(worker) {
+        console.log('testPanel onAttach');
         Gombot.Messaging.registerPageModWorker(worker);
       }
     });

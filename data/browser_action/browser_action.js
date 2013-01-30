@@ -21,11 +21,11 @@ function copyToClipboard(_str) {
 // inside of a panel (ie. window.location is a resource:// URL).
 $(document).ready(function() {
   $('body').html(window.location);
-  return;
-  messenger = Gombot.Messaging();
-  dump('get_current_user\n');
+  // return;
+  messenger = PageMessaging();
+  dump('get_current_user in browser_action.js\n');
   document.body.innerHTML = window.location.toString();
-  Gombot.messenger.messageToChrome({
+  messenger.messageToChrome({
       type: 'get_current_user',
       message: {}
     },
@@ -34,7 +34,6 @@ $(document).ready(function() {
       initUI();
     }
   );
-    console.log('Gombot Messaging: ',Gombot.Messaging);
 });
 
 function initUI() {

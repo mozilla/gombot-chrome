@@ -55,7 +55,7 @@ var PageMessaging = function() {
         var callbackId = getCallbackId();
         var messageWrapper = { message: message, callbackId: callbackId, fromPage: true };
         callbacks[callbackId] = callback;
-        //console.log("PageMessaging.messageToChrome: "+JSON.stringify(messageWrapper));
+        dump("PageMessaging.messageToChrome: "+JSON.stringify(messageWrapper), "\n\n");
         document.defaultView.postMessage(JSON.stringify(messageWrapper), pageOrigin);
       }
     })();

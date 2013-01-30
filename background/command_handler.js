@@ -92,6 +92,7 @@ var CommandHandler = function(Gombot, Messaging, _) {
   
   // just wrap Gombot.getCurrentUser()
   function getCurrentUser(message, sender, callback) {
+    console.log('getCurrentUser');
     callback(Gombot.getCurrentUser());
   }
 
@@ -132,7 +133,7 @@ var CommandHandler = function(Gombot, Messaging, _) {
   //           sendResponse: callback function with single parameter to respond to content scripts }
   Messaging.addContentMessageListener(function(request, sender, sendResponse) {
     if (request.type && commandHandlers[request.type]) {
-      //console.log("Msg received", request, sender);
+      console.log("Msg received", request, sender);
       return commandHandlers[request.type].call(commandHandlers,request.message,sender,sendResponse);
     }
   });
