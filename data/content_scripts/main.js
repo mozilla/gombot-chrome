@@ -27,6 +27,8 @@ function maybeGetAndFillCredentials(formInspector)
 
 
 function maybePromptToSaveCapturedCredentials() {
+    // only trigger from the top level frame to avoid multiple notifications
+    if (window.top !== window.self) return;
     var callback = function(credentials) {
         // if missing credentials or missing password then return
         if (!credentials || !credentials.password) return;

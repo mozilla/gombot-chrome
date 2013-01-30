@@ -69,35 +69,29 @@ var Linker = function(Gombot) {
           supplementalInformation: loginInfo.supplementalInformation || {}
         },
         loginCredential;
-    loginCredential = findLoginCredentialForUsernameAndUrl(user, loginInfo.username, loginInfo.loginurl);
-    if (loginCredential) updateExistingLoginCredential(loginCredential, attrs);
-    else {
-      loginCredential = createNewLoginCredential(attrs);
-      user.get('logins').add(loginCredential);
-    }
-    user.save();
+    // make sure user model is up to date, then save
+    user.fetch({ success: function() {
+      loginCredential = findLoginCredentialForUsernameAndUrl(user, loginInfo.username, loginInfo.loginurl);
+      if (loginCredential) updateExistingLoginCredential(loginCredential, attrs);
+      else {
+        loginCredential = createNewLoginCredential(attrs);
+        user.get('logins').add(loginCredential);
+      }
+      user.save();
+    }});
   }
 
   // TODO: options should have success and error
   function disableSite(user, loginInfo, options) {
-    user.get('disabledSites')[loginInfo.origin] = 'all';
-    user.save();
-  }
-
-  // update the user model first then call the given func
-  // user model must be the first element of args
-  function userFetchThenCall(func, args) {
-    var user = args[0];
-    if (!user) func.apply(null, args);
-    else user.fetch({ success: function() {
-      func.apply(null, args);
+    // make sure user model is up to date, then save
+    user.fetch({ success: function() {
+      user.get('disabledSites')[loginInfo.origin] = 'all';
+      user.save();
     }});
   }
 
   return {
-    shouldShowLinkingNotification: function () {
-      return userFetchThenCall(shouldShowLinkingNotification, Array.prototype.slice.call(arguments));
-    },
+    shouldShowLinkingNotification: shouldShowLinkingNotification,
     link: link,
     disableSite: disableSite
   };
