@@ -13,6 +13,7 @@
 
 var self = require("self");
 var tppanel = require("./lib/tppanel").Panel;
+var panel = require('panel').Panel;
 
 var {Cc, Ci} = require("chrome");
 var mediator = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
@@ -103,23 +104,28 @@ pageMod.PageMod({
 var testPanel = (function() {
   var _panel = null;
   function createPanel() {
-    _panel = tppanel({
+    _panel = panel({
       width:  300,
       height: 300,
       contentURL: self.data.url('browser_action/browser_action.html'),
       contentScriptFile: [ self.data.url("resource_content_scripts/content_messaging.js"),
-                           self.data.url("resource_content_scripts/main.js") ],
-      onAttach: function(worker) {
-        console.log('testPanel onAttach');
-        Gombot.Messaging.registerPageModWorker(worker);
-      }
+                           self.data.url("resource_content_scripts/main.js") ]
     });
+    Gombot.Messaging.registerPageModWorker(_panel);
+    _panel.on('hide', function() {
+      // Chrome initializes the page inside of a browser action each time it is clicked,
+      // while Firefox lets the page inside of a panel persist. For now, let's kill the panel
+      // every time it's hidden, and recreate it whenever the user clicks on the Gombot button.
+      _panel.destroy();
+      _panel = null;
+    })
   }
   return {
     show: function(target) {
       if (!_panel) {
         createPanel();
       }
+      // _panel.show();
       _panel.show(target);
     }
   }

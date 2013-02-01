@@ -31,8 +31,9 @@ var PageMessaging = function() {
       function messageHandler(addonMessage) {
         var callbackId = addonMessage.callbackId;
         var callback = callbacks[callbackId];
+        console.log('messageHandler for callbackId=',callbackId);
         if (!callback) {
-          console.log("ContentMessaging: error can't find callback for callbackId="+callbackId);
+          console.log("PageMessaging: error can't find callback for callbackId="+callbackId);
           return;
         }
         callback(addonMessage.message);
@@ -40,8 +41,8 @@ var PageMessaging = function() {
       }
 
       window.addEventListener("message", function(event) {
-        console.log(event);
         var data = JSON.parse(event.data);
+        console.log('window.addEventListener ', data);
         if (data.fromPage) return;
         messageHandler(data);
       }, false);

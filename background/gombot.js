@@ -55,8 +55,8 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.AccountManager = getModule("AccountManager")(Gombot, _);
   Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
   Gombot.Pages = getModule("Pages")(Gombot);
-  Gombot.InfobarManager = getModule("InfobarManager");
-  Gombot.Infobars = getModule("Infobars")(Gombot);
+  // Gombot.InfobarManager = getModule("InfobarManager");
+  // Gombot.Infobars = getModule("Infobars")(Gombot);
 
   var currentUser = null;
   Gombot.getCurrentUser = function() {

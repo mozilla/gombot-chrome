@@ -88,6 +88,30 @@ var CommandHandler = function(Gombot, Messaging, _) {
     return true;
   }
   
+  // return the URL of the currently active tab on the currently active
+  // window. used by the gombot button panel to get context
+  function getCurrentURL(message, sender, callback) {
+    if (typeof chrome !== 'undefined') {
+      chrome.windows.getCurrent(function(win) { 
+          chrome.tabs.query({
+              'windowId': win.id,
+              'active': true
+          }, 
+          function(tabArray) { 
+              callback({
+                url: tabArray[0].url
+              });
+           });
+       });
+    }
+    else {
+      var tabs = require("tabs");
+      callback({
+        url: tabs.activeTab.url
+      });
+    }
+  }
+  
   // just wrap Gombot.getCurrentUser()
   function getCurrentUser(message, sender, callback) {
     console.log('getCurrentUser');
@@ -118,6 +142,7 @@ var CommandHandler = function(Gombot, Messaging, _) {
     'get_saved_credentials': getSavedCredentials,
     'get_site_config': getSiteConfig,
     'create_user': createUser,
+    'get_current_url': getCurrentURL,
     'get_current_user': getCurrentUser,
     'sign_in': signIn,
     'navigate_to': navigateTo
