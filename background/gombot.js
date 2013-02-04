@@ -45,9 +45,10 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.TldService = getModule("TldService")(getModule("Tld"), getModule("Uri"));
   Gombot.SiteConfigs = getModule("SiteConfigs");
   Gombot.Realms = getModule("Realms")(Gombot, Gombot.SiteConfigs, getModule("Uri"));
-  Gombot.Storage = getModule("Storage")(Backbone, _, Gombot.LocalStorage); // defined by backbone.localStorage.js
-  Gombot.GombotClient = getModule("GombotClient");
-  Gombot.Sync = getModule("GombotSync")(Gombot, Backbone, _);
+  Gombot.Storage = getModule("Storage")(Backbone, _, Gombot.LocalStorage); // local sync; defined by backbone.localStorage.js
+  //Gombot.GombotClient = getModule("GombotClient");
+  //Gombot.Sync = getModule("GombotSync")(Gombot, Backbone, _); // original sync using our api
+  //Gombot.FirebaseSync = getModule("FirebaseSync")(Gombot); // sync using firebase
   Gombot.LoginCredential = getModule("LoginCredential")(Gombot, Backbone, _);
   Gombot.LoginCredentialCollection = getModule("LoginCredentialCollection")(Backbone, _, Gombot.LoginCredential); // LoginCredential need to be initialized
   Gombot.CapturedCredentialStorage = getModule("CapturedCredentialStorage")(Gombot, getModule("Uri"));
@@ -55,8 +56,12 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.AccountManager = getModule("AccountManager")(Gombot, _);
   Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
   Gombot.Pages = getModule("Pages")(Gombot);
-  Gombot.InfobarManager = getModule("InfobarManager");
-  Gombot.Infobars = getModule("Infobars")(Gombot);
+  Gombot.Crypto = getModule("GombotCrypto");
+  Gombot.User = getModule("User")(Backbone, _, Gombot);
+  if (typeof chrome !== "undefined") {
+    Gombot.InfobarManager = getModule("InfobarManager");
+    Gombot.Infobars = getModule("Infobars")(Gombot);
+  }
 
   var currentUser = null;
   Gombot.getCurrentUser = function() {
@@ -73,19 +78,24 @@ var _Gombot = function(importedModules, Gombot) {
     currentUser.destroy({ localOnly: true, success: function() { currentUser = null; callback(); }});
   };
 
-  new Gombot.Storage("users", function(store) {
-    Gombot.User = getModule("User")(Backbone, _, Gombot, store);
-    Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
-    checkFirstRun();
-  });
-
-  function checkFirstRun() {
-    Gombot.LocalStorage.getItem("firstRun", function(firstRun) {
-      initGombot(firstRun);
+  Gombot.init = function(options) {
+    options = options || {};
+    options.storeName = options.storeName || "users";
+    options.callback = options.callback || checkFirstRun;
+    new Gombot.Storage(options.storeName, function(store) {
+      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, store, _);
+      Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
+      options.callback();
     });
   }
 
-  function initGombot(firstRun) {
+  function checkFirstRun() {
+    Gombot.LocalStorage.getItem("firstRun", function(firstRun) {
+      fetchUsers(firstRun);
+    });
+  }
+
+  function fetchUsers(firstRun) {
       Gombot.users = new Gombot.UserCollection();
       Gombot.users.fetch({
         success: function() {
@@ -102,6 +112,7 @@ var _Gombot = function(importedModules, Gombot) {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = _Gombot; // export namespace constructor, for Firefox
-} else { // otherwise, just create the global Gombot namespace
+} else { // otherwise, just create the global Gombot namespace and init
   var Gombot = _Gombot({});
+  Gombot.init();
 }

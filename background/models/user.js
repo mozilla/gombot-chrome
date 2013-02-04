@@ -1,11 +1,8 @@
-var User = function(Backbone, _, Gombot, LocalStorage) {
+var User = function(Backbone, _, Gombot) {
 
   const USER_DATA_VERSIONS = [
     "identity.mozilla.com/gombot/v1/userData"
   ];
-
-  var GombotSync = Gombot.Sync,
-      LoginCredentialCollection = Gombot.LoginCredentialCollection;
 
   // attributes should be something like:
   // {
@@ -38,8 +35,6 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
       disabledSites: {}
     },
 
-    localStorage: LocalStorage,
-
     initialize: function() {
       Backbone.Model.prototype.initialize.apply(this, arguments);
       this.addSyncListener(this.get("logins"));
@@ -64,6 +59,7 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
     },
 
     isAuthenticated: function() {
+      return false;
       return this.client && ((this.client.isAuthenticated && this.client.isAuthenticated()) || (this.client.keys && this.client.user));
     },
 
@@ -71,60 +67,61 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
     // call model.toJSON({ encrypted: true, ciphertext: <ciphertext> })
     // Other toJSON() creates a standard plaintext representation of a User object
     toJSON: function(args) {
-      var result;
-      args = args || {};
-      if (args.ciphertext) {
-        result = { ciphertext: args.ciphertext, updated: this.updated, id: this.id, email: this.get("email"), version: this.get("version") };
-        if (this.isAuthenticated()) _.extend(result, { client: this.client.toJSON() });
-        return result;
-      }
-      else {
-        result = Backbone.Model.prototype.toJSON.apply(this, arguments);
-        return _.extend(result, { logins: this.get("logins").toJSON() });
+      var result = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      return _.extend(result, { logins: this.get("logins").toJSON() });
+    },
+
+    // Returns an object containing key/values of data that will be
+    // stored in plaintext with an encrypted copy of this model's data.
+    // The metadata should not contain any information that is intended
+    // to be stored encrypted at rest.
+    getMetadata: function() {
+      return {
+        id: this.id,
+        email: this.get("email"),
+        version: this.get("version"),
+        updated: this.updated
       }
     },
 
     parse: function(resp) {
-      if (resp.ciphertext) this.ciphertext = resp.ciphertext;
       if (resp.updated) this.updated = resp.updated;
-      if (resp.client) this.client = resp.client;
-      delete resp.ciphertext;
       delete resp.updated;
-      delete resp.client;
       return resp;
     },
 
     sync: function(method, model, options) {
-      var self = this;
-      var success = function(resp) {
-        var s = options.success;
-        options.success = function(model, resp, options) {
-          console.log("User.sync finished method="+method+" resp="+JSON.stringify(resp)+" model="+JSON.stringify(model));
-          // resp.data is returned by GombotSync calls with plaintext user data
-          if (s) s(model, resp.data || {}, options);
-        }
-        if (resp.updated) self.updated = resp.updated;
-        // ciphertext in resp indicates we need to write it out to local storage
-        if (resp.ciphertext) {
-          if (method === "read") {
-            self.save(resp.data, _.extend(options, { localOnly: true, ciphertext: resp.ciphertext }));
-          } else {
-            console.log("localSync method="+method);
-            Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
-          }
-        } else if (options.success) {
-          options.success(model, resp, options);
-        }
-      };
-      var error = function(args) {
-        if (options.error) options.error(args);
-      };
-      var o = _.clone(options);
-      if (options.localOnly) {
-        Backbone.localSync(method, model, options);
-      } else {
-        GombotSync.sync(method, model, _.extend(o,{ success: success, error: error }));
-      }
+      Gombot.SyncAdapter.sync(method, model, options);
+      // var self = this;
+      // var success = function(resp) {
+      //   var s = options.success;
+      //   options.success = function(model, resp, options) {
+      //     console.log("User.sync finished method="+method+" resp="+JSON.stringify(resp)+" model="+JSON.stringify(model));
+      //     // resp.data is returned by GombotSync calls with plaintext user data
+      //     if (s) s(model, resp.data || {}, options);
+      //   }
+      //   if (resp.updated) self.updated = resp.updated;
+      //   // ciphertext in resp indicates we need to write it out to local storage
+      //   if (resp.ciphertext) {
+      //     if (method === "read") {
+      //       self.save(resp.data, _.extend(options, { localOnly: true, ciphertext: resp.ciphertext }));
+      //     } else {
+      //       console.log("localSync method="+method);
+      //       Backbone.localSync(method, model, _.extend(options, { ciphertext: resp.ciphertext }));
+      //     }
+      //   } else if (options.success) {
+      //     options.success(model, resp, options);
+      //   }
+      // };
+      // var error = function(args) {
+      //   if (options.error) options.error(args);
+      // };
+      // var o = _.clone(options);
+      // if (options.localOnly) {
+      //   Backbone.localSync(method, model, options);
+      // } else {
+      //   GombotSync.sync(method, model, _.extend(o,{ success: success, error: error }));
+      // }
     },
 
     set: function(key, val, options) {
@@ -137,9 +134,9 @@ var User = function(Backbone, _, Gombot, LocalStorage) {
       } else {
         (attributes = {})[key] = val;
       }
-      if (attributes.logins !== undefined && !(attributes.logins instanceof LoginCredentialCollection)) {
+      if (attributes.logins !== undefined && !(attributes.logins instanceof Gombot.LoginCredentialCollection)) {
           logins = attributes.logins;
-          attributes.logins = this.get("logins") || new LoginCredentialCollection();
+          attributes.logins = this.get("logins") || new Gombot.LoginCredentialCollection();
       }
       result = Backbone.Model.prototype.set.call(this, attributes, options);
       if (result && logins) {

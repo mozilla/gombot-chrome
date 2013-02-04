@@ -8,12 +8,14 @@
         "notifications",
         "storage",
         "http://*/",
-        "https://*/"
+        "https://*/",
+        "webRequest",
+        "webRequestBlocking"
     ],
     "icons": {
       "128": "images/gombot-icon-128.png"
     },
-
+    "content_security_policy": "script-src 'self' https://cdn.firebase.com https://auth.firebase.com https://*.firebaseio.com; object-src 'self'",
     "background": {
         "page": "background/background.html"
     },
