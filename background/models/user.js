@@ -77,7 +77,7 @@ var User = function(Backbone, _, Gombot) {
     // to be stored encrypted at rest.
     getMetadata: function() {
       return {
-        id: this.id,
+        id: this.get("id"),
         email: this.get("email"),
         version: this.get("version"),
         updated: this.updated

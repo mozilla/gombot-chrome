@@ -36,6 +36,9 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
     });
   }
 
+  // Note: consumers of this proxy should not set properties directly,
+  // e.g., proxy.foo because the change will not be directly reflected
+  // on the underlying model
   function createCryptoProxyForModel(model, keys) {
     var clone = _.clone(model);
     return _.extend(clone, {
@@ -73,7 +76,6 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   // Special kdf derivation function we'll pass to GombotClient to handle FX slowness bug
   if (typeof require !== "undefined") {
     kdf = function (args, callback) {
-      console.log("in derive")
       require("gombot-crypto-jetpack").kdf(args.email, args.password).then(function(keys) {
         callback(null, keys);
       });
