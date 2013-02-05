@@ -87,7 +87,7 @@ exports.testCreateThenFetch = function(test) {
   init(function() {
     createUser({
       callback: function(user) {
-        var u = new Gombot.User({ id: user.id });
+        var u = new Gombot.User({ id: user.id, email: user.get("email") });
         u.fetch({
           password: TEST_PASSWORD,
           success: function() {
