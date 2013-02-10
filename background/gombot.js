@@ -6,10 +6,12 @@
 *
 */
 
-// Gombot is optional
+// Gombot and importedModules are optional. (However, importedModules need to be
+// provided in Firefox and defined in some other way for other platforms.)
 var _Gombot = function(importedModules, Gombot) {
 
   Gombot = Gombot || {};
+  importedModules = importedModules || {};
 
   function getModule(name) {
     if (typeof window !== "undefined" && typeof window[name] !== "undefined") {
@@ -54,7 +56,6 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.CapturedCredentialStorage = getModule("CapturedCredentialStorage")(Gombot, getModule("Uri"));
   Gombot.Linker = getModule("Linker")(Gombot);
   Gombot.AccountManager = getModule("AccountManager")(Gombot, _);
-  Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
   Gombot.Pages = getModule("Pages")(Gombot);
   Gombot.Crypto = getModule("GombotCrypto");
   Gombot.User = getModule("User")(Backbone, _, Gombot);
@@ -82,6 +83,12 @@ var _Gombot = function(importedModules, Gombot) {
     options = options || {};
     options.storeName = options.storeName || "users";
     options.callback = options.callback || checkFirstRun;
+    if (!options.testing) {
+      Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
+    }
+    // TODO: refactor this code (maybe using promises?) so the SyncAdapter
+    // and UserCollection don't need to be created inside this init function.
+    // Also maybe move the storage creation out of here
     new Gombot.Storage(options.storeName, function(store) {
       Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, store, _);
       Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
@@ -113,6 +120,6 @@ var _Gombot = function(importedModules, Gombot) {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = _Gombot; // export namespace constructor, for Firefox
 } else { // otherwise, just create the global Gombot namespace and init
-  var Gombot = _Gombot({});
-  Gombot.init();
+  var gGombot = _Gombot({});
+  gGombot.init();
 }

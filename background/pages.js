@@ -2,6 +2,7 @@ var Pages = function(Gombot) {
 
   const PAGES_PATH="pages/first_run/";
 
+  // Firefox specific parts
   if (typeof chrome === "undefined") {
     // define a pageMod for resource urls
     var pageMod = require("page-mod");
