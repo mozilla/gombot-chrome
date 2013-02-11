@@ -2,7 +2,7 @@ var SpecHelpers = function(Gombot) {
   var LocalStorage = Gombot.LocalStorage;
   var User = Gombot.User;
   var self = {
-    STORE_NAME: "testUsers",
+    STORE_NAME: "usersTest",
     TEST_PASSWORD: "pässwörd",
     TEST_PIN: "1234",
 
@@ -16,7 +16,9 @@ var SpecHelpers = function(Gombot) {
 
     getLocalStorageItem: function(name) {
       var dfd = Q.defer();
+      console.log(LocalStorage, name);
       LocalStorage.getItem(name, function(value) {
+        console.log("LS", value);
         dfd.resolve(value);
       });
       return dfd.promise;
