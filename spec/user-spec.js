@@ -40,6 +40,9 @@ function runUserSpec() {
 
       it("should be able to fetch data from a previously saved user", function() {
         return userPromise.then(function(u) {
+          return SH.fetchUser({ id: u.id, email: testEmail, password: SH.TEST_PASSWORD }).then(function(u) {
+
+          });
           return true;
         });
       });

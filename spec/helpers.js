@@ -55,7 +55,20 @@ var SpecHelpers = function(Gombot) {
         dfd.reject(err);
       }}));
       return dfd.promise;
+    },
+
+    fetchUser: function(options) {
+      var dfd = Q.defer();
+      var user = options.user || new User({ id: options.id, email: options.email });
+      var o = _.clone(options);
+      user.fetch(_.extend(o, { success: function() {
+        dfd.resolve(user);
+      }, error: function(err) {
+        dfd.reject(err);
+      }}));
+      return dfd.promise;
     }
+
   };
   return self;
 };
