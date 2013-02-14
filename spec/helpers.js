@@ -1,10 +1,12 @@
 var SpecHelpers = function(Gombot) {
   var LocalStorage = Gombot.LocalStorage;
   var User = Gombot.User;
+  var LoginCredential = Gombot.LoginCredential;
   var self = {
     LOCAL_STORAGE_STORE_NAME: "usersTest",
     TEST_PASSWORD: "pässwörd",
     TEST_PIN: "1234",
+    TEST_LOGIN_CRED: { username: "gombot.test", password: "foobar", title: "Example", loginurl: "https://www.example.com/login" },
 
     generateTestEmail: function() {
       return "test+"+Math.floor((1+Math.random())*1000000)+"@test.com";
@@ -47,6 +49,8 @@ var SpecHelpers = function(Gombot) {
       options = options || {};
       var email = options.email || self.generateTestEmail();
       var user = new User({ email: email, pin: self.TEST_PIN });
+      user.get("logins").
+        add(new LoginCredential(self.TEST_LOGIN_CRED));
       // TODO: throw in one login entry here
       var o = _.clone(options);
       user.save(null, _.extend(o, { success: function() {

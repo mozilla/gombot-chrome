@@ -2,6 +2,7 @@ var GombotTest;
 var SH;
 var should = chai.should();
 var assert = chai.assert;
+var expect = chai.expect;
 
 mocha.setup('bdd');
 
