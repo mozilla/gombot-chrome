@@ -22,20 +22,28 @@ function runUserSpec() {
         })
         .then(function(attrs) {
           var user = userPromise.valueOf();
-          console.log(attrs, user); // check user.get("email is not null")
-          return attrs.should.have.property("email", user.get("email"))
-          // Q.all([
-          // attrsPromise.should.eventually.have.property("email", userPromise.valueOf().get("emailf")),
-          // attrsPromise.should.eventually.have.property("version", userPromise.valueOf().get("version")),
-          // attrsPromise.should.eventually.have.property("id", useruser.get("id")),
-          // attrsPromise.should.eventually.have.property("ciphertext"),
-          // attrsPromise.should.not.eventually.have.property("pin")
-          //]);
+          return attrs.should.have.property("email").that.eq(testEmail) &&
+            attrs.should.have.property("version").that.eq(user.get("version")) &&
+            attrs.should.have.property("id").that.eq(user.get("id")) &&
+            attrs.should.have.property("ciphertext") &&
+            attrs.should.have.not.property("pin");
+        });
+      });
+    }); // #create
+
+    describe("#fetch", function() {
+      var userPromise = null,
+          testEmail = SH.generateTestEmail();
+      before(function() {
+        userPromise = SH.createUser({ password: SH.TEST_PASSWORD, email: testEmail });
+      });
+
+      it("should be able to fetch data from a previously saved user", function() {
+        return userPromise.then(function(u) {
+          return true;
         });
       });
 
-//      if("the user data in local storage beshould create a ")
-
-    });
+    }); // #fetch
   });
 }
