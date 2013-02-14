@@ -43,6 +43,8 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
     var clone = _.clone(model);
     return _.extend(clone, {
       toJSON: function(options) {
+        // TODO: if no keys here, then do we need to do something special
+        //       like in parse()?
         // missing options means synchronous response to underyling object
         if (!options || !options.success) return model.toJSON();
         var o = _.clone(options);
@@ -55,15 +57,25 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
       parse: function(resp, options) {
         var o = _.clone(options),
             ciphertext = resp.ciphertext;
+        delete resp.ciphertext;
+        // if no keys, then just return the plaintext meta data
+        if (!keys) return _.defer(function() { options.success(resp); });
         decryptModelData(ciphertext, keys, _.extend(o, { success: function(modelData) {
-          delete resp.ciphertext;
           options.success(_.extend(resp, modelData));
+        }, error: function(err) {
+
         }}));
       }
     });
   }
 
   function getCryptoProxyForModel(model, options) {
+    // if no password, then just return proxy with created no keys
+    // this will cause the proxy to skip the encryption and decryption step
+    if (!options.password) {
+      return _.defer(function() { options.success(createCryptoProxyForModel(model)); });
+    }
+    // if we have a cached proxy for model, then return that
     if (model.cryptoProxy) return options.success(model.cryptoProxy);
     var o = _.clone(options);
     deriveKeysForModel(model, _.extend(o, { success: function(keys) {
@@ -103,6 +115,7 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
       return false;
     }
     var o = _.clone(options);
+
     getCryptoProxyForModel(model, _.extend(o, { success: function(cryptoProxyForModel) {
       var o = _.clone(options);
       // translate model proxy back to original model

@@ -51,6 +51,7 @@ function runUserSpec() {
           expect(fetchedUser.get("pin")).to.eq(SH.TEST_PIN);
           expect(fetchedUser).to.not.have.property("ciphertext");
           expect(fetchedUser.get("logins").size()).to.eq(1);
+          expect(fetchedUser.cryptoProxy).to.be.an("object");
           var loginCred = fetchedUser.get("logins").at(0);
           expect(loginCred.get("username")).to.eq(SH.TEST_LOGIN_CRED.username);
           expect(loginCred.get("password")).to.eq(SH.TEST_LOGIN_CRED.password);
@@ -60,8 +61,21 @@ function runUserSpec() {
         });
       });
 
-      it("should be able to fetch encrypted data from a previously saved user without the user's password", function() {
-        // TODO: I need to update the sync_adapter to handle this case
+      it("should only be able to fetch metadata from a previously saved user without the user's password", function() {
+        return createdUserPromise.then(function(u) {
+          return SH.fetchUser({ id: u.id });
+        }).
+        then(function(fetchedUser) {
+          expect(fetchedUser).to.have.property("id").that.eq(createdUserPromise.valueOf().id);
+          expect(fetchedUser.get("email")).to.eq(testEmail);
+          expect(fetchedUser.get("version")).eq(createdUserPromise.valueOf().get("version"));
+          expect(fetchedUser.get("pin")).to.not.exist;
+          expect(fetchedUser).to.not.have.property("ciphertext");
+          expect(fetchedUser.get("ciphertext")).to.not.exist;
+          expect(fetchedUser.cryptoProxy).to.not.exist;
+          expect(fetchedUser.get("logins").size()).to.eq(0);
+          return true;
+        });
       });
 
     }); // #fetch
