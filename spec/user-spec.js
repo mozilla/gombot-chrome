@@ -33,14 +33,14 @@ function runUserSpec() {
       });
     }); // #create
 
-    describe("#fetch", function() {
+    describe("#read", function() {
       var createdUserPromise = null,
           testEmail = SH.generateTestEmail();
       before(function() {
         createdUserPromise = SH.createUser({ password: SH.TEST_PASSWORD, email: testEmail });
       });
 
-      it("should be able to fetch data from a previously saved user with the user's password", function() {
+      it("should fetch data from a previously saved user with the user's password", function() {
         return createdUserPromise.then(function(u) {
           return SH.fetchUser({ id: u.id, email: testEmail, password: SH.TEST_PASSWORD })
         }).
@@ -61,7 +61,7 @@ function runUserSpec() {
         });
       });
 
-      it("should only be able to fetch metadata from a previously saved user without the user's password", function() {
+      it("should only fetch metadata from a previously saved user without the user's password", function() {
         return createdUserPromise.then(function(u) {
           return SH.fetchUser({ id: u.id });
         }).
@@ -77,7 +77,48 @@ function runUserSpec() {
           return true;
         });
       });
-
     }); // #fetch
+
+    describe("#update", function() {
+      var createdUserPromise = null,
+          testEmail = SH.generateTestEmail(),
+          newPin = "9999";
+      before(function() {
+        createdUserPromise = SH.createUser({ password: SH.TEST_PASSWORD, email: testEmail });
+      });
+
+      it("should save the updated user data to persistent storage", function() {
+        return createdUserPromise.then(function(u) {
+          var lc = new SH.newLoginCredential(SH.TEST_LOGIN_CRED2);
+          u.get("logins").add(lc);
+          u.set("pin", newPin);
+          return SH.saveUser({ user: u });
+        }).
+        then(function(savedUser) {
+          return SH.fetchUser({ id: savedUser.id, email: testEmail, password: SH.TEST_PASSWORD })
+        }).
+        then(function(fetchedUser) {
+          expect(fetchedUser).to.have.property("id").that.eq(createdUserPromise.valueOf().id);
+          expect(fetchedUser.get("email")).to.eq(testEmail);
+          expect(fetchedUser.get("version")).eq(createdUserPromise.valueOf().get("version"));
+          expect(fetchedUser.get("pin")).to.eq(newPin);
+          expect(fetchedUser).to.not.have.property("ciphertext");
+          expect(fetchedUser.get("logins").size()).to.eq(2);
+          expect(fetchedUser.cryptoProxy).to.be.an("object");
+          var loginCred = fetchedUser.get("logins").at(0);
+          expect(loginCred.get("username")).to.eq(SH.TEST_LOGIN_CRED.username);
+          expect(loginCred.get("password")).to.eq(SH.TEST_LOGIN_CRED.password);
+          expect(loginCred.get("loginurl")).to.eq(SH.TEST_LOGIN_CRED.loginurl);
+          expect(loginCred.get("title")).to.eq(SH.TEST_LOGIN_CRED.title);
+          loginCred = fetchedUser.get("logins").at(1);
+          expect(loginCred.get("username")).to.eq(SH.TEST_LOGIN_CRED2.username);
+          expect(loginCred.get("password")).to.eq(SH.TEST_LOGIN_CRED2.password);
+          expect(loginCred.get("loginurl")).to.eq(SH.TEST_LOGIN_CRED2.loginurl);
+          expect(loginCred.get("title")).to.eq(SH.TEST_LOGIN_CRED2.title);
+          return true;
+        });
+      });
+    }); // #update
+
   });
 }

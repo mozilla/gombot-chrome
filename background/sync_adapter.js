@@ -70,14 +70,15 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   }
 
   function getCryptoProxyForModel(model, options) {
+    // if we have a cached proxy for model, then return that
+    if (model.cryptoProxy) return _.defer(function() { options.success(model.cryptoProxy); });
     // if no password, then just return proxy with created no keys
     // this will cause the proxy to skip the encryption and decryption step
-    if (!options.password) {
-      return _.defer(function() { options.success(createCryptoProxyForModel(model)); });
-    }
-    // if we have a cached proxy for model, then return that
-    if (model.cryptoProxy) return options.success(model.cryptoProxy);
+    // This is usefulf for a model.fetch() or collection.fetch() where we just
+    // want to see which models are available in system (most likely locally).
+    if (!options.password) return _.defer(function() { options.success(createCryptoProxyForModel(model)); });
     var o = _.clone(options);
+    // otherwise, derive the keys and attach a crypto proxy for the model to the model
     deriveKeysForModel(model, _.extend(o, { success: function(keys) {
       model.cryptoProxy = createCryptoProxyForModel(model, keys);
       options.success(model.cryptoProxy);
