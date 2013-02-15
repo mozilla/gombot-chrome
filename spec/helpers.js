@@ -56,7 +56,7 @@ var SpecHelpers = function(Gombot) {
       var o = _.clone(options);
       user.save(null, _.extend(o, { success: function() {
         dfd.resolve(user);
-      }, error: function(err) {
+      }, error: function(model, err, options) {
         dfd.reject(err);
       }}));
       return dfd.promise;
@@ -69,7 +69,7 @@ var SpecHelpers = function(Gombot) {
       var o = _.clone(options);
       user.fetch(_.extend(o, { success: function() {
         dfd.resolve(user);
-      }, error: function(err) {
+      }, error: function(model, err, options) {
         dfd.reject(err);
       }}));
       return dfd.promise;
@@ -82,7 +82,20 @@ var SpecHelpers = function(Gombot) {
       var o = _.clone(options);
       user.save(null, _.extend(o, { success: function() {
         dfd.resolve(user);
-      }, error: function(err) {
+      }, error: function(model, err, options) {
+        dfd.reject(err);
+      }}));
+      return dfd.promise;
+    },
+
+    deleteUser: function(options) {
+      var dfd = Q.defer();
+      var user = options.user;
+      delete options.user;
+      var o = _.clone(options);
+      user.destroy(_.extend(o, { success: function() {
+        dfd.resolve(user);
+      }, error: function(model, err, options) {
         dfd.reject(err);
       }}));
       return dfd.promise;

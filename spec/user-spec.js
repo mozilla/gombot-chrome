@@ -120,5 +120,24 @@ function runUserSpec() {
       });
     }); // #update
 
+    describe("#delete", function() {
+      var createdUserPromise = null,
+          testEmail = SH.generateTestEmail();
+      before(function() {
+        createdUserPromise = SH.createUser({ password: SH.TEST_PASSWORD, email: testEmail });
+      });
+
+      it("should remove the user's data from persistent storage", function() {
+        return createdUserPromise.then(function(u) {
+          return SH.deleteUser({ user: u });
+        }).
+        then(function(deletedUser) {
+          return SH.fetchUser({ id: deletedUser.id, email: testEmail });
+        }).
+        fail(function (err) {
+          return err.should.be.eq("Record not found");
+        });
+      });
+    }); // #delete
   });
 }
