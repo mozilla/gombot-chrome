@@ -10,7 +10,7 @@ var GombotModules = {
   TldService: require("./tld_service"),
   SiteConfigs: require("./site_configs"),
   Realms: require("./realms"),
-  Storage: require("./storage"),
+  LocalSync: require("./sync/local_sync"),
   //GombotClient: require("./client/client"),
   //GombotSync: require("./gombot_sync"),
   LoginCredential: require("./models/login_credential"),
@@ -23,7 +23,7 @@ var GombotModules = {
   AccountManager: require("./account_manager"),
   Pages: require("./pages"),
   GombotCrypto: require("./client/crypto"),
-  SyncAdapter: require("./sync_adapter")
+  SyncAdapter: require("./sync/sync_adapter")
 };
 
 module.exports = GombotModules;

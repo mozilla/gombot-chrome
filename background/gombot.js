@@ -49,7 +49,7 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.TldService = getModule("TldService")(getModule("Tld"), getModule("Uri"));
   Gombot.SiteConfigs = getModule("SiteConfigs");
   Gombot.Realms = getModule("Realms")(Gombot, Gombot.SiteConfigs, getModule("Uri"));
-  Gombot.Storage = getModule("Storage")(Backbone, _, Gombot.LocalStorage); // local sync; defined by backbone.localStorage.js
+  Gombot.LocalSync = getModule("LocalSync")(Backbone, _, Gombot.LocalStorage); // local sync; defined by backbone.localStorage.js
   //Gombot.GombotClient = getModule("GombotClient");
   //Gombot.Sync = getModule("GombotSync")(Gombot, Backbone, _); // original sync using our api
   Gombot.LoginCredential = getModule("LoginCredential")(Gombot, Backbone, _);
@@ -90,7 +90,7 @@ var _Gombot = function(importedModules, Gombot) {
     // TODO: refactor this code (maybe using promises?) so the SyncAdapter
     // and UserCollection don't need to be created inside this init function.
     // Also maybe move the storage creation out of here
-    new Gombot.Storage(options.storeName || DEFAULT_STORE_NAME, function(store) {
+    new Gombot.LocalSync(options.storeName || DEFAULT_STORE_NAME, function(store) {
       Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
       Gombot.LocalSyncStrategy = store;
       Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.LocalSyncStrategy, _);

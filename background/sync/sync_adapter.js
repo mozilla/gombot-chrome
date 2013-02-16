@@ -111,6 +111,10 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
     SyncStrategy = strategy;
   }
 
+  function isLocal() {
+    return SyncStrategy === Gombot.LocalSync;
+  }
+
   function sync(method, model, options) {
     if (!(model instanceof Gombot.User)) {
       if (options.error) options.error("sync only supports syncing instances of Gombot.User");
