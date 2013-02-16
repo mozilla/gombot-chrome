@@ -105,8 +105,30 @@ var SpecHelpers = function(Gombot) {
     newLoginCredential: function(attrs) {
       attrs = attrs || {};
       return new LoginCredential(attrs);
-    }
+    },
 
+    setSyncStrategy: function(strategy) {
+      if (strategy === 'localStorage') {
+        Gombot.SyncAdapter.setSyncStrategy(Gombot.LocalSyncStrategy);
+      }
+      else if (strategy === 'firebase') {
+        Gombot.SyncAdapter.setSyncStrategy(Gombot.FirebaseSyncStrategy);
+      }
+    },
+
+    deleteTestStore: function(strategy) {
+      if (strategy === 'localStorage') {
+        // TODO
+      }
+      else if (strategy === 'firebase') {
+        var usersTestRef = new Firebase('https://gombot.firebaseIO.com/'+self.FIREBASE_STORE_NAME);
+        usersTestRef.on('value', function(snapshot) {
+          snapshot.forEach(function(childSnap) {
+            childSnap.ref().remove();
+          });
+        });
+      }
+    }
   };
   return self;
 };

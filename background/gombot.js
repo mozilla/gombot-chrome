@@ -10,6 +10,7 @@
 // provided in Firefox and defined in some other way for other platforms.)
 var _Gombot = function(importedModules, Gombot) {
 
+  const DEFAULT_STORE_NAME = "users";
   Gombot = Gombot || {};
   importedModules = importedModules || {};
 
@@ -86,13 +87,14 @@ var _Gombot = function(importedModules, Gombot) {
     if (!options.testing) {
       Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
     }
-    Gombot.FirebaseSync = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || "users"); // sync using firebase
     // TODO: refactor this code (maybe using promises?) so the SyncAdapter
     // and UserCollection don't need to be created inside this init function.
     // Also maybe move the storage creation out of here
-    new Gombot.Storage(options.storeName, function(store) {
-      //Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, store, _);
-      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSync, _);
+    new Gombot.Storage(options.storeName || DEFAULT_STORE_NAME, function(store) {
+      Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
+      Gombot.LocalSyncStrategy = store;
+      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.LocalSyncStrategy, _);
+      //Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSync, _);
       Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
       options.callback();
     });

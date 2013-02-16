@@ -1,5 +1,11 @@
 function runUserSpec(store) {
   describe("User", function() {
+    before(function() {
+      SH.setSyncStrategy(store);
+    });
+    after(function() {
+      SH.deleteTestStore(store);
+    });
     describe("#create", function() {
       var userPromise = null,
           testEmail = SH.generateTestEmail();
