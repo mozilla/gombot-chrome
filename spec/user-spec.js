@@ -1,4 +1,4 @@
-function runUserSpec() {
+function runUserSpec(store) {
   describe("User", function() {
     describe("#create", function() {
       var userPromise = null,
@@ -17,20 +17,23 @@ function runUserSpec() {
         ]);
       });
 
-      it("should create a record for the model in persistent storage that contains the user's data", function() {
-        return userPromise.then(function(u) {
-          return SH.getUserDataFromStore('localStorage', u);
-        })
-        .then(function(attrs) {
-          var user = userPromise.valueOf();
-          attrs.should.have.property("email").that.eq(testEmail);
-          attrs.should.have.property("version").that.eq(user.get("version"));
-          attrs.should.have.property("id").that.eq(user.get("id"));
-          attrs.should.have.property("ciphertext");
-          attrs.should.have.not.property("pin");
-          return true;
+      // TODO: implement test for Firebase
+      if (store === 'localStorage') {
+        it("should create a record for the model in persistent storage that contains the user's data", function() {
+          return userPromise.then(function(u) {
+            return SH.getUserDataFromStore(store, u);
+          })
+          .then(function(attrs) {
+            var user = userPromise.valueOf();
+            attrs.should.have.property("email").that.eq(testEmail);
+            attrs.should.have.property("version").that.eq(user.get("version"));
+            attrs.should.have.property("id").that.eq(user.get("id"));
+            attrs.should.have.property("ciphertext");
+            attrs.should.have.not.property("pin");
+            return true;
+          });
         });
-      });
+      }
     }); // #create
 
     describe("#read", function() {
@@ -61,22 +64,25 @@ function runUserSpec() {
         });
       });
 
-      it("should only fetch metadata from a previously saved user without the user's password", function() {
-        return createdUserPromise.then(function(u) {
-          return SH.fetchUser({ id: u.id });
-        }).
-        then(function(fetchedUser) {
-          expect(fetchedUser).to.have.property("id").that.eq(createdUserPromise.valueOf().id);
-          expect(fetchedUser.get("email")).to.eq(testEmail);
-          expect(fetchedUser.get("version")).eq(createdUserPromise.valueOf().get("version"));
-          expect(fetchedUser.get("pin")).to.not.exist;
-          expect(fetchedUser).to.not.have.property("ciphertext");
-          expect(fetchedUser.get("ciphertext")).to.not.exist;
-          expect(fetchedUser.cryptoProxy).to.not.exist;
-          expect(fetchedUser.get("logins").size()).to.eq(0);
-          return true;
+      // NOTE: localStorage only test
+      if (store == 'localStorage') {
+        it("should only fetch metadata from a previously saved user without the user's password", function() {
+          return createdUserPromise.then(function(u) {
+            return SH.fetchUser({ id: u.id });
+          }).
+          then(function(fetchedUser) {
+            expect(fetchedUser).to.have.property("id").that.eq(createdUserPromise.valueOf().id);
+            expect(fetchedUser.get("email")).to.eq(testEmail);
+            expect(fetchedUser.get("version")).eq(createdUserPromise.valueOf().get("version"));
+            expect(fetchedUser.get("pin")).to.not.exist;
+            expect(fetchedUser).to.not.have.property("ciphertext");
+            expect(fetchedUser.get("ciphertext")).to.not.exist;
+            expect(fetchedUser.cryptoProxy).to.not.exist;
+            expect(fetchedUser.get("logins").size()).to.eq(0);
+            return true;
+          });
         });
-      });
+      }
     }); // #fetch
 
     describe("#update", function() {
@@ -132,7 +138,7 @@ function runUserSpec() {
           return SH.deleteUser({ user: u });
         }).
         then(function(deletedUser) {
-          return SH.fetchUser({ id: deletedUser.id, email: testEmail });
+          return SH.fetchUser({ id: deletedUser.id, email: testEmail, password: SH.TEST_PASSWORD });
         }).
         fail(function (err) {
           return err.should.be.eq("Record not found");

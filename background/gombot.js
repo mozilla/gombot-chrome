@@ -28,6 +28,7 @@ var _Gombot = function(importedModules, Gombot) {
 
   var Backbone = getModule("Backbone")();
   var _ = getModule("_");
+  var BackboneFirebaseAdapter = getModule("BackboneFirebaseAdapter")(Backbone, _)
 
   // mixin guid creation into underscore
   _.mixin({
@@ -50,7 +51,6 @@ var _Gombot = function(importedModules, Gombot) {
   Gombot.Storage = getModule("Storage")(Backbone, _, Gombot.LocalStorage); // local sync; defined by backbone.localStorage.js
   //Gombot.GombotClient = getModule("GombotClient");
   //Gombot.Sync = getModule("GombotSync")(Gombot, Backbone, _); // original sync using our api
-  //Gombot.FirebaseSync = getModule("FirebaseSync")(Gombot); // sync using firebase
   Gombot.LoginCredential = getModule("LoginCredential")(Gombot, Backbone, _);
   Gombot.LoginCredentialCollection = getModule("LoginCredentialCollection")(Backbone, _, Gombot.LoginCredential); // LoginCredential need to be initialized
   Gombot.CapturedCredentialStorage = getModule("CapturedCredentialStorage")(Gombot, getModule("Uri"));
@@ -86,11 +86,13 @@ var _Gombot = function(importedModules, Gombot) {
     if (!options.testing) {
       Gombot.CommandHandler = getModule("CommandHandler")(Gombot, Gombot.Messaging, _);
     }
+    Gombot.FirebaseSync = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || "users"); // sync using firebase
     // TODO: refactor this code (maybe using promises?) so the SyncAdapter
     // and UserCollection don't need to be created inside this init function.
     // Also maybe move the storage creation out of here
     new Gombot.Storage(options.storeName, function(store) {
-      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, store, _);
+      //Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, store, _);
+      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSync, _);
       Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
       options.callback();
     });

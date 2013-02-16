@@ -42,6 +42,7 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   function createCryptoProxyForModel(model, keys) {
     var clone = _.clone(model);
     return _.extend(clone, {
+      keys: keys,
       toJSON: function(options) {
         // TODO: if no keys here, then do we need to do something special
         //       like in parse()?
@@ -63,7 +64,7 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
         decryptModelData(ciphertext, keys, _.extend(o, { success: function(modelData) {
           options.success(_.extend(resp, modelData));
         }, error: function(err) {
-
+          // TODO: handle errors here
         }}));
       }
     });

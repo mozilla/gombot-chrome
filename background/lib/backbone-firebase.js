@@ -1,0 +1,1 @@
+../../lib/backbone-firebase.js

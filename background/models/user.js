@@ -79,8 +79,8 @@ var User = function(Backbone, _, Gombot) {
       return {
         id: this.get("id"),
         email: this.get("email"),
-        version: this.get("version"),
-        updated: this.updated
+        version: this.get("version")
+//        updated: this.updated // TODO: figure out if we still this
       }
     },
 

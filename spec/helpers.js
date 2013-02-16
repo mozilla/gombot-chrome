@@ -4,6 +4,7 @@ var SpecHelpers = function(Gombot) {
   var LoginCredential = Gombot.LoginCredential;
   var self = {
     LOCAL_STORAGE_STORE_NAME: "usersTest",
+    FIREBASE_STORE_NAME: "usersTest",
     TEST_PASSWORD: "pässwörd",
     TEST_PIN: "1234",
     TEST_LOGIN_CRED: { username: "gombot.test", password: "foobar", title: "Example", loginurl: "https://www.example.com/login" },
