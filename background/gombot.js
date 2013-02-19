@@ -29,7 +29,16 @@ var _Gombot = function(importedModules, Gombot) {
 
   var Backbone = getModule("Backbone")();
   var _ = getModule("_");
-  var BackboneFirebaseAdapter = getModule("BackboneFirebaseAdapter")(Backbone, _)
+  var BackboneFirebaseAdapter = getModule("BackboneFirebaseAdapter")(Backbone, _);
+  var Dropbox = getModule("Dropbox");
+  var Q = getModule("Q");
+
+  var Libs = {
+    Q: Q,
+    _: _,
+    Backbone: Backbone,
+    Dropbox: Dropbox
+  };
 
   // mixin guid creation into underscore
   _.mixin({
@@ -65,6 +74,7 @@ var _Gombot = function(importedModules, Gombot) {
     Gombot.Infobars = getModule("Infobars")(Gombot);
   }
 
+  // TODO: refactor this into account manager so that logged in state can be stored separately from the users
   var currentUser = null;
   Gombot.getCurrentUser = function() {
     return currentUser;
@@ -91,6 +101,7 @@ var _Gombot = function(importedModules, Gombot) {
     // and UserCollection don't need to be created inside this init function.
     // Also maybe move the storage creation out of here
     new Gombot.LocalSync(options.storeName || DEFAULT_STORE_NAME, function(store) {
+      Gombot.DropboxSyncStrategy = getModule("DropboxSync")(Libs);
       Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
       Gombot.LocalSyncStrategy = store;
       Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.LocalSyncStrategy, _);
