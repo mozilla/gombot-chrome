@@ -74,6 +74,40 @@ var DropboxSync = function(Libs) {
     }
   };
 
+  // name is websafebase64 encoding of email address. This
+  // will create a file of that name in Dropbox.
+  Backbone.Dropbox = function(name, client) {
+    this.name = name;
+    this.client = client;
+    // var cb = function(error, data) {
+    //   if ((error && error.status === 404) || !data) {
+    //     this.records = [];
+    //   }
+    //   else {
+    //     this.records = data.split(",");
+    //   }
+    //   callback(this);
+    // };
+    // this.client.readFile(this.name, cb.bind(this));
+  };
+
+  _.extend(Backbone.Dropbox.prototype, {
+
+    create: function(model) {
+      var dfd = Q.defer();
+      model.toJSON({
+        success: (function(jsonObj) {
+          this.client.writeFile(this.name, JSON.stringify(jsonObj),
+
+        }).bind(this),
+        error: (function(err) {
+          dfd.reject(err);
+        }).bind(this)});
+      return dfd.promise;
+    }
+
+  });
+
   // function _sync(method, model, options) {
   //   var id;
   //   switch (method) {
