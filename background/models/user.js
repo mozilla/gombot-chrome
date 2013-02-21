@@ -27,6 +27,7 @@ var User = function(Backbone, _, Gombot) {
   //     "pin": "1234"
   // }
   var User = Backbone.Model.extend({
+    urlRoot: "/users",
     defaults: {
       version: USER_DATA_VERSIONS[USER_DATA_VERSIONS.length-1],
       pin: null,

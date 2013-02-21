@@ -104,7 +104,7 @@ var _Gombot = function(importedModules, Gombot) {
       Gombot.DropboxSyncStrategy = getModule("DropboxSync")(Libs);
       Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
       Gombot.LocalSyncStrategy = store;
-      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.LocalSyncStrategy, _);
+      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.DropboxSyncStrategy, _);
       //Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSync, _);
       Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
       options.callback();

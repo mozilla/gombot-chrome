@@ -13,7 +13,7 @@ var DropboxSync = function(Libs) {
   client.onError.addListener(function(error) {
     handleError(error);
     if (window.console) {
-      console.error(error);
+      //console.error(error);
     }
   });
 
@@ -24,14 +24,6 @@ var DropboxSync = function(Libs) {
         console.log("error", error);
         return dfd.reject(error);
       }
-      console.log("authenticated");
-      client.revisions("hello_world.txt", {},  function(error, stat) {
-        if (error) {
-          return console.log(error);  // Something went wrong.
-        }
-
-        console.log("revisions", stat);
-      });
       return dfd.resolve();
     });
     return dfd.promise;
@@ -39,11 +31,20 @@ var DropboxSync = function(Libs) {
 
   function sync(method, model, options) {
     if (!model.keys) {
-      console.log("Error missing keys in model for DropboxSync", model);
+      console.log("Error: missing keys in model for DropboxSync", model);
       return;
     }
-    //model.dropbox = model.dropbox || getFirebaseStoreForUser(model);
-    //Backbone.Dropbox.sync(method, model, options);
+    // TODO: need to get user authenticated first
+
+    // figure this out a little better so that clients are shared by all
+    model.dropbox = model.dropbox || new Backbone.Dropbox(this.client);
+    var promise = model.dropbox[method](model);
+    promise.then(function(value) {
+      if (options.success) options.success(value);
+    }, function(err) {
+      // TODO: use handleError to better handle dropbox errors
+      if (options.error) options.error(err);
+    });
   }
 
   function signOut() {
@@ -74,35 +75,50 @@ var DropboxSync = function(Libs) {
     }
   };
 
-  // name is websafebase64 encoding of email address. This
-  // will create a file of that name in Dropbox.
-  Backbone.Dropbox = function(name, client) {
-    this.name = name;
+  Backbone.Dropbox = function(client) {
     this.client = client;
-    // var cb = function(error, data) {
-    //   if ((error && error.status === 404) || !data) {
-    //     this.records = [];
-    //   }
-    //   else {
-    //     this.records = data.split(",");
-    //   }
-    //   callback(this);
-    // };
-    // this.client.readFile(this.name, cb.bind(this));
   };
 
+  // TODO: for users you can create two users with the same email, which
+  // is a problem here
   _.extend(Backbone.Dropbox.prototype, {
 
     create: function(model) {
       var dfd = Q.defer();
+      if (!model.id) {
+        model.id = _.guid();
+        model.set(model.idAttribute, model.id);
+      }
       model.toJSON({
         success: (function(jsonObj) {
-          this.client.writeFile(this.name, JSON.stringify(jsonObj),
-
+          this.client.writeFile(model.url(), JSON.stringify(jsonObj),
+            function(err, stat) {
+              dfd.resolve(model.toJSON());
+            });
         }).bind(this),
         error: (function(err) {
           dfd.reject(err);
         }).bind(this)});
+      return dfd.promise;
+    },
+
+    read: function(model) {
+      var dfd = Q.defer();
+      return dfd.promise;
+    },
+
+    readAll: function() {
+      var dfd = Q.defer();
+      return dfd.promise;
+    },
+
+    update: function(model) {
+      var dfd = Q.defer();
+      return dfd.promise;
+    },
+
+    'delete': function(model) {
+      var dfd = Q.defer();
       return dfd.promise;
     }
 
