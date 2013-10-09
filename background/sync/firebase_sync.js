@@ -24,6 +24,10 @@ var FirebaseSync = function(Backbone, _, firebaseStoreName) {
   };
 };
 
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = LocalSync;
+}
+
 
 //  var authClient = new FirebaseAuthClient(dataRef, authClientCallback);
   // chrome.webRequest.onBeforeSendHeaders.addListener(

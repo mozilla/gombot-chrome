@@ -29,8 +29,12 @@ var _Gombot = function(importedModules, Gombot) {
 
   var Backbone = getModule("Backbone")();
   var _ = getModule("_");
-  var BackboneFirebaseAdapter = getModule("BackboneFirebaseAdapter")(Backbone, _);
-  var Dropbox = getModule("Dropbox");
+  var BackboneFirebaseAdapter;
+  var Dropbox;
+  if (typeof window !== "undefined") { // skip on Firefox for now
+    Dropbox = getModule("Dropbox");
+    BackboneFirebaseAdapter = getModule("BackboneFirebaseAdapter")(Backbone, _);
+  }
   var Q = getModule("Q");
 
   var Libs = {
@@ -101,11 +105,15 @@ var _Gombot = function(importedModules, Gombot) {
     // and UserCollection don't need to be created inside this init function.
     // Also maybe move the storage creation out of here
     new Gombot.LocalSync(options.storeName || DEFAULT_STORE_NAME, function(store) {
-      Gombot.DropboxSyncStrategy = getModule("DropboxSync")(Libs);
-      Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
       Gombot.LocalSyncStrategy = store;
-      Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.DropboxSyncStrategy, _);
-      //Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSync, _);
+      if (typeof window !== "undefined") { // skip on Firefox for now
+        Gombot.DropboxSyncStrategy = getModule("DropboxSync")(Libs);
+        Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
+        Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSyncStrategy, _);
+      }
+      else {
+        Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.LocalSyncStrategy, _);
+      }
       Gombot.UserCollection = getModule("UserCollection")(Backbone, _, Gombot, store);
       options.callback();
     });

@@ -23,7 +23,8 @@ var GombotModules = {
   AccountManager: require("./account_manager"),
   Pages: require("./pages"),
   GombotCrypto: require("./client/crypto"),
-  SyncAdapter: require("./sync/sync_adapter")
+  SyncAdapter: require("./sync/sync_adapter"),
+  Q: require("./lib/q.js")
 };
 
 module.exports = GombotModules;
