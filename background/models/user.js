@@ -52,7 +52,7 @@ var User = function(Backbone, _, Gombot) {
     },
 
     addSyncListener: function(logins) {
-      this.listenTo(logins, "sync", this.save);
+      this.listenTo(logins, "sync", this.save.bind(this));
     },
 
     removeSyncListener: function(logins) {
@@ -92,6 +92,10 @@ var User = function(Backbone, _, Gombot) {
     },
 
     sync: function(method, model, options) {
+      console.log("sync", this.isNew(), method, model, options, this.get("logins"));
+      // TODO: THere is a bug in the firebase backbone adapter and crypto proxy.
+      // The bb adapter is setting the id after create which is not being
+      // propagated back to the original model
       Gombot.SyncAdapter.sync(method, model, options);
       // var self = this;
       // var success = function(resp) {

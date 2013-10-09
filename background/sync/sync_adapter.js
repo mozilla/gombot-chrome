@@ -7,7 +7,7 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
 
   function maybeHandleError(handler, err) {
     if (err) {
-      console.log("SyncMediator error", err);
+      console.log("SyncAdapter error", err);
       if (handler) handler(err);
       return true;
     }
@@ -15,6 +15,7 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   }
 
   function encryptModel(model, keys, options) {
+    console.log("encrypting", JSON.stringify(model));
     GombotCrypto.encrypt(keys, JSON.stringify(model), function(err, ciphertext) {
       if (err) return maybeHandleError(options.error, err);
       options.success(ciphertext);
@@ -24,6 +25,7 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   function decryptModelData(ciphertext, keys, options) {
     GombotCrypto.decrypt(keys, ciphertext, function(err, json) {
       var modelData;
+      console.log("decrypted model data", json);
       try {
         if (!err) {
           modelData = JSON.parse(json);
@@ -40,14 +42,16 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   // e.g., proxy.foo because the change will not be directly reflected
   // on the underlying model
   function createCryptoProxyForModel(model, keys) {
-    var clone = _.clone(model);
+    var clone = model;
+    var toJSON = model.toJSON.bind(model);
+    var parse = model.parse.bind(model);
     return _.extend(clone, {
       keys: keys,
       toJSON: function(options) {
         // TODO: if no keys here, then do we need to do something special
         //       like in parse()?
         // missing options means synchronous response to underyling object
-        if (!options || !options.success) return model.toJSON();
+        if (!options || !options.success) return toJSON();
         var o = _.clone(options);
         encryptModel(model, keys, _.extend(o, { success: function(ciphertext) {
           options.success(_.extend(model.getMetadata(), {
@@ -56,12 +60,17 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
         }}));
       },
       parse: function(resp, options) {
+        console.log("in parse", resp, options);
         var o = _.clone(options),
             ciphertext = resp.ciphertext;
+        if (!ciphertext) return parse(resp, options);
         delete resp.ciphertext;
         // if no keys, then just return the plaintext meta data
         if (!keys) return _.defer(function() { options.success(resp); });
         decryptModelData(ciphertext, keys, _.extend(o, { success: function(modelData) {
+          model.id = modelData.id;
+          model.set(model.idAttribute, model.id);
+          console.log("model data", modelData);
           options.success(_.extend(resp, modelData));
         }, error: function(err) {
           // TODO: handle errors here

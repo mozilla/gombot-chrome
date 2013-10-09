@@ -131,7 +131,7 @@ var _Gombot = function(importedModules, Gombot) {
         success: function() {
           if (!firstRun) {
             Gombot.Pages.navigateTo('create_account');
-            Gombot.LocalStorage.setItem("firstRun", true);
+            //Gombot.LocalStorage.setItem("firstRun", true);
           }
           var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });
           if (loggedInUser) Gombot.setCurrentUser(loggedInUser);

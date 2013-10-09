@@ -79,7 +79,9 @@ var CommandHandler = function(Gombot, Messaging, _) {
 
   // probably will need to tweak this
   function getSiteConfig(message, sender, callback) {
-    callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(sender.tab.url)] || {});
+    var url = sender.tab && sender.tab.url;
+    if (!url) return callback({});
+    callback(Gombot.SiteConfigs[Gombot.TldService.getDomain(url)] || {});
   }
 
   // create a new user account

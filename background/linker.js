@@ -59,6 +59,7 @@ var Linker = function(Gombot) {
 
   // TODO: options should have success and error
   function link(user, loginInfo, options) {
+    console.log("in link");
     var attrs = {
           username: loginInfo.username,
           password: loginInfo.password,
@@ -71,10 +72,12 @@ var Linker = function(Gombot) {
         loginCredential;
     // make sure user model is up to date, then save
     user.fetch({ success: function() {
+      console.log("in fetch success");
       loginCredential = findLoginCredentialForUsernameAndUrl(user, loginInfo.username, loginInfo.loginurl);
       if (loginCredential) updateExistingLoginCredential(loginCredential, attrs);
       else {
         loginCredential = createNewLoginCredential(attrs);
+        console.log("about to add new login")
         user.get('logins').add(loginCredential);
       }
       user.save();
