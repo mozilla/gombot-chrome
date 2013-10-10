@@ -42,16 +42,17 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
   // e.g., proxy.foo because the change will not be directly reflected
   // on the underlying model
   function createCryptoProxyForModel(model, keys) {
-    var clone = model;
-    var toJSON = model.toJSON.bind(model);
-    var parse = model.parse.bind(model);
+    var clone = _.clone(model);
     return _.extend(clone, {
       keys: keys,
+      set: function (key, val, options) {
+        return model.set(key, val, options);
+      },
       toJSON: function(options) {
         // TODO: if no keys here, then do we need to do something special
         //       like in parse()?
         // missing options means synchronous response to underyling object
-        if (!options || !options.success) return toJSON();
+        if (!options || !options.success) return model.toJSON();
         var o = _.clone(options);
         encryptModel(model, keys, _.extend(o, { success: function(ciphertext) {
           options.success(_.extend(model.getMetadata(), {
@@ -60,17 +61,15 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
         }}));
       },
       parse: function(resp, options) {
-        console.log("in parse", resp, options);
         var o = _.clone(options),
             ciphertext = resp.ciphertext;
-        if (!ciphertext) return parse(resp, options);
+        if (!ciphertext) return model.parse(resp, options);
         delete resp.ciphertext;
         // if no keys, then just return the plaintext meta data
         if (!keys) return _.defer(function() { options.success(resp); });
         decryptModelData(ciphertext, keys, _.extend(o, { success: function(modelData) {
           model.id = modelData.id;
           model.set(model.idAttribute, model.id);
-          console.log("model data", modelData);
           options.success(_.extend(resp, modelData));
         }, error: function(err) {
           // TODO: handle errors here
