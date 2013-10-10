@@ -106,7 +106,7 @@ var _Gombot = function(importedModules, Gombot) {
     // Also maybe move the storage creation out of here
     new Gombot.LocalSync(options.storeName || DEFAULT_STORE_NAME, function(store) {
       Gombot.LocalSyncStrategy = store;
-      if (false && typeof window !== "undefined") { // skip on Firefox for now
+      if (typeof window !== "undefined") { // skip on Firefox for now
         Gombot.DropboxSyncStrategy = getModule("DropboxSync")(Libs);
         Gombot.FirebaseSyncStrategy = getModule("FirebaseSync")(Backbone, _, options.firebaseStoreName || DEFAULT_STORE_NAME); // sync using firebase
         Gombot.SyncAdapter = getModule("SyncAdapter")(Gombot, Gombot.Crypto, Gombot.FirebaseSyncStrategy, _);
