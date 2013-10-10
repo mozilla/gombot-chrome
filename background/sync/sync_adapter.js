@@ -63,6 +63,8 @@ var SyncAdapter = function(Gombot, GombotCrypto, SyncStrategy, _) {
       parse: function(resp, options) {
         var o = _.clone(options),
             ciphertext = resp.ciphertext;
+        // clone the response because we are going to delete the ciphertext property
+        resp = _.clone(resp);
         if (!ciphertext) return model.parse(resp, options);
         delete resp.ciphertext;
         // if no keys, then just return the plaintext meta data

@@ -7,7 +7,7 @@ var CapturedCredentialStorage = function(Gombot, Uri) {
     // TODO: revisit strict equality requirement here
     if (!oldCredentials || newCredentials.origin !== oldCredentials.origin) {
       storage[source.id] = newCredentials;
-      console.log("Storing new credentials", storage[source.id], Gombot.getCurrentUser());
+      //console.log("Storing new credentials", storage[source.id], Gombot.getCurrentUser());
       return;
     }
     if (newCredentials.password) {
@@ -16,7 +16,7 @@ var CapturedCredentialStorage = function(Gombot, Uri) {
     if (newCredentials.username) {
       oldCredentials.username = newCredentials.username;
     }
-    console.log("Merging credentials", storage[source.id], Gombot.getCurrentUser());
+    //console.log("Merging credentials", storage[source.id], Gombot.getCurrentUser());
   }
 
   function cleanupLoginUrl(url) {
