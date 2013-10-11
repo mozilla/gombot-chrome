@@ -2,12 +2,18 @@ var FirebaseSync = function(Backbone, _, firebaseStoreName) {
 
   var firebaseUserRef = 'https://gombot.firebaseIO.com/'+firebaseStoreName;
 
-  function getFirebaseStoreForUser(model) {
+  function maybeInitFirebaseStoreForUser(model, callback) {
+    if (model.firebase) return _.defer(callback);
+    var firebaseReady = function(firebase) {
+      model.firebase = firebase;
+      callback();
+    };
+
     var storePath = [ firebaseUserRef,
                       btoa(model.get("email")),
                       model.keys.authKey,
                       model.keys.authKey ].join('/');
-    return new Backbone.Firebase(new Firebase(storePath));
+    new Backbone.Firebase(new Firebase(storePath), firebaseReady);
   }
 
   function sync(method, model, options) {
@@ -15,8 +21,9 @@ var FirebaseSync = function(Backbone, _, firebaseStoreName) {
       console.log("Error missing keys in model for firebase", model);
       return;
     }
-    model.firebase = model.firebase || getFirebaseStoreForUser(model);
-    Backbone.Firebase.sync(method, model, options);
+    maybeInitFirebaseStoreForUser(model, function () {
+      Backbone.Firebase.sync(method, model, options);
+    })
   }
 
   return {
