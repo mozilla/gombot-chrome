@@ -130,7 +130,7 @@ var _Gombot = function(importedModules, Gombot) {
       Gombot.users.fetch({
         success: function() {
           if (!firstRun) {
-            Gombot.Pages.navigateTo('create_account');
+            Gombot.Pages.navigateTo('index', null, 'pages/fxa/');
             //Gombot.LocalStorage.setItem("firstRun", true);
           }
           var loggedInUser = Gombot.users.find(function(user) { return user.isAuthenticated() });

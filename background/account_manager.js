@@ -35,7 +35,14 @@ var AccountManager = function(Gombot, _) {
         cb(null);
       },
       error: function(args) {
-        cb(args);
+        var err = args;
+        if (err === "Record not found") {
+          details.pin = "1111"; // hack a pin for now
+          return createAccount(details, cb);
+        }
+        else {
+          cb(err);
+        }
       },
       password: details.password
     });

@@ -19,22 +19,23 @@ var Pages = function(Gombot) {
     });
   }
 
-  function constructUrl(resource) {
+  function constructUrl(resource, path) {
     var url;
+    path = path || PAGES_PATH;
     if (typeof chrome !== 'undefined') {
-      url = "../data/"+PAGES_PATH+resource+".html";
+      url = "../data/"+path+resource+".html";
     }
     else { // Firefox
       var self = require("self");
-      url = self.data.url(PAGES_PATH+resource+".html");
+      url = self.data.url(path+resource+".html");
     }
     return url;
   }
 
   // Navigates the source to the given resource. If the source is null,
   // then it will load the resource in a new tab.
-  function navigateTo(resource, source) {
-    var url = constructUrl(resource);
+  function navigateTo(resource, source, path) {
+    var url = constructUrl(resource, path);
     if (typeof chrome !== 'undefined') {
       if (!source) chrome.tabs.create({ url: url });
       else chrome.tabs.update(source.tab.id, { url: url });
