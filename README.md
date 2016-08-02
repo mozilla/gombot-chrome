@@ -3,7 +3,7 @@ Gombot Client (Chrome)
 
 These are the browser extensions for Gombot, an new experimental cross-platform password manager from Mozilla.
 
-For more information on packaging and running this extension in Chrome, see [http://developer.chrome.com/extensions/packaging.html](this page).
+For more information on packaging and running this extension in Chrome, see [this page](http://developer.chrome.com/extensions/packaging.html).
 
 Setup
 -----
